@@ -1,0 +1,31 @@
+#system(ng-class="{uploading: uploading.length}", ngf-drop, ngf-select, ng-model='files', ngf-drag-over-class="'dragover'", ngf-multiple='true', ngf-select-disabled='true', ngf-allow-dir='true')
+  img(ng-if="system.logo", ng-src="{{'images/systems/' + system.logo}}")
+  img(ng-if="system.picture && !system.logo", ng-src="{{'images/systems/' + system.picture}}")
+
+  h1 {{system.name}}
+
+  #uploading-list(ng-if="uploading.length")
+    .upload(ng-repeat='file in uploading')
+      span {{file.name}}
+      .progress
+        span(style="width:{{file.progress}}%")
+
+
+  .no-entry(ng-if="!games.length")
+    span No game found
+
+  ul#games(ng-if="games.length")
+    li(ng-repeat='game in games')
+      label
+        input(type='checkbox', ng-model="selected[game]")
+        span(ng-if="!unknown[game]") {{game | noExtension}}
+        span.unknown(ng-if="unknown[game]") {{game}}
+
+  #games-tools(ng-if="games.length")
+    button(ng-disabled="!hasSelected()", ng-click="remove()")
+      i.fa.fa-trash-o
+      span Remove
+
+  .drop-label
+    i.fa.fa-download
+    span Drop your ROMs for the {{system.name}} here

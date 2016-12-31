@@ -1,0 +1,19 @@
+doctype
+html(ng-app="app")
+  head
+    title Retropie Manager
+    link(rel='icon', type='image/png', href='images/space_invader_black.png')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='vendors/font-awesome/css/font-awesome.min.css')
+    script(type='text/javascript', src='vendors/angular/angular.min.js')
+    script(type='text/javascript', src='vendors/angular-ui-router/release/angular-ui-router.min.js')
+    script(type='text/javascript', src='vendors/ng-file-upload/ng-file-upload.min.js')
+    script(type='text/javascript', src='app.js')
+    script.
+      var systems = !{systems};
+  body
+    header
+      a(href="/")
+        img(src="images/space_invader.png")
+        span Retropie Manager
+    #content(ui-view)

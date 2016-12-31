@@ -1,0 +1,22 @@
+{
+  "name": "retropie-manager",
+  "description": "A ROMs manager for Retropie",
+  "main": "index.js",
+  "author": {
+    "name": "Jean-Baptiste DEMONTE",
+    "email": "jbdemonte@gmail.com",
+    "url": "http://jb.demonte.fr"
+  },
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "public/vendors/"
+  ],
+  "dependencies": {
+    "angular": "~1.6.1",
+    "angular-ui-router": "~0.3.2",
+    "ng-file-upload": "~12.2.13",
+    "font-awesome": "^4.7.0"
+  }
+}

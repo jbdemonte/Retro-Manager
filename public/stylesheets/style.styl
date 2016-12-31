@@ -1,0 +1,107 @@
+@import 'nib'
+global-reset()
+
+@font-face
+  font-family 'Press Start 2P'
+  src url('./fonts/PressStart2P-Regular.ttf') format('truetype')
+
+@font-face
+  font-family 'Khand'
+  src url('./fonts/Khand/Khand-Regular.ttf') format('truetype')
+
+HEADER_SIZE = 80px
+
+*
+  outline none
+
+html
+  height 100%
+
+body
+  background #393939
+  text-align center
+  position relative
+  font-family 'Khand'
+  min-height 100%
+
+#content
+  padding-top HEADER_SIZE
+
+header
+  height HEADER_SIZE
+  position fixed
+  top 0
+  left 0
+  right 0
+  z-index 10
+  text-align left
+  line-height HEADER_SIZE
+  
+  background #7d7e7d
+  background -moz-linear-gradient(top,  #7d7e7d 0%, #0e0e0e 100%)
+  background -webkit-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%)
+  background linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%)
+
+  border-bottom 1px solid rgba(0, 0, 0, 0.7)
+  box-shadow 0 -1px 0 rgba(255, 255, 255, 0.2) inset
+
+  a
+    text-decoration none
+
+  span
+      color #fff
+      font-family 'Press Start 2P' !important
+      font-size 16px
+
+    img
+      width auto
+      height 30px
+      vertical-align middle
+      margin 0 18px 0 10px
+      position relative
+      top -10px
+
+button
+  box-shadow inset 0 1px 0 0 #bbdaf7
+  background linear-gradient(to bottom, #79bbff 5%, #378de5 100%)
+  background-color #79bbff
+  border-radius 6px
+  border 1px solid #84bbf3
+  display inline-block
+  color #ffffff
+  font-family 'Khand'
+  font-size 15px
+  font-weight bold
+  padding 4px 20px
+  text-decoration none
+  text-shadow 0 1px 0 #528ecc
+  cursor pointer
+  &:hover
+    background linear-gradient(to bottom, #378de5 5%, #79bbff 100%)
+    background-color #378de5
+  &:active:not([disabled])
+    position relative
+    top 1px
+  &[disabled]
+    background #ccc
+    border-color #ccc
+    font-weight normal
+    text-shadow none
+    box-shadow none
+    cursor default
+  i.fa
+    margin-right 8px
+
+.no-entry
+  color #ccc
+  border 1px solid #ccc
+  border-radius 10px
+  width 600px
+  margin 40px auto
+  span
+    text-align center
+    display block
+    padding 50px 10px
+  
+@require './styl/systems.styl'
+@require './styl/system.styl'

@@ -1,0 +1,151 @@
+@keyframes downloading
+  0%
+    background-position 0 0
+  100%
+    background-position 50px 50px
+
+#system
+  position absolute
+  top HEADER_SIZE
+  bottom 0
+  right 0
+  left 0
+
+  &.uploading
+    padding-bottom 110px
+    .drop-label
+      display none
+
+  .drop-label
+    position fixed
+    bottom 10px
+    right 10px
+    color #ffac08
+    i
+      margin-right 5px
+    span
+      font-size 13px
+
+  &:not(.dragover)
+    .drop-label
+      i
+        display none
+      span
+        font-style italic
+        color #7d7d7d
+
+  > img
+    position absolute
+    left 15px
+    top 15px
+    max-height 40px
+    max-width 150px
+  h1
+    padding 30px
+    font-family 'Press Start 2P' !important
+    color #fff
+
+  #uploading-list
+    border-top 1px solid rgba(0, 0, 0, 0.7)
+    box-shadow 0 -1px 0 rgba(255, 255, 255, 0.2) inset
+    background rgba(0, 0, 0, 0.2)
+
+    height 120px
+    position fixed
+    left 0
+    bottom 0
+    right 0
+    overflow-x scroll
+    white-space nowrap
+
+
+    .upload
+      display inline-block
+      width 90px
+      height @width
+      background #767676
+      border 1px solid #525252
+      border-radius 3px
+      color #fff
+      text-align center
+      margin 15px 0 15px 15px
+      overflow hidden
+      position relative
+
+      > span
+        position absolute
+        left 5px
+        right @left
+        bottom 32px
+        white-space normal
+
+      .progress
+        height 15px
+        position absolute
+        bottom 10px
+        left 5px
+        right @left
+
+        span
+          display block
+          height 100%
+          border-top-right-radius 4px
+          border-bottom-right-radius 4px
+          border-top-left-radius 8px
+          border-bottom-left-radius 8px
+          background-color rgb(43,194,83)
+          background-image linear-gradient(center bottom, rgb(43,194,83) 37%, rgb(84,240,84) 69%)
+          box-shadow inset 0 2px 9px  rgba(255,255,255,0.3), inset 0 -2px 6px rgba(0,0,0,0.4)
+          position relative
+          overflow hidden
+
+          &:after
+            content ""
+            position absolute
+            top 0
+            left 0
+            bottom 0
+            right 0
+            background-image linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent)
+            z-index 1
+            background-size 50px 50px
+            border-top-right-radius 8px
+            border-bottom-right-radius 8px
+            border-top-left-radius 20px
+            border-bottom-left-radius 20px
+            overflow hidden
+            animation downloading 2s linear infinite
+
+  
+  #games
+    margin 20px auto 0
+    font-size 12px
+    color #fff
+    width 600px
+    border 1px solid #8c8c8c
+    border-radius 3px
+
+    li:nth-child(odd)
+      background rgba(255, 255, 255, 0.1)
+    li:hover
+      background rgba(255, 255, 255, 0.5)
+      span
+        color #ffb116
+    label
+      position relative
+      display inline-block
+      width 600px
+      cursor pointer
+      padding 5px
+      font-size 16px
+      .unknown
+        color #8c8c8c
+        font-style italic
+      input
+        position absolute
+        left 10px
+
+  #games-tools
+    width 600px
+    margin 20px auto 0
+    text-align left

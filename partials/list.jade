@@ -1,0 +1,7 @@
+#systems
+  .channel(ng-repeat="system in systems", ui-sref="system({systemId: system.id})")
+    .box
+      span.helper
+      img(ng-if="system.picture", ng-src="{{'images/systems/' + system.picture}}")
+      .title
+        span {{system.name}}

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "mastersystem",
+    "name": "Sega Master System",
+    "picture": "sms.png",
+    "extensions": ["sms", "zip"]
+  },
+  {
+    "id": "megadrive",
+    "name": "Megadrive",
+    "alias": "Genesis",
+    "picture": "megadrive.png",
+    "logo": "megadrive-logo.png",
+    "extensions": ["gen", "md", "smd", "bin", "zip"]
+  },
+  {
+    "id": "n64",
+    "name": "Nintendo64",
+    "picture": "n64.png",
+    "extensions": ["n64", "v64", "z64"]
+  },
+  {
+    "id": "nes",
+    "name": "Nintendo Entertainment System",
+    "picture": "nes.png",
+    "extensions": ["nes"]
+  },
+  {
+    "id": "snes",
+    "name": "Super Nintendo Entertainment System",
+    "picture": "snes.png",
+    "logo": "snes-logo.png",
+    "extensions": ["sfc", "smc", "zip"]
+  }
+]

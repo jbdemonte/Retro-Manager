@@ -1,0 +1,52 @@
+#systems
+  .channel
+    vertical-align top
+    display inline-block
+    width 250px
+    margin 20px
+    cursor pointer
+    .box
+      position relative
+      display inline-block
+      background #292929
+      width @width
+      height 120px
+      border 2px solid #bcbcbc
+      border-radius 15px
+      overflow hidden
+      .helper // to vertical centerize the image
+        display inline-block
+        height 100%
+        vertical-align middle
+      img
+        max-width 90%
+        max-height 90%
+        vertical-align middle
+
+      .title
+        position absolute
+        bottom 0
+        left 0
+        right 0
+        text-align right
+        padding 5px 10px
+        background rgba(0, 0, 0, 0.5)
+        span
+          line-height 20px
+          color #5bb0ff
+          font-size 10px
+          font-family 'Press Start 2P' !important
+
+    &:hover
+      .box
+        background #3E3E3E
+        &:before
+          content ' '
+          display block
+          position absolute
+          border-radius 11px
+          top 0
+          left 0
+          right 0
+          bottom 0
+          box-shadow inset 0 0 10px 0 #fff

@@ -1,0 +1,30 @@
+{
+  "name": "retropie-manager",
+  "version": "0.0.0",
+  "description": "A ROMs manager for Retropie",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Jean-Baptiste DEMONTE",
+    "email": "jbdemonte@gmail.com",
+    "url": "http://jb.demonte.fr"
+  },
+  "license": "MIT",
+  "keywords": [
+    "raspberry", "raspbian", "retropie", "rom", "retrogaming"
+  ],
+  "dependencies": {
+    "adm-zip": "^0.4.7",
+    "body-parser": "^1.15.2",
+    "connect-multiparty": "^2.0.0",
+    "express": "^4.14.0",
+    "glob": "^7.1.1",
+    "jade": "^1.11.0",
+    "mkdirp": "^0.5.1",
+    "nib": "^1.1.2",
+    "p7zip": "^2.0.0",
+    "stylus": "^0.54.5"
+  }
+}
