@@ -15,7 +15,7 @@ var systems = (function () {
       throw new Error('Duplicate system id: ' + system.id);
     }
     result[system.id] = system;
-    system.path = path.resolve(config.ROMS_PATH + '/' + system.id);
+    system.path = path.resolve(config.path.roms + '/' + system.id);
   });
   return result;
 })();

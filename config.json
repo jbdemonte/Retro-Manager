@@ -1,4 +1,6 @@
 {
-  "BIOS_PATH": "/home/pi/RetroPie/BIOS",
-  "ROMS_PATH": "/home/pi/RetroPie/roms"
+  "path": {
+    "bios": "/home/pi/RetroPie/BIOS",
+    "roms": "/home/pi/RetroPie/roms"
+  }
 }
