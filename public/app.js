@@ -75,6 +75,14 @@ app.filter("toFarenheight", function () {
   };
 });
 
+app.filter("prettySize", function () {
+  return function (bytes) {
+    var units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB'];
+    var number = Math.floor(Math.log(bytes) / Math.log(1024));
+    return Math.floor(bytes / Math.pow(1024, Math.floor(number))) +  ' ' + units[number];
+  };
+});
+
 app.controller('ListCtrl', ['$scope', function ($scope) {
   $scope.systems = systems;
 }]);

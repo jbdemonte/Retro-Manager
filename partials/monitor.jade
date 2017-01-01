@@ -8,9 +8,9 @@
     span(ng-if="$ctrl.data.cpuTemperature.main > 0", ng-class="{warning: $ctrl.data.cpuTemperature.main >= 70, danger: $ctrl.data.cpuTemperature.main >= 80}") {{$ctrl.data.cpuTemperature.main}}°C / {{$ctrl.data.cpuTemperature.main | toFarenheight}}°F
 
   span.info(title="Memory Usage")
-    i.fa.fa-microchip
-    span(ng-class="{warning: $ctrl.data.mem.usedPct >= 50, danger: $ctrl.data.mem.usedPct >= 75}") {{$ctrl.data.mem.usedPct | number:1}}%
+    i.fa.fa-server
+    span(ng-class="{warning: $ctrl.data.mem.usedPct >= 50, danger: $ctrl.data.mem.usedPct >= 75}") {{$ctrl.data.mem.usedPct | number:1}}% - {{$ctrl.data.mem.used | prettySize}} / {{$ctrl.data.mem.total | prettySize}}
 
-  span.info(title="SD Card Usage", ng-repeat='fsSize in $ctrl.data.fsSize', ng-if='fsSize.fs=="/dev/root"')
+  span.info(title="SD Card Usage", ng-repeat='fsSize in $ctrl.data.fsSize', ng-if='fsSize.fs="/dev/root"')
     i.fa.fa-hdd-o
-    span(ng-class="{warning: fsSize.use >= 50, danger: fsSize.use >= 75}") {{fsSize.use}}%
+    span(ng-class="{warning: fsSize.use >= 50, danger: fsSize.use >= 75}") {{fsSize.use}}% - {{fsSize.used | prettySize}} / {{fsSize.size | prettySize}}
