@@ -37,6 +37,22 @@ app.config(['$stateProvider', '$httpProvider', function ($stateProvider, $httpPr
 
 }]);
 
+app.component('systemInformation', {
+  templateUrl: '/partials/systemInformation.html',
+  controller: ['$http', '$interval', function ($http, $interval) {
+    var self = this;
+    function update() {
+      $http
+        .get('api/si')
+        .then(function (response) {
+          self.data = response.data;
+        });
+    }
+    $interval(update, 5000);
+    update();
+  }]
+});
+
 app.filter("noExtension", function () {
   return function (file) {
     file = file.split('.');
@@ -44,6 +60,14 @@ app.filter("noExtension", function () {
       file.pop();
     }
     return file.join('.');
+  };
+});
+
+app.filter("toFarenheight", function () {
+  return function (degree) {
+    if (degree) {
+      return Math.round(parseFloat(degree) * 9/5 + 32);
+    }
   };
 });
 

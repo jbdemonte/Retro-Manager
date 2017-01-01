@@ -1,5 +1,5 @@
 {
-  "name": "retropie-manager",
+  "name": "RetroPie-Manager",
   "version": "0.0.0",
   "description": "A ROMs manager for Retropie",
   "main": "index.js",
@@ -13,7 +13,11 @@
   },
   "license": "MIT",
   "keywords": [
-    "raspberry", "raspbian", "retropie", "rom", "retrogaming"
+    "raspberry",
+    "raspbian",
+    "retropie",
+    "rom",
+    "retrogaming"
   ],
   "dependencies": {
     "adm-zip": "^0.4.7",
@@ -25,6 +29,7 @@
     "mkdirp": "^0.5.1",
     "nib": "^1.1.2",
     "p7zip": "^2.0.0",
-    "stylus": "^0.54.5"
+    "stylus": "^0.54.5",
+    "systeminformation": "^3.13.0"
   }
 }

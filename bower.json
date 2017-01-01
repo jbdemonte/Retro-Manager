@@ -1,5 +1,5 @@
 {
-  "name": "retropie-manager",
+  "name": "RetroPie-Manager",
   "description": "A ROMs manager for Retropie",
   "main": "index.js",
   "author": {
