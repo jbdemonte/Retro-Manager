@@ -45,6 +45,9 @@ app.component('systemInformation', {
       $http
         .get('api/si')
         .then(function (response) {
+          if (response.data.mem.total) {
+            response.data.mem.usedPct = response.data.mem.used * 100 / response.data.mem.total;
+          }
           self.data = response.data;
         });
     }
