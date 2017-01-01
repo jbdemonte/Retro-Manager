@@ -38,13 +38,13 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
 
 }]);
 
-app.component('systemInformation', {
-  templateUrl: '/partials/systemInformation.html',
+app.component('monitor', {
+  templateUrl: '/partials/monitor.html',
   controller: ['$http', '$interval', function ($http, $interval) {
     var self = this;
     function update() {
       $http
-        .get('api/si')
+        .get('api/monitor')
         .then(function (response) {
           if (response.data.mem.total) {
             response.data.mem.usedPct = response.data.mem.used * 100 / response.data.mem.total;
