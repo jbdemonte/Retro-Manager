@@ -5,7 +5,7 @@
   h1 {{system.name}}
 
   #uploading-list(ng-if="uploading.length")
-    .upload(ng-repeat='file in uploading')
+    .upload(ng-repeat='file in uploading', title="{{file.name}}")
       span {{file.name}}
       .progress
         span(style="width:{{file.progress}}%")
