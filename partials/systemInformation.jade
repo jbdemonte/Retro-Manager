@@ -1,6 +1,6 @@
 .content(ng-if="$ctrl.data")
   span.info(title="CPU Usage")
-    i.fa.fa-microchip
+    i.fa.fa-cogs
     span(ng-class="{warning: $ctrl.data.currentLoad.avgload >= 50, danger: $ctrl.data.currentLoad.avgload >= 75}") {{$ctrl.data.currentLoad.avgload}}%
 
   span.info(title="CPU Temperature", ng-if="$ctrl.data.cpuTemperature.main > 0")
@@ -8,7 +8,7 @@
     span(ng-if="$ctrl.data.cpuTemperature.main > 0", ng-class="{warning: $ctrl.data.cpuTemperature.main >= 70, danger: $ctrl.data.cpuTemperature.main >= 80}") {{$ctrl.data.cpuTemperature.main}}°C / {{$ctrl.data.cpuTemperature.main | toFarenheight}}°F
 
   span.info(title="Memory Usage")
-    span Memory
+    i.fa.fa-microchip
     span(ng-class="{warning: $ctrl.data.mem.usedPct >= 50, danger: $ctrl.data.mem.usedPct >= 75}") {{$ctrl.data.mem.usedPct | number:1}}%
 
   span.info(title="SD Card Usage", ng-repeat='fsSize in $ctrl.data.fsSize', ng-if='fsSize.fs=="/dev/root"')
