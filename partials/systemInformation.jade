@@ -3,7 +3,7 @@
     i.fa.fa-microchip
     span(ng-class="{warning: $ctrl.data.currentLoad.avgload >= 50, danger: $ctrl.data.currentLoad.avgload >= 75}") {{$ctrl.data.currentLoad.avgload}}%
 
-  span.info(title="CPU Temperature")
+  span.info(title="CPU Temperature", ng-if="$ctrl.data.cpuTemperature.main > 0")
     i.fa.fa-thermometer-three-quarters
     span(ng-if="$ctrl.data.cpuTemperature.main > 0", ng-class="{warning: $ctrl.data.cpuTemperature.main >= 70, danger: $ctrl.data.cpuTemperature.main >= 80}") {{$ctrl.data.cpuTemperature.main}}°C / {{$ctrl.data.cpuTemperature.main | toFarenheight}}°F
 
@@ -11,6 +11,6 @@
     span Memory
     span(ng-class="{warning: $ctrl.data.mem.used >= 50, danger: $ctrl.data.mem.used >= 75}") {{$ctrl.data.mem.used * 100 / $ctrl.data.mem.total | number:1}}%
 
-  span.info(title="SD Card Usage", ng-repeat='fsSize in $ctrl.data.fsSize', ng-if='fsSize.fs="/dev/root"')
+  span.info(title="SD Card Usage", ng-repeat='fsSize in $ctrl.data.fsSize', ng-if='fsSize.fs=="/dev/root"')
     i.fa.fa-hdd-o
     span(ng-class="{warning: fsSize.use >= 50, danger: fsSize.use >= 75}") {{fsSize.use}}%
