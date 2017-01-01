@@ -2,12 +2,12 @@
 
 var app = angular.module('app', ['ui.router', 'ngFileUpload']);
 
-app.config(['$stateProvider', '$httpProvider', function ($stateProvider, $httpProvider) {
+app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($stateProvider, $httpProvider, $locationProvider) {
 
   $httpProvider.defaults.headers.delete = {"Content-Type": "application/json;charset=utf-8"};
 
   $stateProvider.state('root', {
-    url: '',
+    url: '/',
     templateUrl: '/partials/list.html',
     controller: 'ListCtrl'
   });
@@ -34,6 +34,7 @@ app.config(['$stateProvider', '$httpProvider', function ($stateProvider, $httpPr
     }
   });
 
+  $locationProvider.html5Mode(true);
 
 }]);
 
