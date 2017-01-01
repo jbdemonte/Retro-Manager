@@ -1,6 +1,5 @@
 #system(ng-class="{uploading: uploading.length}", ngf-drop, ngf-select, ng-model='files', ngf-drag-over-class="'dragover'", ngf-multiple='true', ngf-select-disabled='true', ngf-allow-dir='true')
-  img(ng-if="system.logo", ng-src="{{'images/systems/' + system.logo}}")
-  img(ng-if="system.picture && !system.logo", ng-src="{{'images/systems/' + system.picture}}")
+  img(ng-src="{{'images/systems/' + system.picture}}")
 
   h1 {{system.name}}
 

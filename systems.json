@@ -10,7 +10,6 @@
     "name": "Megadrive",
     "alias": "Genesis",
     "picture": "megadrive.png",
-    "logo": "megadrive-logo.png",
     "extensions": ["gen", "md", "smd", "bin", "zip"]
   },
   {
@@ -29,7 +28,6 @@
     "id": "snes",
     "name": "Super Nintendo Entertainment System",
     "picture": "snes.png",
-    "logo": "snes-logo.png",
     "extensions": ["sfc", "smc", "zip"]
   }
 ]
