@@ -12,6 +12,7 @@ global-reset()
 HEADER_SIZE = 80px
 
 *
+  box-sizing border-box
   outline none
 
 html
@@ -25,7 +26,12 @@ body
   min-height 100%
 
 #content
-  padding-top HEADER_SIZE
+  position fixed
+  top HEADER_SIZE
+  bottom 0
+  left 0
+  right 0
+  overflow auto
 
 header
   height HEADER_SIZE
