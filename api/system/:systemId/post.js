@@ -49,7 +49,7 @@ module.exports = [multipart(), function (req, res) {
     })
     .then(function () { // finally
       if (!moved) {
-        fs.unlink(file.path);
+        fs.unlink(file.path, function () {});
       }
     });
 
