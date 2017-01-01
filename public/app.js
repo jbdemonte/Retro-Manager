@@ -59,7 +59,6 @@ app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system',
   $scope.unknown = {};
 
   games.forEach(function (game) {
-    console.log(game, system.extensions, game.split('.').pop(), system.extensions.indexOf(game.split('.').pop()));
     $scope.unknown[game] = system.extensions.indexOf(game.split('.').pop()) < 0;
   });
 
