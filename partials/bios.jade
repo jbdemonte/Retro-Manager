@@ -1,0 +1,44 @@
+#bios(ng-class="{uploading: uploading.length}", ngf-drop, ngf-select, ng-model='files', ngf-drag-over-class="'dragover'", ngf-multiple='true', ngf-select-disabled='true', ngf-allow-dir='true')
+  i.fa.fa-microchip
+
+  h1 BIOS
+
+  uploading-list(list="uploading")
+
+  .no-entry(ng-if="!files.length")
+    span No game found
+
+  table#files(ng-if="files.length")
+    thead
+      tr
+        th
+        th
+        th
+          span MD5
+        th
+          span System
+        th
+          span File
+    tbody
+      tr(ng-repeat="file in files", ng-class="{missing: file.missing, unknown: file.unknown}")
+        td.chk
+          input(type="checkbox", ng-model="selected[system.id][file.name]", ng-disabled="file.missing")
+        td.icon
+          i.fa.fa-question-circle-o(ng-if="file.unknown")
+          i.fa.fa-times-circle-o(ng-if="file.missing")
+          i.fa-check-circle-o(ng-if="!file.unknown && !file.missing")
+        td.md5
+          span {{file.md5}}
+        td.system
+          span {{file.system.name}}
+        td.file
+          span {{file.file}}
+
+  #files-tools(ng-if="files.length")
+    button(ng-disabled="!hasSelected()", ng-click="remove()")
+      i.fa.fa-trash-o
+      span Remove
+
+  .drop-label
+    i.fa.fa-download
+    span Drop your BIOS files here

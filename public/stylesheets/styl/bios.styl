@@ -1,4 +1,4 @@
-#system
+#bios
   padding-bottom 40px
   min-height 100%
 
@@ -29,46 +29,75 @@
         font-style italic
         color #7d7d7d
 
-  > img
+  > i
     position absolute
     left 15px
     top 15px
-    max-height 170px
-    max-width 170px
+    font-size 40px
+    color #fff
+
   h1
     padding 30px
     font-family 'Press Start 2P' !important
     color #fff
-
-  #games
+  
+  #files
     margin 20px auto 0
-    font-size 12px
     color #fff
     width 600px
     border 1px solid #8c8c8c
     border-radius 3px
 
-    li:nth-child(odd)
+    tr:nth-child(odd)
       background rgba(255, 255, 255, 0.1)
-    li:hover
+    tr:hover
       background rgba(255, 255, 255, 0.5)
       span
         color #ffb116
-    label
-      position relative
-      display inline-block
-      width 600px
-      cursor pointer
-      padding 5px
-      font-size 16px
-      .unknown
-        color #8c8c8c
-        font-style italic
-      input
-        position absolute
-        left 10px
 
-  #games-tools
+    tr.missing
+      color #8c8c8c
+
+    tr.unknown
+      color #8c8c8c
+      font-style italic
+
+    th
+      background #292929
+      padding 4px
+      text-align center
+
+    td
+      padding 6px 0
+
+    td.icon
+      width 25px
+      .fa-question-circle-o
+        color orange
+      .fa-times-circle-o
+        color #ff5050
+      .fa-check-circle-o
+        color #00af00
+
+    td.chk
+      width 30px
+      text-align center
+
+    td.md5
+      width 170px
+      span
+        font-size 13px
+
+    td.system
+      width 170px
+      span
+        font-size 14px
+
+    td.file
+      span
+        font-size 16px
+
+  #files-tools
     width 600px
     margin 20px auto 0
     text-align left

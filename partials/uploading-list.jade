@@ -1,0 +1,5 @@
+#uploading-list(ng-if="$ctrl.list.length")
+  .upload(ng-repeat='file in $ctrl.list', title="{{file.name}}")
+    span {{file.name}}
+    .progress
+      span(style="width:{{file.progress}}%")

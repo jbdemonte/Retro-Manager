@@ -8,12 +8,31 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
 
   $stateProvider.state('root', {
     url: '/',
-    templateUrl: '/partials/list.html',
-    controller: 'ListCtrl'
+    templateUrl: '/partials/home.html'
   });
 
-  $stateProvider.state('system', {
-    url: '/system/:systemId',
+  $stateProvider.state('bios', {
+    url: '/bios',
+    templateUrl: '/partials/bios.html',
+    controller: 'BiosCtrl',
+    resolve: {
+      listing: ['$http', function ($http) {
+        return $http
+          .get('api/bios')
+          .then(function (response) {
+            return response.data.listing || {};
+          });
+      }]
+    }
+  });
+
+  $stateProvider.state('consoles', {
+    url: '/consoles',
+    templateUrl: '/partials/systems.html',
+    controller: 'SystemsCtrl'
+  });
+
+  var listing = {
     templateUrl: '/partials/system.html',
     controller: 'SystemCtrl',
     resolve: {
@@ -28,11 +47,13 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
         return $http
           .get('api/system/' + $stateParams.systemId)
           .then(function (response) {
-            return response.data ? response.data.games || [] : [];
+            return response.data.games || [];
           });
       }]
     }
-  });
+  };
+
+  $stateProvider.state('consoles_list', Object.assign({url: '/consoles/:systemId'}, listing));
 
   $locationProvider.html5Mode(true);
 
@@ -55,6 +76,13 @@ app.component('monitor', {
     $interval(update, 5000);
     update();
   }]
+});
+
+app.component('uploadingList', {
+  templateUrl: '/partials/uploading-list.html',
+  bindings: {
+    list: '<'
+  }
 });
 
 app.filter("noExtension", function () {
@@ -83,7 +111,50 @@ app.filter("prettySize", function () {
   };
 });
 
-app.controller('ListCtrl', ['$scope', function ($scope) {
+app.controller('BiosCtrl', ['$scope', 'listing', function ($scope, listing) {
+
+  $scope.files = [];
+
+  systems.forEach(function (system) {
+    if (system.bios) {
+      Object.keys(system.bios).forEach(function (md5) {
+        var found = listing.some(function (file) {
+          return file.system === system.id && file.md5 === md5 && file.name === system.bios[md5];
+        });
+        if (!found) {
+          $scope.files.push({system: system, file: system.bios[md5], md5: md5, missing: true});
+        }
+      });
+    }
+  });
+
+  listing.forEach(function (file) {
+    var found = systems.some(function (system) {
+      return system.bios && Object.keys(system.bios).some(function (md5) {
+        return file.system === system.id && file.md5 === md5 && file.name === system.bios[md5];
+      });
+    });
+    if (!found) {
+      file.unknown = true;
+      $scope.files.push(file);
+    }
+  });
+
+  $scope.files.sort(function (a, b) {
+    if (a.system < b.system) {
+      return -1;
+    } else if (a.system > b.system) {
+      return 1;
+    }
+    return a.name < b.name ? -1 : 1;
+  });
+
+  $scope.uploading = [];
+
+}]);
+
+app.controller('SystemsCtrl', ['$scope', '$state', function ($scope, $state) {
+  $scope.state = $state.current.name;
   $scope.systems = systems;
 }]);
 
@@ -93,7 +164,6 @@ app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system',
   $scope.uploading = [];
   $scope.selected = {};
   $scope.unknown = {};
-
   games.forEach(function (game) {
     $scope.unknown[game] = system.extensions.indexOf(game.split('.').pop()) < 0;
   });

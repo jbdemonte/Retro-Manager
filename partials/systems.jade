@@ -1,5 +1,5 @@
 #systems
-  .channel(ng-repeat="system in systems", ui-sref="system({systemId: system.id})")
+  .channel(ng-repeat="system in systems", ui-sref="{{state + '_list'}}({systemId: system.id})")
     .box
       span.helper
       img(ng-if="system.picture", ng-src="{{'images/systems/' + system.picture}}")

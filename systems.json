@@ -10,7 +10,7 @@
     "name": "Megadrive",
     "alias": "Genesis",
     "picture": "megadrive.png",
-    "extensions": ["gen", "md", "smd", "bin", "zip"]
+    "extensions": ["gen", "md", "smd", "bin", "sg", "zip"]
   },
   {
     "id": "neogeo",
@@ -29,6 +29,15 @@
     "name": "Nintendo Entertainment System",
     "picture": "nes.png",
     "extensions": ["nes"]
+  },
+  {
+    "id": "pcengine",
+    "name": "PC Engine / TurboGrafx 16",
+    "picture": "pcengine.png",
+    "extensions": ["pce", "cue", "ccd", "sgx", "zip"],
+    "bios": {
+      "ff1a674273fe3540ccef576376407d1d": "syscard3.pce"
+    }
   },
   {
     "id": "snes",

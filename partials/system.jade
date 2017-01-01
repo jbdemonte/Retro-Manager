@@ -3,20 +3,15 @@
 
   h1 {{system.name}}
 
-  #uploading-list(ng-if="uploading.length")
-    .upload(ng-repeat='file in uploading', title="{{file.name}}")
-      span {{file.name}}
-      .progress
-        span(style="width:{{file.progress}}%")
-
+  uploading-list(list="uploading")
 
   .no-entry(ng-if="!games.length")
     span No game found
 
   ul#games(ng-if="games.length")
-    li(ng-repeat='game in games')
+    li(ng-repeat="game in games")
       label
-        input(type='checkbox', ng-model="selected[game]")
+        input(type="checkbox", ng-model="selected[game]")
         span(ng-if="!unknown[game]") {{game | noExtension}}
         span.unknown(ng-if="unknown[game]") {{game}}
 
