@@ -2,7 +2,7 @@ var fs = require('fs');
 var mkdirp = require('mkdirp');
 var AdmZip = require('adm-zip');
 var p7zip = require('p7zip');
-var tools = require('../../server/tools');
+var tools = require('../../../server/tools');
 var multipart = require('connect-multiparty');
 
 module.exports = [multipart(), function (req, res) {

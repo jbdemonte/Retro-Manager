@@ -1,5 +1,5 @@
 var fs = require('fs');
-var tools = require('../../server/tools');
+var tools = require('../../../server/tools');
 
 module.exports = function (req, res) {
   var system = tools.system.get(req.params.systemId);

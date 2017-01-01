@@ -26,7 +26,7 @@ app.config(['$stateProvider', '$httpProvider', function ($stateProvider, $httpPr
       }],
       games: ['$http', '$stateParams', function ($http, $stateParams) {
         return $http
-          .get('api/' + $stateParams.systemId)
+          .get('api/system/' + $stateParams.systemId)
           .then(function (response) {
             return response.data ? response.data.games || [] : [];
           });
@@ -76,7 +76,7 @@ app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system',
       return !$scope.selected[game];
     });
     $scope.selected = {};
-    $http.delete('api/' + system.id, {data: JSON.stringify({games: games})});
+    $http.delete('api/system/' + system.id, {data: JSON.stringify({games: games})});
   };
 
   $scope.$watch('files', function () {
@@ -98,7 +98,7 @@ app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system',
       }
       Upload
         .upload({
-          url: 'api/' + system.id,
+          url: 'api/system/' + system.id,
           data: {
             file: file
           }
