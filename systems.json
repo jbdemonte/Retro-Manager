@@ -13,6 +13,12 @@
     "extensions": ["gen", "md", "smd", "bin", "zip"]
   },
   {
+    "id": "neogeo",
+    "name": "NeoGeo",
+    "picture": "neogeo.png",
+    "extensions": ["zip"]
+  },
+  {
     "id": "n64",
     "name": "Nintendo64",
     "picture": "n64.png",
