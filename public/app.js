@@ -111,36 +111,62 @@ app.filter("prettySize", function () {
   };
 });
 
-app.controller('BiosCtrl', ['$scope', 'listing', function ($scope, listing) {
+app.controller('BiosCtrl', ['$scope', '$http', 'listing', function ($scope, $http, listing) {
 
-  $scope.files = [];
+  $scope.selected = {};
+  $scope.bios = [];
+
+
+  $scope.hasSelected = function () {
+    return Object.keys($scope.selected).some(function (key) {
+      return $scope.selected[key];
+    });
+  };
+
+  $scope.remove = function () {
+    var files = Object.keys($scope.selected).filter(function (key) {
+      return $scope.selected[key];
+    });
+    $scope.bios = $scope.bios.filter(function (item) {
+      return !$scope.selected[item.system + '/' + item.file];
+    });
+    $scope.selected = {};
+    $http.delete('api/bios', {data: JSON.stringify({files: files})});
+  };
+
+  $scope.toggle = function (item) {
+    if (item.missing) {
+      return ;
+    }
+    $scope.selected[item.system + '/' + item.file] = !$scope.selected[item.system + '/' + item.file];
+  };
 
   systems.forEach(function (system) {
     if (system.bios) {
       Object.keys(system.bios).forEach(function (md5) {
-        var found = listing.some(function (file) {
-          return file.system === system.id && file.md5 === md5 && file.name === system.bios[md5];
+        var found = listing.some(function (item) {
+          return item.system === system.id && item.md5 === md5 && item.file === system.bios[md5];
         });
         if (!found) {
-          $scope.files.push({system: system, file: system.bios[md5], md5: md5, missing: true});
+          $scope.bios.push({system: system.id, file: system.bios[md5], md5: md5, missing: true});
         }
       });
     }
   });
 
-  listing.forEach(function (file) {
+  listing.forEach(function (item) {
     var found = systems.some(function (system) {
       return system.bios && Object.keys(system.bios).some(function (md5) {
-        return file.system === system.id && file.md5 === md5 && file.name === system.bios[md5];
+        return item.system === system.id && item.md5 === md5 && item.file === system.bios[md5];
       });
     });
     if (!found) {
-      file.unknown = true;
-      $scope.files.push(file);
+      item.unknown = true;
+      $scope.bios.push(item);
     }
   });
 
-  $scope.files.sort(function (a, b) {
+  $scope.bios.sort(function (a, b) {
     if (a.system < b.system) {
       return -1;
     } else if (a.system > b.system) {

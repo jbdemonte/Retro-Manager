@@ -5,10 +5,10 @@
 
   uploading-list(list="uploading")
 
-  .no-entry(ng-if="!files.length")
-    span No game found
+  .no-entry(ng-if="!bios.length")
+    span No BIOS found
 
-  table#files(ng-if="files.length")
+  table#files(ng-if="bios.length")
     thead
       tr
         th
@@ -20,21 +20,21 @@
         th
           span File
     tbody
-      tr(ng-repeat="file in files", ng-class="{missing: file.missing, unknown: file.unknown}")
+      tr(ng-repeat="item in bios", ng-class="{missing: item.missing, unknown: item.unknown}", ng-click="toggle(item)")
         td.chk
-          input(type="checkbox", ng-model="selected[system.id][file.name]", ng-disabled="file.missing")
+          input(type="checkbox", ng-model="selected[item.system + '/' + item.file]", ng-disabled="item.missing")
         td.icon
-          i.fa.fa-question-circle-o(ng-if="file.unknown")
-          i.fa.fa-times-circle-o(ng-if="file.missing")
-          i.fa-check-circle-o(ng-if="!file.unknown && !file.missing")
+          i.fa.fa-question-circle-o(ng-if="item.unknown", title="Unknown file")
+          i.fa.fa-times-circle-o(ng-if="item.missing", title="Missing file")
+          i.fa-check-circle-o(ng-if="!item.unknown && !item.missing")
         td.md5
-          span {{file.md5}}
+          span {{item.md5}}
         td.system
-          span {{file.system.name}}
+          span {{item.system}}
         td.file
-          span {{file.file}}
+          span {{item.file}}
 
-  #files-tools(ng-if="files.length")
+  #files-tools(ng-if="bios.length")
     button(ng-disabled="!hasSelected()", ng-click="remove()")
       i.fa.fa-trash-o
       span Remove
