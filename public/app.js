@@ -111,11 +111,22 @@ app.filter("prettySize", function () {
   };
 });
 
-app.controller('BiosCtrl', ['$scope', '$http', 'listing', function ($scope, $http, listing) {
+app.controller('BiosCtrl', ['$scope', '$http', 'Upload', 'listing', function ($scope, $http, Upload, listing) {
 
   $scope.selected = {};
   $scope.bios = [];
+  $scope.uploading = [];
 
+  function sort() {
+    $scope.bios.sort(function (a, b) {
+      if (a.system < b.system) {
+        return -1;
+      } else if (a.system > b.system) {
+        return 1;
+      }
+      return a.name < b.name ? -1 : 1;
+    });
+  }
 
   $scope.hasSelected = function () {
     return Object.keys($scope.selected).some(function (key) {
@@ -127,8 +138,13 @@ app.controller('BiosCtrl', ['$scope', '$http', 'listing', function ($scope, $htt
     var files = Object.keys($scope.selected).filter(function (key) {
       return $scope.selected[key];
     });
-    $scope.bios = $scope.bios.filter(function (item) {
-      return !$scope.selected[item.system + '/' + item.file];
+    $scope.bios.filter(function (item) {
+      return item.unknown && !$scope.selected[item.system + '/' + item.file];
+    });
+    $scope.bios.forEach(function (item) {
+      if ($scope.selected[item.system + '/' + item.file]) {
+        item.missing = true;
+      }
     });
     $scope.selected = {};
     $http.delete('api/bios', {data: JSON.stringify({files: files})});
@@ -141,15 +157,65 @@ app.controller('BiosCtrl', ['$scope', '$http', 'listing', function ($scope, $htt
     $scope.selected[item.system + '/' + item.file] = !$scope.selected[item.system + '/' + item.file];
   };
 
+  $scope.$watch('files', function (files) {
+    (files || []).forEach(function (file) {
+      if (file.$error) {
+        return ;
+      }
+      var item = {
+        name: file.name,
+        progress: {}
+      };
+      $scope.uploading.push(item);
+      function hide() {
+        $scope.uploading.splice($scope.uploading.indexOf(item), 1);
+      }
+      Upload
+        .upload({
+          url: 'api/bios',
+          data: {
+            file: file
+          }
+        })
+        .then(
+          function (response) {
+            if (response.data.added) {
+              response.data.added.forEach(function (item) {
+                var found = $scope.bios.some(function (entry) {
+                  if (item.system === entry.system && item.md5 === entry.md5 && item.file === entry.file) {
+                    entry.missing = entry.unknown = false;
+                    return true;
+                  }
+                });
+                if (!found) {
+                  $scope.bios.push(item);
+                }
+              });
+              sort();
+            }
+            hide();
+          },
+          function () {
+            hide();
+          },
+          function (evt) {
+            item.progress = Math.floor(100.0 * evt.loaded / evt.total);
+          }
+        )
+        .catch(function () {
+          hide();
+        });
+    });
+  });
+
   systems.forEach(function (system) {
     if (system.bios) {
       Object.keys(system.bios).forEach(function (md5) {
-        var found = listing.some(function (item) {
-          return item.system === system.id && item.md5 === md5 && item.file === system.bios[md5];
+        var item = {system: system.id, file: system.bios[md5], md5: md5};
+        item.missing = listing.every(function (item) {
+          return item.system !== system.id || item.md5 !== md5 || item.file !== system.bios[md5];
         });
-        if (!found) {
-          $scope.bios.push({system: system.id, file: system.bios[md5], md5: md5, missing: true});
-        }
+        $scope.bios.push(item);
       });
     }
   });
@@ -166,16 +232,7 @@ app.controller('BiosCtrl', ['$scope', '$http', 'listing', function ($scope, $htt
     }
   });
 
-  $scope.bios.sort(function (a, b) {
-    if (a.system < b.system) {
-      return -1;
-    } else if (a.system > b.system) {
-      return 1;
-    }
-    return a.name < b.name ? -1 : 1;
-  });
-
-  $scope.uploading = [];
+  sort();
 
 }]);
 
@@ -211,11 +268,7 @@ app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system',
     $http.delete('api/system/' + system.id, {data: JSON.stringify({games: games})});
   };
 
-  $scope.$watch('files', function () {
-    upload($scope.files);
-  });
-
-  function upload(files) {
+  $scope.$watch('files', function (files) {
     (files || []).forEach(function (file) {
       if (file.$error) {
         return ;
@@ -257,8 +310,6 @@ app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system',
           hide();
         });
     });
-  }
-
-
+  });
 
 }]);

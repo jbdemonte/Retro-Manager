@@ -14,29 +14,22 @@ module.exports = [multipart(), function (req, res) {
   }
 
   var file = req.files.file;
-  var extension = tools.file.extension(file.name);
+  var extension = tools.fs.extension(file.name);
   var moved;
 
   Promise
     .resolve()
     .then(function () {
-      return tools.dir.mk(system.path);
+      return tools.fs.mkdir(system.path);
     })
     .then(function () {
       if (system.extensions.indexOf(extension) < 0) {
-        if (extension === 'zip') {
-          return tools.compression.unzip(file.path, system.path, system.extensions);
-        }
-        if (extension === '7z') {
-          return tools.compression.un7zip(file.path, system.path, system.extensions);
-        }
-      } else {
-        return tools.file.rename(file.path, system.path + '/' + file.name).then(function () {
-          moved = true;
-          return [file.name];
-        });
+        return tools.compression.uncompress(file.path, system.path, system.extensions);
       }
-      return Promise.reject({message: 'Unknown file type'});
+      return tools.fs.rename(file.path, system.path + '/' + file.name).then(function () {
+        moved = true;
+        return [file.name];
+      });
     })
     .then(function (files) {
       res.send({files: files});
