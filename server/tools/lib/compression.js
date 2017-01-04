@@ -6,9 +6,25 @@ var tools = {
 
 module.exports = {
   hasArchiveExtension: hasArchiveExtension,
-  uncompress: uncompress
+  uncompressToTmp: uncompressToTmp,
+  listFiles: listFiles
 };
 
+// list only extensions which are un-compressible and which may not be a system ROM extension (ie. ISO)
+var CLASSIC_ARCHIVES_EXTENSIONS = 'zip 7z gz gzip tgz tar arj bz2 bzip2 tbz2 tbz xz txz lzma'.split(' ');
+
+/**
+ * Return the File list of an archives
+ * @param {string} source
+ * @return {Promise.string[]}
+ */
+function listFiles(source) {
+  return p7zip.list(source).then(function (result) {
+    return result.files.map(function (file) {
+      return file.name;
+    });
+  });
+}
 
 /**
  * Uncompress a 7z archive
@@ -28,9 +44,9 @@ function un7zip(source, destination, extensions) {
         .map(function (entry) {
           return entry.name;
         });
-      if (files) {
+      if (files.length) {
         return p7zip
-          .extract(source, destination, files, false)
+          .extract(source, destination, extensions ? files : null, false)
           .then(function () {
             return files.map(function (file) {
               return file.split('/').pop(); // remove relative path
@@ -56,13 +72,29 @@ function uncompress(source, destination, extensions) {
 }
 
 /**
+ * Uncompress an archive and return its tmpPath path and files
+ * @param {string} source
+ * @return {Promise.<{tmpPath: string, files: string[]}>}
+ */
+function uncompressToTmp(source) {
+  return tools.fs
+    .mkTmpDir()
+    .then(function (tmpPath) {
+      return uncompress(source, tmpPath)
+        .then(function (files) {
+          return {
+            tmpPath: tmpPath,
+            files: files
+          };
+        });
+    });
+}
+
+/**
  * Return TRUE if the file seems to be a known kind of archive
  * @param {string} source
  * @return {boolean}
  */
 function hasArchiveExtension(source) {
-  return !!~[
-    'zip', '7z', 'gz', 'gzip', 'tgz', 'tar', 'arj', 'bz2', 'bzip2',
-    'tbz2', 'tbz', 'xz', 'txz', 'dmg', 'lzma', 'udf', 'iso', 'img'
-  ].indexOf(tools.fs.extension(source));
+  return !!~CLASSIC_ARCHIVES_EXTENSIONS.indexOf(tools.fs.extension(source));
 }

@@ -291,7 +291,7 @@ app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system',
         .then(
           function (response) {
             if (!response.data.error) {
-              (response.data.files || []).forEach(function (filename) {
+              (response.data.added || []).forEach(function (filename) {
                 if ($scope.games.indexOf(filename) < 0) {
                   $scope.games.push(filename);
                 }

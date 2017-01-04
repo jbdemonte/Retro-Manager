@@ -39,7 +39,7 @@ function handleFile(source, filename, bios) {
       // find a system which recognize this file as a BIOS
       if (system) {
         return tools.fs
-          .rename(source, system.biosPath + '/' + system.bios[md5])
+          .rename(source, system.path.bios + '/' + system.bios[md5])
           .then(function () {
             bios.push({
               system: system.id,
@@ -51,11 +51,11 @@ function handleFile(source, filename, bios) {
       }
       // if file is an archive, uncompress it and then test all files contained
       if (tools.compression.hasArchiveExtension(filename || source)) {
-        return uncompress(source)
+        return tools.compression.uncompressToTmp(source)
           .then(function (result) {
             return Promise
               .all(result.files.map(function (file) {
-                return handleFile(result.tmpPath + '/' + file, bios);
+                return handleFile(result.tmpPath + '/' + file, '', bios);
               }))
               .then(function () {
                 return tools.fs.rmTmpDir(result.tmpPath);
@@ -63,25 +63,5 @@ function handleFile(source, filename, bios) {
           });
       }
       // else ignore this file
-    });
-}
-
-/**
- * Uncompress an archive and return its tmpPath path and files
- * @param {string} source
- * @return {Promise.<{tmpPath: string, files: string[]}>}
- */
-function uncompress(source) {
-  return tools.fs
-    .mkTmpDir()
-    .then(function (tmpPath) {
-      return tools.compression
-        .uncompress(source, tmpPath)
-        .then(function (files) {
-          return {
-            tmpPath: tmpPath,
-            files: files
-          };
-        });
     });
 }

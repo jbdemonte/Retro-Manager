@@ -10,8 +10,8 @@ module.exports = function (req, res) {
 
   var promises = (Array.isArray(req.body.games) ? req.body.games : []).map(function (file) {
     // check requested file is in the target system path
-    var filePath = path.resolve(system.path + '/' + file);
-    if (filePath.indexOf(system.path) === 0) {
+    var filePath = path.resolve(system.path.roms + '/' + file);
+    if (filePath.indexOf(system.path.rom) === 0) {
       return new Promise(function (resolve, reject) {
         fs.unlink(filePath, function (err) {
           if (err) {

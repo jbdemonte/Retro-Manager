@@ -6,7 +6,7 @@ module.exports = function (req, res) {
   if (!system) {
     return res.json({error: 'Unknown system'});
   }
-  fs.readdir(system.path, function (err, files) {
+  fs.readdir(system.path.roms, function (err, files) {
     res.json({games: files || []});
   });
 

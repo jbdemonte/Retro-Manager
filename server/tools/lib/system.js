@@ -16,8 +16,10 @@ systems.forEach(function (system) {
     throw new Error('Duplicate system id: ' + system.id);
   }
   systemsById[system.id] = system;
-  system.path = path.resolve(config.path.roms + '/' + system.id);
-  system.biosPath = path.resolve(config.path.bios + '/' + system.id);
+  system.path = {
+    roms: path.resolve(config.path.roms + '/' + system.id),
+    bios: path.resolve(config.path.bios + '/' + system.id)
+  };
 });
 
 module.exports = {
