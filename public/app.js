@@ -6,9 +6,14 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
 
   $httpProvider.defaults.headers.delete = {"Content-Type": "application/json;charset=utf-8"};
 
-  $stateProvider.state('root', {
+  $stateProvider.state('home', {
     url: '/',
     templateUrl: '/partials/home.html'
+  });
+
+  $stateProvider.state('credits', {
+    url: '/credits',
+    templateUrl: '/partials/credits.html'
   });
 
   $stateProvider.state('bios', {

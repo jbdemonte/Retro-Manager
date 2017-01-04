@@ -1,26 +1,62 @@
 #home
   margin-top 28vh
 
-  a
+  a.credits
+    position absolute
+    bottom 20px
+    right 20px
+    &:hover
+      color LINK_HOVER_COLOR
+
+  a:not(.credits)
     display inline-block
     border 2px solid #bcbcbc
     border-radius 15px
     padding 25px 30px
-    color #fff
-    text-decoration none
+    vertical-align middle
+    margin-bottom 20px
+
+    &:first-child
+      margin-right 50px
+
+    > *
+      display block
+      text-align center
 
     *
       vertical-align middle
+
     i
       font-size 50px
-      margin-right 20px
+      &:before
+        font-size 50px
+        margin 0
     span
+      margin-top 10px
       font-size 25px
 
     & + a
       margin-left 30px
 
     &:hover
-      color #ffac08
-      border-color #ffac08
-      box-shadow inset 0 0 10px 0 #ffac08
+      border-color LINK_HOVER_COLOR
+      box-shadow inset 0 0 10px 0 LINK_HOVER_COLOR
+      *
+        color LINK_HOVER_COLOR
+
+
+@media (max-width: 1024px)
+
+  #home a:not(.credits)
+    padding 15px 20px
+
+    &:first-child
+      margin-right 20px
+
+    i
+      font-size 40px
+      &:before
+        font-size 40px
+    span
+      font-size 20px
+

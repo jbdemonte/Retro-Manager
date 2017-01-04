@@ -10,6 +10,7 @@ global-reset()
   src url('./fonts/Khand/Khand-Regular.ttf') format('truetype')
 
 HEADER_SIZE = 80px
+LINK_HOVER_COLOR = #ffac08
 
 *
   box-sizing border-box
@@ -25,6 +26,16 @@ body
   font-family 'Khand'
   min-height 100%
 
+a
+  color #fff
+  text-decoration none
+  i
+  span
+    color #fff
+
+.center
+  text-align center
+
 #content
   position fixed
   top HEADER_SIZE
@@ -34,15 +45,15 @@ body
   overflow auto
 
 header
-  height HEADER_SIZE
   position fixed
   top 0
   left 0
   right 0
+  height HEADER_SIZE
+  line-height @height
   z-index 10
   text-align left
-  line-height HEADER_SIZE
-  
+
   background #7d7e7d
   background -moz-linear-gradient(top,  #7d7e7d 0%, #0e0e0e 100%)
   background -webkit-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%)
@@ -52,18 +63,19 @@ header
   box-shadow 0 -1px 0 rgba(255, 255, 255, 0.2) inset
 
   a
-    text-decoration none
     span
-        color #fff
-        font-family 'Press Start 2P' !important
-        font-size 16px
-      img
-        width auto
-        height 30px
-        vertical-align middle
-        margin 0 18px 0 10px
-        position relative
-        top -10px
+      font-family 'Press Start 2P' !important
+      font-size 16px
+    img
+      width auto
+      height 30px
+      vertical-align middle
+      margin 0 18px 0 10px
+      position relative
+      top -10px
+    &:hover
+      span
+        color LINK_HOVER_COLOR
 
   monitor
     position absolute
@@ -135,6 +147,7 @@ button
     background-position 50px 50px
   
 @require './styl/home.styl'
+@require './styl/credits.styl'
 @require './styl/bios.styl'
 @require './styl/systems.styl'
 @require './styl/system.styl'
