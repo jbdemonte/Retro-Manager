@@ -1,5 +1,21 @@
 [
   {
+    "id": "atarijaguar",
+    "name": "Atari Jaguar",
+    "picture": "jaguar.png",
+    "extensions": ["j64", "jag"]
+  },
+  {
+    "id": "dreamcast",
+    "name": "Dreamcast",
+    "picture": "dreamcast.png",
+    "extensions": ["cdi", "gdi"],
+    "bios": {
+      "e10c53c2f8b90bab96ead2d368858623": "dc_boot.bin",
+      "74e3f69c2bb92bc1fc5d9a53dcf6ffe2": "dc_flash.bin"
+    }
+  },
+  {
     "id": "mastersystem",
     "name": "Sega Master System",
     "picture": "sms.png",
@@ -37,6 +53,24 @@
     "extensions": ["pce", "cue", "ccd", "sgx", "zip"],
     "bios": {
       "ff1a674273fe3540ccef576376407d1d": "syscard3.pce"
+    }
+  },
+  {
+    "id": "psx",
+    "name": "PlayStation",
+    "picture": "playstation.png",
+    "extensions": ["img", "bin", "iso"],
+    "bios": {
+      "924e392ed05558ffdb115408c263dccf": "SCPH1001.BIN"
+    }
+  },
+  {
+    "id": "saturn",
+    "name": "Sega Saturn",
+    "picture": "saturn.png",
+    "extensions": ["bin", "iso", "mdf"],
+    "bios": {
+      "af5828fdff51384f99b3c4926be27762": "saturn_bios.bin"
     }
   },
   {
