@@ -5,3 +5,6 @@
       img(ng-if="system.picture", ng-src="{{'images/systems/' + system.picture}}")
       .title
         span {{system.name}}
+
+  .no-entry(ng-if="!systems.length")
+    span No system found

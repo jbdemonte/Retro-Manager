@@ -8,7 +8,8 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
 
   $stateProvider.state('home', {
     url: '/',
-    templateUrl: '/partials/home.html'
+    templateUrl: '/partials/home.html',
+    controller: 'HomeCtrl'
   });
 
   $stateProvider.state('credits', {
@@ -31,8 +32,26 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
     }
   });
 
+  $stateProvider.state('arcades', {
+    url: '/arcades',
+    templateUrl: '/partials/systems.html',
+    controller: 'SystemsCtrl'
+  });
+
+  $stateProvider.state('computers', {
+    url: '/computers',
+    templateUrl: '/partials/systems.html',
+    controller: 'SystemsCtrl'
+  });
+
   $stateProvider.state('consoles', {
     url: '/consoles',
+    templateUrl: '/partials/systems.html',
+    controller: 'SystemsCtrl'
+  });
+
+  $stateProvider.state('handhelds', {
+    url: '/handhelds',
     templateUrl: '/partials/systems.html',
     controller: 'SystemsCtrl'
   });
@@ -58,7 +77,10 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
     }
   };
 
+  $stateProvider.state('arcades_list', Object.assign({url: '/arcades/:systemId'}, listing));
+  $stateProvider.state('computers_list', Object.assign({url: '/computers/:systemId'}, listing));
   $stateProvider.state('consoles_list', Object.assign({url: '/consoles/:systemId'}, listing));
+  $stateProvider.state('handhelds_list', Object.assign({url: '/handhelds/:systemId'}, listing));
 
   $locationProvider.html5Mode(true);
 
@@ -115,6 +137,13 @@ app.filter("prettySize", function () {
     return Math.floor(bytes / Math.pow(1024, Math.floor(number))) +  ' ' + units[number];
   };
 });
+
+app.controller('HomeCtrl', ['$scope', function ($scope) {
+  $scope.sections = {};
+  systems.forEach(function (system) {
+    $scope.sections[system.section] = true;
+  });
+}]);
 
 app.controller('BiosCtrl', ['$scope', '$http', 'Upload', 'listing', function ($scope, $http, Upload, listing) {
 
@@ -243,7 +272,9 @@ app.controller('BiosCtrl', ['$scope', '$http', 'Upload', 'listing', function ($s
 
 app.controller('SystemsCtrl', ['$scope', '$state', function ($scope, $state) {
   $scope.state = $state.current.name;
-  $scope.systems = systems;
+  $scope.systems = systems.filter(function (system) {
+    return system.section === $scope.state;
+  });
 }]);
 
 app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system', 'games', function ($scope, $http, $timeout, Upload, system, games) {

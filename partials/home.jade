@@ -3,19 +3,19 @@
     i.fa.fa-microchip
     span BIOS
 
-  a(ui-sref="arcade")
+  a(ui-sref="arcades", ng-if="sections.arcades")
     i.flaticon-joystick
-    span ARCADE
+    span ARCADES
 
-  a(ui-sref="computers")
+  a(ui-sref="computers", ng-if="sections.computers")
     i.flaticon-black-keyboard
     span COMPUTERS
 
-  a(ui-sref="consoles")
+  a(ui-sref="consoles", ng-if="sections.consoles")
     i.fa.fa-gamepad
     span CONSOLES
 
-  a(ui-sref="handheld")
+  a(ui-sref="handhelds", ng-if="sections.handhelds")
     i.flaticon-gameboy
     span HANDHELD CONSOLES
 
