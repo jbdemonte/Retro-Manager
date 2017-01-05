@@ -1,16 +1,20 @@
 var path = require('path');
 var fs = require('fs');
-var mkdirp = require('mkdirp');
 var md5File = require('md5-file/promise');
+var glob = require('glob');
 
 var tools = {
   promise: require('./promise'),
   string: require('./string')
 };
 
+var _mkdir = tools.promise.promify(require('mkdirp'));
+var _rmdir = tools.promise.promify(fs, fs.rmdir);
+var _rename = tools.promise.promify(fs, fs.rename);
+
 var TMP_DIR = path.resolve(path.join(__dirname, '../../..')) + '/tmp';
 
-module.exports = {
+var exports = module.exports = {
   extension: getExtension,
 
   /**
@@ -27,8 +31,11 @@ module.exports = {
   mkTmpDir: mkTmpDir,
   rmTmpDir: rmTmpDir,
 
-  stat: stat,
-  unlink: unlink
+  stat: tools.promise.promify(fs, fs.stat),
+  unlink: tools.promise.promify(fs, fs.unlink),
+
+  readdir: tools.promise.promify(fs, fs.readdir),
+  glob: tools.promise.promify(glob)
 };
 
 /**
@@ -37,11 +44,9 @@ module.exports = {
  * @return {Promise.string} target
  */
 function mkdir(target) {
-  return tools.promise
-    .promify(mkdirp, target)
-    .then(function () {
-      return target;
-    });
+  return _mkdir(target).then(function () {
+    return target;
+  });
 }
 
 /**
@@ -50,8 +55,7 @@ function mkdir(target) {
  * @return {Promise}
  */
 function rmdir(target) {
-  return tools.promise
-    .promify(fs, fs.readdir, target)
+  return exports.readdir(target)
     .then(function (list) {
       return Promise.all(list.map(function (item) {
         if (~['.', '..'].indexOf(item)) {
@@ -69,26 +73,20 @@ function rmdir(target) {
       }));
     })
     .then(function () {
-      return tools.promise.promify(fs, fs.rmdir, target);
+      return _rmdir(target);
     });
 }
-
-
 
 /**
  * Make a temporary directory
  * @return {Promise.<string>}
  */
 function mkTmpDir() {
-  return Promise
-    .resolve()
-    .then(function () {
-      return new Promise(function (resolve) {
-        var tmp = TMP_DIR + '/' + tools.string.rand();
-        fs.access(tmp, function (err) {
-          // if err => path does not exist => ok
-          resolve(err ? tmp : false);
-        });
+  return new Promise(function (resolve) {
+      var tmp = TMP_DIR + '/' + tools.string.rand();
+      fs.access(tmp, function (err) {
+        // if err => path does not exist => ok
+        resolve(err ? tmp : false);
       });
     })
     .then(function (tmp) {
@@ -123,24 +121,6 @@ function getExtension(filename) {
 }
 
 /**
- * Remove a file
- * @param {string} filePath
- * @return {Promise}
- */
-function unlink(filePath) {
-  return tools.promise.promify(fs, fs.unlink, filePath);
-}
-
-/**
- * Return information about a file
- * @param {string} filePath
- * @return {Promise}
- */
-function stat(filePath) {
-  return tools.promise.promify(fs, fs.stat, filePath);
-}
-
-/**
  * Rename a file
  * @param {string} source
  * @param {string} target
@@ -148,5 +128,7 @@ function stat(filePath) {
  */
 function rename(source, target) {
   return mkdir(path.dirname(target))
-    .then(tools.promise.promify.prepare(fs, fs.rename, source, target));
+    .then(function () {
+      return _rename(source, target);
+    });
 }
