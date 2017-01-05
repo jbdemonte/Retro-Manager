@@ -1,7 +1,5 @@
 var path = require('path');
 var fs = require('fs');
-var md5File = require('md5-file/promise');
-var glob = require('glob');
 
 var tools = {
   promise: require('./promise'),
@@ -22,7 +20,7 @@ var exports = module.exports = {
    * @param {string} source
    * @return {Promise.string}
    */
-  md5: md5File,
+  md5: require('md5-file/promise'),
 
   mkdir: mkdir,
   rename: rename,
@@ -35,7 +33,7 @@ var exports = module.exports = {
   unlink: tools.promise.promify(fs, fs.unlink),
 
   readdir: tools.promise.promify(fs, fs.readdir),
-  glob: tools.promise.promify(glob)
+  glob: tools.promise.promify(require('glob'))
 };
 
 /**
@@ -62,12 +60,12 @@ function rmdir(target) {
           return;
         }
         var fullPath = path.join(target, item);
-        return stat(fullPath)
+        return exports.stat(fullPath)
           .then(function (stats) {
             if (stats.isDirectory()) {
               return rmdir(fullPath);
             }
-            return unlink(fullPath);
+            return exports.unlink(fullPath);
           });
 
       }));
