@@ -54,7 +54,6 @@
     "name": "Atari 7800",
     "picture": "Atari 7800.png",
     "extensions": ["a78", "bin", "zip"],
-    "download_links": ["http://www.planetemu.net/roms/atari-7800"],
     "bios": {
       "0763f1ffb006ddbe32e52d497ee848ae": "7800 BIOS (U).rom"
     },
@@ -107,10 +106,42 @@
     "section": "consoles"
   },
   {
+    "id": "gb",
+    "name": "Game Boy",
+    "picture": "Game Boy.png",
+    "pictures": ["Game Boy.png", "Game Boy Pocket.png"],
+    "extensions": ["gb", "zip"],
+    "section": "handhelds"
+  },
+  {
+    "id": "gba",
+    "name": "Game Boy Advance",
+    "picture": "Game Boy Advance.png",
+    "extensions": ["gba", "zip"],
+    "bios": {
+      "a860e8c0b6d573d191e4ec7db1b1e4f6": "gba_bios.bin"
+    },
+    "section": "handhelds"
+  },
+  {
+    "id": "gbc",
+    "name": "Game Boy Color",
+    "picture": "Game Boy Color.png",
+    "extensions": ["gb", "gbc", "zip"],
+    "section": "handhelds"
+  },
+  {
     "id": "gamegear",
     "name": "Game Gear",
     "picture": "Game Gear.png",
     "extensions": ["gg"],
+    "section": "handhelds"
+  },
+  {
+    "id": "gw",
+    "name": "Game & Watch",
+    "picture": "Game & Watch.png",
+    "extensions": ["mgw", "zip"],
     "section": "handhelds"
   },
   {
