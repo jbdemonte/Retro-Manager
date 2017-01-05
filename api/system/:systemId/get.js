@@ -1,4 +1,3 @@
-var fs = require('fs');
 var tools = require('../../../server/tools');
 
 module.exports = function (req, res) {
@@ -6,8 +5,25 @@ module.exports = function (req, res) {
   if (!system) {
     return res.json({error: 'Unknown system'});
   }
-  fs.readdir(system.path.roms, function (err, files) {
-    res.json({games: files || []});
-  });
+  var result = {games: []};
+  tools.fs
+    .readdir(system.path.roms)
+    .then(function (files) {
+      result.games = files;
+    })
+    .then(function () {
+      return tools.downloader.list();
+    })
+    .then(function (downloaders) {
+      result.downloadable = downloaders.some(function (downloader) {
+        return downloader.hasSystem(system);
+      });
+    })
+    .then(function () {
+      res.json(result);
+    })
+    .catch(function (err) {
+      res.json(result);
+    });
 
 };

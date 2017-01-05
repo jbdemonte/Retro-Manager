@@ -29,6 +29,8 @@ var exports = module.exports = {
   mkTmpDir: mkTmpDir,
   rmTmpDir: rmTmpDir,
 
+  filterDirs: filterDirs,
+
   stat: tools.promise.promify(fs, fs.stat),
   unlink: tools.promise.promify(fs, fs.unlink),
 
@@ -128,5 +130,28 @@ function rename(source, target) {
   return mkdir(path.dirname(target))
     .then(function () {
       return _rename(source, target);
+    });
+}
+
+/**
+ * Filter a list of path to get only folders
+ * @param {string[]} items
+ * @return {Promise.<string[]>}
+ */
+function filterDirs(items) {
+  return Promise.all(
+    (items || []).map(function (item) {
+      return exports.stat(item);
+    }))
+    .then(function (results) {
+      return results
+        .map(function (stats, index) {
+          if (stats.isDirectory()) {
+            return items[index];
+          }
+        })
+        .filter(function (item) {
+          return item;
+        });
     });
 }

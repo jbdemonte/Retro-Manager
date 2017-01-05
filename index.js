@@ -21,6 +21,18 @@ app.get('/partials/*.html', function (req, res) {
   return res.render(__dirname + '/partials/' + req.params[0]);
 });
 
+app.get('/images/downloaders/:downloaderId/:image', function (req, res) {
+  res.sendFile(
+    'web/' + req.params.downloaderId + '/images/' + req.params.image,
+    {root: __dirname},
+    function (err) {
+      if (err) {
+        return res.status(err.status).end();
+      }
+    }
+  );
+});
+
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 

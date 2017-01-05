@@ -33,6 +33,13 @@ a
   span
     color #fff
 
+  &:hover
+    color LINK_HOVER_COLOR
+    i
+    span
+      color LINK_HOVER_COLOR
+
+
 .center
   text-align center
 
@@ -73,9 +80,6 @@ header
       margin 0 18px 0 10px
       position relative
       top -10px
-    &:hover
-      span
-        color LINK_HOVER_COLOR
 
   monitor
     position absolute
@@ -97,6 +101,11 @@ header
           color orange
         &.danger
           color red
+
+h1
+  padding 30px
+  font-family 'Press Start 2P' !important
+  color #fff
 
 button
   box-shadow inset 0 1px 0 0 #bbdaf7
@@ -140,6 +149,62 @@ button
     display block
     padding 50px 10px
 
+
+.channel
+  vertical-align top
+  display inline-block
+  width 250px
+  margin 20px
+  cursor pointer
+  .box
+    position relative
+    display inline-block
+    background #292929
+    width @width
+    height 120px
+    border 2px solid #bcbcbc
+    border-radius 15px
+    overflow hidden
+    .helper // to vertical centerize the image
+      display inline-block
+      height 100%
+      vertical-align middle
+    img
+      max-width 90%
+      max-height 90%
+      vertical-align middle
+
+    .title
+      position absolute
+      bottom 0
+      left 0
+      right 0
+      text-align right
+      padding 5px 10px
+      background rgba(0, 0, 0, 0.5)
+      span
+        line-height 20px
+        color #5bb0ff
+        font-size 10px
+        font-family 'Press Start 2P' !important
+
+  &:hover
+    .box
+      border-color LINK_HOVER_COLOR
+      background #1f1e1e
+      .title span
+        color LINK_HOVER_COLOR
+      &:before
+        content ' '
+        display block
+        position absolute
+        border-radius 11px
+        top 0
+        left 0
+        right 0
+        bottom 0
+        box-shadow inset 0 0 10px 0 LINK_HOVER_COLOR
+
 @keyframes downloading
   0%
     background-position 0 0
@@ -149,6 +214,6 @@ button
 @require './styl/home.styl'
 @require './styl/credits.styl'
 @require './styl/bios.styl'
-@require './styl/systems.styl'
 @require './styl/system.styl'
+@require './styl/download.styl'
 @require './styl/component/uploading-list.styl'

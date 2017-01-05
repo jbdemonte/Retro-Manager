@@ -1,0 +1,14 @@
+#download
+
+  #pictures
+    img(ng-src="{{'images/systems/' + system.picture}}", ng-if="!system.pictures.length", title="{{system.picture}}")
+    img(ng-src="{{'images/systems/' + picture}}", ng-repeat="picture in system.pictures", title="{{picture}}")
+
+  h1 {{system.name}}
+
+  .channel(ng-repeat="downloader in downloaders", ui-sref="")
+    .box
+      span.helper
+      img(ng-if="downloader.picture", ng-src="{{'images/downloaders/' + downloader.id + '/' + downloader.picture}}")
+      .title
+        span {{downloader.name}}

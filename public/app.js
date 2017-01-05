@@ -6,6 +6,14 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
 
   $httpProvider.defaults.headers.delete = {"Content-Type": "application/json;charset=utf-8"};
 
+  var systemResolver = ['$stateParams', function ($stateParams) {
+    return systems
+      .filter(function (system) {
+        return system.id === $stateParams.systemId;
+      })
+      .shift();
+  }];
+
   $stateProvider.state('home', {
     url: '/',
     templateUrl: '/partials/home.html',
@@ -60,18 +68,12 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
     templateUrl: '/partials/system.html',
     controller: 'SystemCtrl',
     resolve: {
-      system: ['$stateParams', function ($stateParams) {
-        return systems
-          .filter(function (system) {
-            return system.id === $stateParams.systemId;
-          })
-          .shift();
-      }],
-      games: ['$http', '$stateParams', function ($http, $stateParams) {
+      system: systemResolver,
+      data: ['$http', '$stateParams', function ($http, $stateParams) {
         return $http
           .get('api/system/' + $stateParams.systemId)
           .then(function (response) {
-            return response.data.games || [];
+            return response.data;
           });
       }]
     }
@@ -81,6 +83,22 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
   $stateProvider.state('computers_list', Object.assign({url: '/computers/:systemId'}, listing));
   $stateProvider.state('consoles_list', Object.assign({url: '/consoles/:systemId'}, listing));
   $stateProvider.state('handhelds_list', Object.assign({url: '/handhelds/:systemId'}, listing));
+
+  $stateProvider.state('download', {
+    url: '/:section/:systemId/download',
+    templateUrl: '/partials/download.html',
+    controller: 'DownloadCtrl',
+    resolve: {
+      system: systemResolver,
+      downloaders: ['$http', '$stateParams', function ($http, $stateParams) {
+        return $http
+          .get('api/system/' + $stateParams.systemId + '/download')
+          .then(function (response) {
+            return response.data.downloaders || [];
+          });
+      }]
+    }
+  });
 
   $locationProvider.html5Mode(true);
 
@@ -277,13 +295,19 @@ app.controller('SystemsCtrl', ['$scope', '$state', function ($scope, $state) {
   });
 }]);
 
-app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system', 'games', function ($scope, $http, $timeout, Upload, system, games) {
+app.controller('DownloadCtrl', ['$scope', 'system', 'downloaders', function ($scope, system, downloaders) {
   $scope.system = system;
-  $scope.games = games;
+  $scope.downloaders = downloaders;
+}]);
+
+app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system', 'data', function ($scope, $http, $timeout, Upload, system, data) {
+  $scope.system = system;
+  $scope.games = data.games;
+  $scope.downloadable = data.downloadable;
   $scope.uploading = [];
   $scope.selected = {};
   $scope.unknown = {};
-  games.forEach(function (game) {
+  $scope.games.forEach(function (game) {
     $scope.unknown[game] = system.extensions.indexOf(game.split('.').pop()) < 0;
   });
 
