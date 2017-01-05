@@ -12,6 +12,15 @@ systems.forEach(function (system) {
   if (!Array.isArray(system.extensions) || !system.extensions.length) {
     throw new Error('System extentions are missing in ' + JSON.stringify(system));
   }
+  if (!system.picture) {
+    throw new Error('System picture is missing in ' + JSON.stringify(system));
+  }
+  if (!system.section) {
+    throw new Error('System section is missing in ' + JSON.stringify(system));
+  }
+  if (!~['arcades', 'consoles', 'computers', 'handhelds'].indexOf(system.section)) {
+    throw new Error('Unknown system section in ' + JSON.stringify(system));
+  }
   if (systemsById[system.id]) {
     throw new Error('Duplicate system id: ' + system.id);
   }

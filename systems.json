@@ -1,29 +1,104 @@
 [
   {
+    "id": "3do",
+    "name": "Panasonic 3do",
+    "picture": "Panasonic 3do.png",
+    "extensions": ["iso"],
+    "bios": {
+      "51f2f43ae2f3508a14d9f56597e2d3ce": "panafz10.bin"
+    },
+    "section": "consoles"
+  },
+  {
+    "id": "amiga",
+    "name": "Amiga",
+    "picture": "Amiga.png",
+    "extensions": ["adf", "uae", "hdf", "lzx"],
+    "bios": {
+      "192d6d950d0ed3df8040b788502831c2": "kick13.rom",
+      "dc10d7bdd1b6f450773dfb558477c230": "kick20.rom",
+      "e40a5dfb3d017ba8779faba30cbd1c8e": "kick31.rom"
+    },
+    "section": "computers"
+  },
+  {
+    "id": "amstradcpc",
+    "name": "Amstrad CPC",
+    "picture": "Amstrad CPC.png",
+    "extensions": ["dsk", "cpc"],
+    "section": "computers"
+  },
+  {
     "id": "atari2600",
     "name": "Atari 2600",
-    "picture": "atari2600.png",
-    "extensions": ["a26", "bin", "zip"],
+    "picture": "Atari 2600.png",
+    "extensions": ["a26", "bin", "gz", "rom", "zip"],
+    "section": "computers"
+  },
+  {
+    "id": "atari5200",
+    "name": "Atari 5200",
+    "picture": "Atari 5200.png",
+    "extensions": ["a52", "bin"],
+    "bios": {
+      "0bac0c6a50104045d902df4503a4c30b": "ATARIBAS.ROM",
+      "eb1f32f5d9f382db1bbfb8d7f9cb343a": "ATARIOSA.ROM",
+      "a3e8d617c95d08031fe1b20d541434b2": "ATARIOSB.ROM",
+      "06daac977823773a3eea3422fd26a703": "ATARIXL.ROM",
+      "281f20ea4320404ec820fb7ec0693b38": "5200.rom"
+    },
+    "section": "computers"
+  },
+  {
+    "id": "atari7800",
+    "name": "Atari 7800",
+    "picture": "Atari 7800.png",
+    "extensions": ["a78", "bin", "zip"],
+    "download_links": ["http://www.planetemu.net/roms/atari-7800"],
+    "bios": {
+      "0763f1ffb006ddbe32e52d497ee848ae": "7800 BIOS (U).rom"
+    },
+    "section": "computers"
+  },
+  {
+    "id": "atari800",
+    "name": "Atari 8-bit Series",
+    "picture": "Atari 800.png",
+    "extensions": ["atr", "bas", "bin", "com", "dcm", "gz", "xex", "xfd"],
+    "bios": {
+      "0bac0c6a50104045d902df4503a4c30b": "ATARIBAS.ROM",
+      "eb1f32f5d9f382db1bbfb8d7f9cb343a": "ATARIOSA.ROM",
+      "a3e8d617c95d08031fe1b20d541434b2": "ATARIOSB.ROM",
+      "06daac977823773a3eea3422fd26a703": "ATARIXL.ROM",
+      "281f20ea4320404ec820fb7ec0693b38": "5200.rom"
+    },
     "section": "computers"
   },
   {
     "id": "atarijaguar",
     "name": "Atari Jaguar",
-    "picture": "jaguar.png",
+    "picture": "Atari Jaguar.png",
     "extensions": ["j64", "jag"],
     "section": "consoles"
   },
   {
+    "id": "atarist",
+    "name": "Atari ST",
+    "picture": "Atari ST.png",
+    "extensions": ["ctr", "img", "ipf", "raw", "rom", "st", "stx"],
+    "section": "computers"
+  },
+  {
     "id": "c64",
     "name": "Commodore 64",
-    "picture": "c64.png",
+    "picture": "Commodore 64.png",
     "extensions": ["crt", "d64", "g64", "t64", "tap", "x64"],
     "section": "computers"
   },
   {
     "id": "dreamcast",
     "name": "Dreamcast",
-    "picture": "dreamcast.png",
+    "picture": "Dreamcast.png",
     "extensions": ["cdi", "gdi"],
     "bios": {
       "e10c53c2f8b90bab96ead2d368858623": "dc_boot.bin",
@@ -34,15 +109,16 @@
   {
     "id": "gamegear",
     "name": "Game Gear",
-    "picture": "gamegear.png",
-    "extensions": ["gg", "zip"],
+    "picture": "Game Gear.png",
+    "extensions": ["gg"],
     "section": "handhelds"
   },
   {
     "id": "mastersystem",
     "name": "Sega Master System",
-    "picture": "sms.png",
-    "extensions": ["sms", "zip"],
+    "picture": "Sega Master System 2.png",
+    "pictures": ["Sega Master System.png", "Sega Master System 2.png", "Sega Mark III.png"],
+    "extensions": ["sms"],
     "section": "consoles"
   },
   {
@@ -50,27 +126,28 @@
     "name": "Megadrive",
     "alias": "Genesis",
     "picture": "megadrive.png",
-    "extensions": ["gen", "md", "smd", "bin", "sg", "zip"],
+    "pictures": ["Megadrive.png", "Genesis.png"],
+    "extensions": ["smd", "bin", "gen", "md", "sg", "zip"],
     "section": "consoles"
   },
   {
     "id": "neogeo",
-    "name": "NeoGeo",
-    "picture": "neogeo.png",
+    "name": "Neo Geo",
+    "picture": "Neo Geo.png",
     "extensions": ["zip"],
     "section": "consoles"
   },
   {
     "id": "n64",
-    "name": "Nintendo64",
-    "picture": "n64.png",
+    "name": "Nintendo 64",
+    "picture": "Nintendo 64.png",
     "extensions": ["n64", "v64", "z64"],
     "section": "consoles"
   },
   {
     "id": "nes",
     "name": "Nintendo Entertainment System",
-    "picture": "nes.png",
+    "picture": "Nintendo Entertainment System.png",
     "extensions": ["nes"],
     "section": "consoles"
   },
@@ -78,7 +155,8 @@
     "id": "pcengine",
     "name": "PC Engine / TurboGrafx 16",
     "picture": "pcengine.png",
-    "extensions": ["pce", "cue", "ccd", "sgx", "zip"],
+    "pictures": ["PC Engine.png", "TurboGrafx 16.png"],
+    "extensions": ["pce"],
     "bios": {
       "ff1a674273fe3540ccef576376407d1d": "syscard3.pce"
     },
@@ -87,7 +165,7 @@
   {
     "id": "psx",
     "name": "PlayStation",
-    "picture": "playstation.png",
+    "picture": "PlayStation.png",
     "extensions": ["img", "bin", "iso"],
     "bios": {
       "924e392ed05558ffdb115408c263dccf": "SCPH1001.BIN"
@@ -97,7 +175,7 @@
   {
     "id": "saturn",
     "name": "Sega Saturn",
-    "picture": "saturn.png",
+    "picture": "Sega Saturn.png",
     "extensions": ["bin", "iso", "mdf"],
     "bios": {
       "af5828fdff51384f99b3c4926be27762": "saturn_bios.bin"
@@ -107,7 +185,7 @@
   {
     "id": "snes",
     "name": "Super Nintendo Entertainment System",
-    "picture": "snes.png",
+    "picture": "Super Nintendo Entertainment System.png",
     "extensions": ["sfc", "smc", "zip"],
     "section": "consoles"
   }
