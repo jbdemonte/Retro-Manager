@@ -185,7 +185,7 @@
   {
     "id": "pcengine",
     "name": "PC Engine / TurboGrafx 16",
-    "picture": "pcengine.png",
+    "picture": "PC Engine.png",
     "pictures": ["PC Engine.png", "TurboGrafx 16.png"],
     "extensions": ["pce"],
     "bios": {
