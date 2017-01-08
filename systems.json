@@ -262,17 +262,24 @@
     "section": "computers"
   },
   {
-    "id": "neogeo",
-    "name": "Neo Geo",
-    "picture": "Neo Geo.png",
-    "extensions": ["zip"],
-    "section": "consoles"
-  },
-  {
     "id": "n64",
     "name": "Nintendo 64",
     "picture": "Nintendo 64.png",
     "extensions": ["n64", "v64", "z64"],
+    "section": "consoles"
+  },
+  {
+    "id": "nds",
+    "name": "Nintendo DS",
+    "picture": "Nintendo DS.png",
+    "extensions": ["bin", "nds"],
+    "section": "handhelds"
+  },
+  {
+    "id": "neogeo",
+    "name": "Neo Geo",
+    "picture": "Neo Geo.png",
+    "extensions": ["zip"],
     "section": "consoles"
   },
   {
@@ -281,6 +288,20 @@
     "picture": "Nintendo Entertainment System.png",
     "extensions": ["nes"],
     "section": "consoles"
+  },
+  {
+    "id": "ngp",
+    "name": "NeoGeo Pocket",
+    "picture": "Neo Geo Pocket.png",
+    "extensions": ["ngp", "ngc", "zip"],
+    "section": "handhelds"
+  },
+  {
+    "id": "ngpc",
+    "name": "Neo Geo Pocket Color",
+    "picture": "Neo Geo Pocket Color.png",
+    "extensions": ["ngc", "zip"],
+    "section": "handhelds"
   },
   {
     "id": "pcengine",
