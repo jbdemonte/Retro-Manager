@@ -33,7 +33,7 @@
     "name": "Atari 2600",
     "picture": "Atari 2600.png",
     "extensions": ["a26", "bin", "gz", "rom", "zip"],
-    "section": "computers"
+    "section": "consoles"
   },
   {
     "id": "atari5200",
@@ -47,7 +47,7 @@
       "06daac977823773a3eea3422fd26a703": "ATARIXL.ROM",
       "281f20ea4320404ec820fb7ec0693b38": "5200.rom"
     },
-    "section": "computers"
+    "section": "consoles"
   },
   {
     "id": "atari7800",
@@ -57,7 +57,7 @@
     "bios": {
       "0763f1ffb006ddbe32e52d497ee848ae": "7800 BIOS (U).rom"
     },
-    "section": "computers"
+    "section": "consoles"
   },
   {
     "id": "atari800",
@@ -112,7 +112,7 @@
     "bios": {
       "2c66f5911e5b42b8ebe113403548eee7": "coleco.rom"
     },
-    "section": "computers"
+    "section": "consoles"
   },
   {
     "id": "daphne",
@@ -193,6 +193,17 @@
     "section": "handhelds"
   },
   {
+    "id": "intellivision",
+    "name": "Intellivision",
+    "picture": "Intellivision.png",
+    "extensions": ["bin", "int"],
+    "bios": {
+      "62e761035cb657903761800f4437b8af": "exec.bin",
+      "0cd5946c6473e42e8e4c2137785e427f": "grom.bin"
+    },
+    "section": "consoles"
+  },
+  {
     "id": "lynx",
     "name": "Lynx",
     "picture": "Atari Lynx.png",
@@ -201,6 +212,13 @@
       "fcd403db69f54290b51035d82f835e7b": "lynxboot.img"
     },
     "section": "handhelds"
+  },
+  {
+    "id": "macintosh",
+    "name": "Macintosh",
+    "picture": "Macintosh.png",
+    "extensions": ["img", "rom"],
+    "section": "computers"
   },
   {
     "id": "mastersystem",
@@ -308,10 +326,50 @@
     "section": "consoles"
   },
   {
+    "id": "segacd",
+    "name": "Sega CD",
+    "picture": "Sega CD.png",
+    "extensions": ["cue"],
+    "bios": {
+      "854b9150240a198070150e4566ae1290": "us_scd2_9306.bin",
+      "d8b8b720dea6c6ba25c309ed633930f4": "eu_mcd2_9306.bin",
+      "bdeb4c47da613946d422d97d98b21cda": "jp_mcd1_9112.bin"
+    },
+    "section": "consoles"
+  },
+  {
+    "id": "sg-1000",
+    "name": "Sega SG-1000",
+    "picture": "Sega SG-1000.png",
+    "extensions": ["sg", "zip"],
+    "section": "consoles"
+  },
+  {
     "id": "snes",
     "name": "Super Nintendo Entertainment System",
     "picture": "Super Nintendo Entertainment System.png",
     "extensions": ["sfc", "smc", "zip"],
     "section": "consoles"
+  },
+  {
+    "id": "virtualboy",
+    "name": "Nintendo Virtual Boy",
+    "picture": "Nintendo Virtual-Boy.png",
+    "extensions": ["vb", "zip"],
+    "section": "others"
+  },
+  {
+    "id": "wonderswan",
+    "name": "Wonder Swan",
+    "picture": "Bandai Wonder Swan.png",
+    "extensions": ["ws", "wsc", "zip"],
+    "section": "handhelds"
+  },
+  {
+    "id": "wonderswancolor",
+    "name": "Wonder Swan Color",
+    "picture": "Bandai Wonder Swan Color.png",
+    "extensions": ["wsc", "zip"],
+    "section": "handhelds"
   }
 ]
