@@ -1,0 +1,61 @@
+#source
+  color #fcc
+
+  #filters
+    width 90%
+    margin 0 auto
+    text-align right
+    padding 10px
+
+    input
+      border 1px solid #7d7d7d
+      line-height 22px
+      background #545454
+      border-radius 3px
+      min-width 180px
+      padding 2px 6px
+      color #b7b7b7
+      font-size 14px
+      font-family 'Khand'
+
+  .channel
+    &.downloaded:not(:hover)
+      opacity: 0.3
+    &.downloading
+      .box
+        .footer
+          .progress
+            display block
+    .size
+      position absolute
+      top 5px
+      left 5px
+      color #7d7d7d
+      font-size 12px
+      font-family 'Khand'
+    .box
+      .fa-spin
+      .fa-check-circle-o
+        position absolute
+        top 5px
+        right 5px
+        font-size 25px
+        color #808080
+
+      .footer
+        span.long
+          font-size 8px
+          line-height 16px
+        .progress
+          display none
+          position absolute
+          top 0
+          left 0
+          overflow hidden
+
+          span
+            display block
+            height 5px
+            width 250px
+            background #04ff00
+            background linear-gradient(to right,  #ff0000 0%,#ffa500 50%,#04ff00 100%)

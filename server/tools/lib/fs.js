@@ -28,13 +28,14 @@ var exports = module.exports = {
   rmdir: rmdir,
   mkTmpDir: mkTmpDir,
   rmTmpDir: rmTmpDir,
+  saveToTmpFile: saveToTmpFile,
 
   filterDirs: filterDirs,
 
   stat: tools.promise.promify(fs, fs.stat),
   unlink: tools.promise.promify(fs, fs.unlink),
 
-  readdir: tools.promise.promify(fs, fs.readdir),
+  readdir: tools.promise.promify(fs, fs.readdir, true, []),
   glob: tools.promise.promify(require('glob'))
 };
 
@@ -82,18 +83,8 @@ function rmdir(target) {
  * @return {Promise.<string>}
  */
 function mkTmpDir() {
-  return new Promise(function (resolve) {
-      var tmp = TMP_DIR + '/' + tools.string.rand();
-      fs.access(tmp, function (err) {
-        // if err => path does not exist => ok
-        resolve(err ? tmp : false);
-      });
-    })
+  return tmpPath()
     .then(function (tmp) {
-      // if path does not exists, create and return it, else re-call mkTmpDir
-      if (!tmp) {
-        return mkTmpDir();
-      }
       return mkdir(tmp);
     });
 }
@@ -131,6 +122,52 @@ function rename(source, target) {
     .then(function () {
       return _rename(source, target);
     });
+}
+
+/**
+ * Save data into a temporary file
+ * @param {string} raw
+ * @param {string} filename
+ * @return {Promise.<string>} Return the filepath
+ */
+function saveToTmpFile(raw, filename) {
+  return mkdir(TMP_DIR)
+    .then(function () {
+      return tmpPath(filename);
+    })
+    .then(function (tmp) {
+      return new Promise(function (resolve, reject) {
+        fs.writeFile(tmp, raw, function (err) {
+          if (err) {
+            return reject();
+          }
+          resolve(tmp);
+        });
+      });
+    });
+}
+
+/**
+ * Return an available filepath (a non existing random filepath)
+ * @param {string} [filename]
+ * @return {Promise.<string>}
+ */
+function tmpPath(filename) {
+  var extension = filename ? getExtension(filename) : '';
+
+  return new Promise(function (resolve) {
+    var tmp = TMP_DIR + '/' + tools.string.rand() + (extension ? '.' + extension : '');
+    fs.access(tmp, function (err) {
+      // if err => path does not exist => ok
+      resolve(err ? tmp : false);
+    });
+  })
+  .then(function (tmp) {
+    if (!tmpPath) {
+      return tmpPath(filename);
+    }
+    return tmp;
+  });
 }
 
 /**

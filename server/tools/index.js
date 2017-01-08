@@ -1,7 +1,8 @@
 module.exports = {
   compression: require('./lib/compression'),
-  downloader: require('./lib/downloader'),
+  source: require('./lib/source'),
   fs: require('./lib/fs'),
+  object: require('./lib/object'),
   promise: require('./lib/promise'),
   string: require('./lib/string'),
   system: require('./lib/system')

@@ -84,17 +84,33 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
   $stateProvider.state('consoles_list', Object.assign({url: '/consoles/:systemId'}, listing));
   $stateProvider.state('handhelds_list', Object.assign({url: '/handhelds/:systemId'}, listing));
 
-  $stateProvider.state('download', {
-    url: '/:section/:systemId/download',
-    templateUrl: '/partials/download.html',
-    controller: 'DownloadCtrl',
+  $stateProvider.state('sources', {
+    url: '/:section/:systemId/sources',
+    templateUrl: '/partials/sources.html',
+    controller: 'SourcesCtrl',
     resolve: {
       system: systemResolver,
-      downloaders: ['$http', '$stateParams', function ($http, $stateParams) {
+      sources: ['$http', '$stateParams', function ($http, $stateParams) {
         return $http
-          .get('api/system/' + $stateParams.systemId + '/download')
+          .get('api/system/' + $stateParams.systemId + '/sources')
           .then(function (response) {
-            return response.data.downloaders || [];
+            return response.data.sources || [];
+          });
+      }]
+    }
+  });
+
+  $stateProvider.state('source', {
+    url: '/:section/:systemId/sources/:sourceId',
+    templateUrl: '/partials/source.html',
+    controller: 'SourceCtrl',
+    resolve: {
+      system: systemResolver,
+      source: ['$http', '$stateParams', function ($http, $stateParams) {
+        return $http
+          .get('api/system/' + $stateParams.systemId + '/sources/' + $stateParams.sourceId)
+          .then(function (response) {
+            return response.data;
           });
       }]
     }
@@ -103,6 +119,35 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
   $locationProvider.html5Mode(true);
 
 }]);
+
+app.factory('socket', function ($rootScope) {
+  var socket = io.connect();
+  return {
+    on: function (eventName, callback) {
+      var handler = function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          callback.apply(socket, args);
+        });
+      };
+      socket.on(eventName, handler);
+
+      return function () {
+        socket.off(eventName, handler);
+      };
+    },
+    emit: function (eventName, data, callback) {
+      socket.emit(eventName, data, function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          if (callback) {
+            callback.apply(socket, args);
+          }
+        });
+      });
+    }
+  };
+});
 
 app.component('monitor', {
   templateUrl: '/partials/monitor.html',
@@ -295,9 +340,71 @@ app.controller('SystemsCtrl', ['$scope', '$state', function ($scope, $state) {
   });
 }]);
 
-app.controller('DownloadCtrl', ['$scope', 'system', 'downloaders', function ($scope, system, downloaders) {
+app.controller('SourcesCtrl', ['$scope', 'system', 'sources', function ($scope, system, sources) {
   $scope.system = system;
-  $scope.downloaders = downloaders;
+  $scope.sources = sources;
+}]);
+
+app.controller('SourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'source', function ($scope, $stateParams, socket, system, source) {
+  $scope.system = system;
+  $scope.source = source;
+  $scope.filters = {};
+
+  var gamesByUrl = {};
+
+  function mapGames() {
+    var games = $scope.source.games;
+    gamesByUrl = {};
+    if (games) {
+      for (var i = 0; i < games.length; i++) {
+        gamesByUrl[games[i].url] = games[i];
+      }
+    }
+  }
+  mapGames();
+
+  $scope.filter = function (game) {
+    if ($scope.filters.name) {
+      return ~(game.name || '').toLowerCase().indexOf($scope.filters.name);
+    }
+    return true;
+  };
+
+  $scope.download = function (game) {
+    if (!game.downloaded && !game.downloading) {
+      game.downloading = true;
+      socket.emit('download', game);
+    }
+  };
+
+  socket.on('games', function (games) {
+    source.games = games;
+    mapGames();
+  });
+
+  socket.on('progress', function (data) {
+    var game = gamesByUrl[data.game.url];
+    if (game) {
+      game.progression = data.progression;
+    }
+  });
+
+  socket.on('complete', function (data) {
+    var game = gamesByUrl[data.game.url];
+    if (game) {
+      delete game.progression;
+      game.downloading = false;
+      game.downloaded = true;
+    }
+  });
+
+  socket.on('crawling', function (crawling) {
+    if (system.id in crawling) {
+      source.crawling = crawling[system.id];
+    }
+  });
+
+  socket.emit('crawl', {sourceId: $stateParams.sourceId, systemId: system.id});
 }]);
 
 app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system', 'data', function ($scope, $http, $timeout, Upload, system, data) {

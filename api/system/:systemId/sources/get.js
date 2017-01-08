@@ -5,16 +5,16 @@ module.exports = function (req, res) {
   if (!system) {
     return res.json({error: 'Unknown system'});
   }
-  tools.downloader.list(system)
-    .then(function (downloaders) {
+  tools.source.list(system)
+    .then(function (sources) {
       res.json({
-        downloaders: downloaders.map(function (downloader) {
-          return downloader.toJSON();
+        sources: sources.map(function (source) {
+          return source.toJSON();
         })
       });
     })
     .catch(function (err) {
-      res.json({downloaders: []});
+      res.json({sources: []});
     });
 
 };

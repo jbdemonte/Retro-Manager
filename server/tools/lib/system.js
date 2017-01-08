@@ -1,34 +1,16 @@
-var path = require('path');
-var config = require('../../../config.json');
-var systems = require('../../../systems.json');
+var classes = {
+  System: require('../../classes/lib/System')
+};
 
-var systemsById = {};
+var systemById = {};
 
-// build system hashmap
-systems.forEach(function (system) {
-  if (!system.id) {
-    throw new Error('System id is missing in ' + JSON.stringify(system));
-  }
-  if (!Array.isArray(system.extensions) || !system.extensions.length) {
-    throw new Error('System extentions are missing in ' + JSON.stringify(system));
-  }
-  if (!system.picture) {
-    throw new Error('System picture is missing in ' + JSON.stringify(system));
-  }
-  if (!system.section) {
-    throw new Error('System section is missing in ' + JSON.stringify(system));
-  }
-  if (!~['arcades', 'consoles', 'computers', 'handhelds'].indexOf(system.section)) {
-    throw new Error('Unknown system section in ' + JSON.stringify(system));
-  }
-  if (systemsById[system.id]) {
+// LOAD SYSTEMS FROM JSON
+require('../../../systems.json').forEach(function (data) {
+  var system = new classes.System(data);
+  if (systemById[system.id]) {
     throw new Error('Duplicate system id: ' + system.id);
   }
-  systemsById[system.id] = system;
-  system.path = {
-    roms: path.resolve(config.path.roms + '/' + system.id),
-    bios: path.resolve(config.path.bios + '/' + system.id)
-  };
+  systemById[system.id] = system;
 });
 
 module.exports = {
@@ -42,7 +24,7 @@ module.exports = {
  * @return {object|undefined}
  */
 function get(id) {
-  return systemsById[id];
+  return systemById[id];
 }
 
 /**
