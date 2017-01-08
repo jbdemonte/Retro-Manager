@@ -64,6 +64,12 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
     controller: 'SystemsCtrl'
   });
 
+  $stateProvider.state('others', {
+    url: '/others',
+    templateUrl: '/partials/systems.html',
+    controller: 'SystemsCtrl'
+  });
+
   var listing = {
     templateUrl: '/partials/system.html',
     controller: 'SystemCtrl',
@@ -83,6 +89,7 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
   $stateProvider.state('computers_list', Object.assign({url: '/computers/:systemId'}, listing));
   $stateProvider.state('consoles_list', Object.assign({url: '/consoles/:systemId'}, listing));
   $stateProvider.state('handhelds_list', Object.assign({url: '/handhelds/:systemId'}, listing));
+  $stateProvider.state('others_list', Object.assign({url: '/others/:systemId'}, listing));
 
   $stateProvider.state('sources', {
     url: '/:section/:systemId/sources',

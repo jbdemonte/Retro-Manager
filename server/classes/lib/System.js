@@ -28,7 +28,7 @@ function System(data) {
   if (!this.section) {
     throw new Error('System section is missing in ' + JSON.stringify(data));
   }
-  if (!~['arcades', 'consoles', 'computers', 'handhelds'].indexOf(this.section)) {
+  if (!~['arcades', 'consoles', 'computers', 'handhelds', 'others'].indexOf(this.section)) {
     throw new Error('Unknown system section in ' + JSON.stringify(data));
   }
 

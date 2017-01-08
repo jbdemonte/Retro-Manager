@@ -95,6 +95,43 @@
     "section": "computers"
   },
   {
+    "id": "coco",
+    "name": "Tandy Color Computer",
+    "picture": "Tandy Color Computer.png",
+    "extensions": ["asc", "bas", "cas", "ccc", "dmk", "dsk", "jvc", "os9", "rom", "sna", "vdk", "wav"],
+    "bios": {
+      "c2fc43556eb6b7b25bdf5955bd9df825": "bas13.rom"
+    },
+    "section": "computers"
+  },
+  {
+    "id": "coleco",
+    "name": "Colecovision",
+    "picture": "Colecovision.png",
+    "extensions": ["bin", "col", "rom", "zip"],
+    "bios": {
+      "2c66f5911e5b42b8ebe113403548eee7": "coleco.rom"
+    },
+    "section": "computers"
+  },
+  {
+    "id": "daphne",
+    "name": "Daphne",
+    "picture": "LaserActive.png",
+    "extensions": [".daphne"],
+    "section": "others"
+  },
+  {
+    "id": "dragon32",
+    "name": "Dragon 32",
+    "picture": "Dragon 32.png",
+    "extensions": ["asc", "bas", "cas", "ccc", "dmk", "dsk", "jvc", "os9", "rom", "sna", "vdk", "wav"],
+    "bios": {
+      "3420b96031078a4ef408cad7bf21a33f": "d32.rom"
+    },
+    "section": "computers"
+  },
+  {
     "id": "dreamcast",
     "name": "Dreamcast",
     "picture": "Dreamcast.png",
@@ -102,6 +139,17 @@
     "bios": {
       "e10c53c2f8b90bab96ead2d368858623": "dc_boot.bin",
       "74e3f69c2bb92bc1fc5d9a53dcf6ffe2": "dc_flash.bin"
+    },
+    "section": "consoles"
+  },
+  {
+    "id": "fds",
+    "name": "Nintendo Family Computer Disk System",
+    "picture": "Nintendo Family Computer.png",
+    "pictures": ["Nintendo Family Computer.png", "Nintendo Family Computer - Famicom Disk System.png"],
+    "extensions": ["fds", "zip"],
+    "bios": {
+      "ca30b50f880eb660a320674ed365ef7a": "disksys.rom"
     },
     "section": "consoles"
   },
@@ -145,6 +193,16 @@
     "section": "handhelds"
   },
   {
+    "id": "lynx",
+    "name": "Lynx",
+    "picture": "Atari Lynx.png",
+    "extensions": ["lnx", "zip"],
+    "bios": {
+      "fcd403db69f54290b51035d82f835e7b": "lynxboot.img"
+    },
+    "section": "handhelds"
+  },
+  {
     "id": "mastersystem",
     "name": "Sega Master System",
     "picture": "Sega Master System 2.png",
@@ -160,6 +218,30 @@
     "pictures": ["Megadrive.png", "Genesis.png"],
     "extensions": ["smd", "bin", "gen", "md", "sg", "zip"],
     "section": "consoles"
+  },
+  {
+    "id": "msx",
+    "name": "MSX",
+    "picture": "Sony HitBit (MSX 1).png",
+    "extensions": ["mx1", "mx2", "zip"],
+    "bios": {
+      "d6dedca1112ddfda94cc9b2e426b818b": "CARTS.SHA",
+      "85b38e4128bbc300e675f55b278683a8": "CYRILLIC.FNT",
+      "80dcd1ad1a4cf65d64b7ba10504e8190": "DISK.ROM",
+      "af8537262df8df267072f359399a7635": "FMPAC16.ROM",
+      "6f69cc8b5ed761b03afd78000dfb0e19": "FMPAC.ROM",
+      "c83e50e9f33b8dd893c414691822740d": "ITALIC.FNT",
+      "febe8782b466d7c3b16de6d104826b34": "KANJI.ROM",
+      "2183c2aff17cf4297bdb496de78c2e8a": "MSX2EXT.ROM",
+      "7c8243c71d8f143b2531f01afa6a05dc": "MSX2PEXT.ROM",
+      "6d8c0ca64e726c82a4b726e9b01cdf1e": "MSX2P.ROM",
+      "ec3a01c91f24fbddcbcab0ad301bc9ef": "MSX2.ROM",
+      "6418d091cd6907bbcf940324339e43bb": "MSXDOS2.ROM",
+      "aa95aea2563cd5ec0a0919b44cc17d47": "MSX.ROM",
+      "403cdea1cbd2bb24fae506941f8f655e": "PAINTER.ROM",
+      "279efd1eae0d358eecd4edc7d9adedf3": "RS232.ROM"
+    },
+    "section": "computers"
   },
   {
     "id": "neogeo",
@@ -210,6 +292,18 @@
     "extensions": ["bin", "iso", "mdf"],
     "bios": {
       "af5828fdff51384f99b3c4926be27762": "saturn_bios.bin"
+    },
+    "section": "consoles"
+  },
+  {
+    "id": "sega32x",
+    "name": "Sega 32x",
+    "picture": "Sega Genesis Model2 32X.png",
+    "extensions": ["32x", "smd", "bin", "zip"],
+    "bios": {
+      "6a5433f6a132a2b683635819a6dcf085": "32X_G_BIOS.BIN",
+      "f88354ec482be09aeccd76a97bb75868": "32X_M_BIOS.BIN",
+      "7f041b6a55cd7423a6c08a219335269e": "32X_S_BIOS.BIN"
     },
     "section": "consoles"
   },
