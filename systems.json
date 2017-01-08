@@ -221,6 +221,20 @@
     "section": "computers"
   },
   {
+    "id": "mame",
+    "name": "Mame",
+    "picture": "MAME.png",
+    "extensions": ["zip"],
+    "section": "arcades"
+  },
+  {
+    "id": "mame-advmame",
+    "name": "MAME AdvanceMAME",
+    "picture": "AdvanceMAME.png",
+    "extensions": ["zip"],
+    "section": "arcades"
+  },
+  {
     "id": "mastersystem",
     "name": "Sega Master System",
     "picture": "Sega Master System 2.png",
