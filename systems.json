@@ -304,6 +304,13 @@
     "section": "handhelds"
   },
   {
+    "id": "oric",
+    "name": "Oric 1 / Atmos",
+    "picture": "Oric Atmos.png",
+    "extensions": ["dsk", "tap"],
+    "section": "computers"
+  },
+  {
     "id": "pcengine",
     "name": "PC Engine / TurboGrafx 16",
     "picture": "PC Engine.png",
@@ -315,6 +322,13 @@
     "section": "consoles"
   },
   {
+    "id": "psp",
+    "name": "PSP",
+    "picture": "PlayStation Portable.png",
+    "extensions": ["cso", "iso", "pbp"],
+    "section": "handhelds"
+  },
+  {
     "id": "psx",
     "name": "PlayStation",
     "picture": "PlayStation.png",
@@ -323,6 +337,13 @@
       "924e392ed05558ffdb115408c263dccf": "SCPH1001.BIN"
     },
     "section": "consoles"
+  },
+  {
+    "id": "samcoupe",
+    "name": "SAM Coupé",
+    "picture": "SAM Coupé.png",
+    "extensions": ["dsk", "mgt", "sad", "sbt"],
+    "section": "computers"
   },
   {
     "id": "saturn",
@@ -373,6 +394,43 @@
     "section": "consoles"
   },
   {
+    "id": "trs-80",
+    "name": "TRS-80",
+    "picture": "TRS-80 Model 3.png",
+    "extensions": ["dsk"],
+    "bios": {
+      "ca74822ebc2803c6635a55116ecd9539": "level2.rom"
+    },
+    "section": "computers"
+  },
+  {
+    "id": "ti99",
+    "name": "TI-99/4A",
+    "picture": "TI-99:4A.png",
+    "extensions": ["ctg"],
+    "bios": {
+      "412ecbf991edcb68edd0e76c2caa4a59": "TI-994A.ctg"
+    },
+    "section": "computers"
+  },
+  {
+    "id": "vectrex",
+    "name": "Vectrex",
+    "picture": "Vectrex.png",
+    "extensions": ["vec", "zip"],
+    "section": "consoles"
+  },
+  {
+    "id": "videopac",
+    "name": "Videopac / Odyssey 2",
+    "picture": "Odyssey 2.png",
+    "extensions": ["bin"],
+    "bios": {
+      "562d5ebf9e030a40d6fabfc2f33139fd": "o2rom.bin"
+    },
+    "section": "consoles"
+  },
+  {
     "id": "virtualboy",
     "name": "Nintendo Virtual Boy",
     "picture": "Nintendo Virtual-Boy.png",
@@ -392,5 +450,20 @@
     "picture": "Bandai Wonder Swan Color.png",
     "extensions": ["wsc", "zip"],
     "section": "handhelds"
+  },
+  {
+    "id": "zmachine",
+    "name": "Zmachine (Infocom)",
+    "picture": "Infocom.png",
+    "extensions": ["dat", "z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8", "zip"],
+    "section": "others"
+  },
+
+  {
+    "id": "zxspectrum",
+    "name": "ZX Spectrum",
+    "picture": "ZX Spectrum.png",
+    "extensions": ["sna", "szx", "z80", "tap", "tzx", "gz", "udi", "mgt", "img", "trd", "scl", "dsk"],
+    "section": "computers"
   }
 ]
