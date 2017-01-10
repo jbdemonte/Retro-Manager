@@ -52,7 +52,7 @@ function Source(path) {
   this.path = path;
 
   try {
-    this.manifest = require(this.path + '/manifest.json');
+    this.manifest = require(this.path);
     this.manifest.systems = this.manifest.systems || {};
     this.valid = true;
   } catch (err) {
@@ -122,6 +122,9 @@ Source.prototype.systemManifest = function (systemId) {
   if (manifest.missingImg) {
     manifest.missingImg = this.engine.makeUrl(manifest.missingImg);
   }
+  ['pg_home', 'pg_games'].forEach(function (key) {
+    manifest[key] = manifest[key] || {};
+  });
   return manifest;
 };
 
@@ -143,8 +146,10 @@ Source.prototype.crawl = function (systemId) {
 
   loadGameList(manifest, engine, manifest.path)
     .then(function (games) {
-      if (manifest.pg_games.reIgnore) {
-        var ignore = new RegExp(manifest.pg_games.reIgnore);
+      games = unique(games || []);
+
+      if (manifest.pg_games.ignore) {
+        var ignore = new RegExp(manifest.pg_games.ignore);
         games = games.filter(function (game) {
           return !game.name.match(ignore);
         });
@@ -254,16 +259,17 @@ function loadGameList(manifest, engine, url, crawled) {
   if (crawled[url]) {
     return Promise.resolve();
   }
-  crawled[url] = true;
 
   if (!tools.object.isObject(manifest.pg_games)) {
     return Promise.reject('Manifest error: pages.games mismatch');
   }
 
   // Single page with all games
-  if (!manifest.pg_home || !manifest.pg_home.pageLinks) {
-    return loadGameListPage(manifest, engine, url);
+  if (!manifest.pg_home.pageLinks) {
+    return loadGameListPage(manifest, engine, url, crawled);
   }
+
+  crawled[url] = true;
 
   // Main page with pagination (ie: A-Z Roms)
   return engine
@@ -284,23 +290,36 @@ function loadGameList(manifest, engine, url, crawled) {
         .then(function (results) {
           return Array.prototype.concat.apply([], results);
         });
-    })
-    .then(function (games) {
-      return unique(games || []);
     });
 }
 
-function loadGameListPage(manifest, engine, url) {
+function loadGameListPage(manifest, engine, url, crawled) {
+  if (crawled[url]) {
+    return Promise.resolve([]);
+  }
+  crawled[url] = true;
+
   return engine
     .get(url)
     .then(function (result) {
-      return result.map(manifest.pg_games.items, function (item) {
-        return buildGame(manifest, engine, item, url);
+      var games = result.map(manifest.pg_games.items, function (item) {
+        return buildGame(manifest, engine, result, item, url);
       });
+      if (manifest.pg_home.next) {
+        // Pagination base on "Previous - Next"
+        var next = result.find(manifest.pg_home.next).attr('href');
+        if (next) {
+          return loadGameListPage(manifest, engine, next, crawled)
+            .then(function (moreGames) {
+              return games.concat(moreGames);
+            });
+        }
+      }
+      return games;
     });
 }
 
-function buildGame(manifest, engine, item, url) {
+function buildGame(manifest, engine, result, item, url) {
   var data = {
     sc  : manifest.sourceId,
     sid : manifest.systemId,
@@ -309,11 +328,11 @@ function buildGame(manifest, engine, item, url) {
 
   // classic image tag
   if (manifest.pg_games.img) {
-    data.img = engine.makeUrl(item.find(manifest.pg_games.img).attr('src'));
+    data.img = engine.makeUrl(result.find(item, manifest.pg_games.img).attr('src'));
   }
   // there is a link to an image
   if (!data.img && manifest.pg_games.imgLink) {
-    data.img = engine.makeUrl(item.find(manifest.pg_games.imgLink).attr('href'));
+    data.img = engine.makeUrl(result.find(item, manifest.pg_games.imgLink).attr('href'));
   }
 
   // check if image is not a default one
@@ -321,12 +340,19 @@ function buildGame(manifest, engine, item, url) {
     delete data.img;
   }
 
+  if (manifest.pg_games.romLink) {
+    // Direct link to the rom
+    data.url = manifest.pg_games.romLink;
+  } else if (manifest.pg_games.link) {
   // get game page link
-  if (manifest.pg_games.link) {
-    data.url = item.find(manifest.pg_games.link).attr('href');
+    data.url = result.find(item, manifest.pg_games.link).attr('href');
   } else {
     // the item itself is the link to the page
     data.url = item.attr('href');
+  }
+
+  if (typeof data.url === 'function') {
+    data.url = data.url(item);
   }
 
   if (data.url) {
@@ -335,7 +361,7 @@ function buildGame(manifest, engine, item, url) {
 
   // get game name
   if (manifest.pg_games.name) {
-    data.name = (item.find(manifest.pg_games.name).text() || '').trim();
+    data.name = (result.find(item, manifest.pg_games.name).text() || '').trim();
   } else {
     // the item itself show the game name
     data.name = item.text().trim();
@@ -343,7 +369,7 @@ function buildGame(manifest, engine, item, url) {
 
   // get game size
   if (manifest.pg_games.size) {
-    data.size = (item.find(manifest.pg_games.size).text() || '').trim();
+    data.size = (result.find(item, manifest.pg_games.size).text() || '').trim();
   }
 
   return data;
@@ -359,7 +385,6 @@ function buildGame(manifest, engine, item, url) {
  * @return {Promise}
  */
 function download(engine, url, referer, progressEventName, tasks) {
-
   if (!tasks.length) {
     return engine.get({url: url, followAllRedirects: true, encoding: null}, {referer: referer}, {progress: progressEventName});
   }
@@ -382,7 +407,7 @@ function download(engine, url, referer, progressEventName, tasks) {
           query.url = form.attr('action');
           query.method = (form.attr('method') || 'post').toUpperCase();
           query.form = {};
-          data.forEach(form.find('input'), function (input) {
+          data.forEach(data.find(form, 'input'), function (input) {
             query.form[input.attr('name')] = input.val();
           });
         }

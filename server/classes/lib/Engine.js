@@ -8,6 +8,11 @@ var contentDisposition = require('content-disposition');
 
 module.exports = Engine;
 
+var regex = {
+  eq: /:eq\((\d+)\)/,
+  digit: /^\d+$/
+};
+
 /**
  * HTTP Engine
  * @param {string} origin
@@ -198,25 +203,25 @@ function handleBody(body, target) {
   };
 
   // Append :eq() support to cheerio
-  target.find = function (selectors) {
-    selectors = selectors.split(',');
-    var result = selectors.map(function (selector) {
-      var cursor = $;
-      selector.split(/:eq\((\d+)\)/).forEach(function (part) {
+  target.find = function (container, selectors) {
+    if (!selectors) {
+      selectors = container;
+      container = $;
+    }
+    var $result = $();
+    selectors.split(',').forEach(function (selector) {
+      var cursor = container;
+      selector.split(regex.eq).forEach(function (part) {
         if (part) {
-          if (part.match(/^\d+$/)) {
+          if (part.match(regex.digit)) {
             cursor = cursor.eq(parseInt(part, 10));
           } else {
-            cursor = cursor(part);
+            cursor = cursor.find ? cursor.find(part) : cursor(part);
           }
         }
       });
-      return cursor;
+      $result = $result.add(cursor);
     });
-    var items = $();
-    while (result.length) {
-      items = items.add(result.shift());
-    }
-    return items;
+    return $result;
   };
 }
