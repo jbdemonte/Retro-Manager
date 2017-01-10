@@ -285,7 +285,7 @@ function loadGameList(manifest, engine, url, crawled) {
       }
       return Promise
         .all(urls.map(function (url) {
-          return loadGameListPage(manifest, engine, url);
+          return loadGameListPage(manifest, engine, url, crawled);
         }))
         .then(function (results) {
           return Array.prototype.concat.apply([], results);
