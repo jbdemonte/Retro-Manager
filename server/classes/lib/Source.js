@@ -188,41 +188,17 @@ Source.prototype.download = function (game) {
 
   engine.on(progressEventName, progress);
 
+  var tasks = [];
   var files = [];
   var filename, tmpfile;
 
   find(self.games[game.sid], game.url).downloading = true;
-
-  Promise
-    .resolve()
-    .then(function () {
-      if (manifest.pg_game && manifest.pg_game.form) {
-        return engine
-          .get(game.url)
-          .then(function (data) {
-            var form = data.$(manifest.pg_game.form);
-
-            if (!form) {
-              return Promise.reject('Form not found');
-            }
-
-            var action = form.attr('action');
-            var method = (form.attr('method') || 'post').toLowerCase();
-            var values = {};
-            data.$.tools.forEach(form.find('input'), function (input) {
-              values[input.attr('name')] = input.val();
-            });
-
-            if (typeof engine[method] !== 'function') {
-              return Promise.reject('unknown form method: ' + method);
-            }
-
-            return engine[method]({url: action, form: values, followAllRedirects: true, encoding: null}, {referer: game.ref}, {progress: progressEventName});
-          });
-      }
-
-      return engine.get({url: game.url, encoding: null}, {referer: game.ref}, {progress: progressEventName});
-    })
+  
+  if (manifest.pg_game) {
+    tasks = Array.isArray(manifest.pg_game) ? manifest.pg_game.slice() : [manifest.pg_game];
+  }
+  
+  download(engine, game.url, game.ref, progressEventName, tasks)
     .then(function (result) {
       engine.removeListener(progressEventName, progress);
       if (result) {
@@ -271,7 +247,6 @@ function find(games, url) {
   return {};
 }
 
-
 function loadGameList(manifest, engine, url, crawled) {
   crawled = crawled || {};
 
@@ -294,7 +269,7 @@ function loadGameList(manifest, engine, url, crawled) {
   return engine
     .get(url)
     .then(function (result) {
-      return result.$.tools.map(manifest.pg_home.pageLinks, function (link) {
+      return result.map(manifest.pg_home.pageLinks, function (link) {
         return link.attr('href');
       });
     })
@@ -319,36 +294,131 @@ function loadGameListPage(manifest, engine, url) {
   return engine
     .get(url)
     .then(function (result) {
-      return result.$.tools.map(manifest.pg_games.items, function (item) {
+      return result.map(manifest.pg_games.items, function (item) {
         return buildGame(manifest, engine, item, url);
       });
     });
 }
 
 function buildGame(manifest, engine, item, url) {
-  var img;
-
-  if (manifest.pg_games.img) {
-    img = engine.makeUrl(item.find(manifest.pg_games.img).attr('src'));
-  } else if (manifest.pg_games.imgLnk) {
-    img = engine.makeUrl(item.find(manifest.pg_games.imgLnk).attr('href'));
-  }
-
-  if (manifest.missingImg && img === manifest.missingImg) {
-    img = undefined;
-  }
-
-  return {
+  var data = {
     sc  : manifest.sourceId,
     sid : manifest.systemId,
-    url : engine.makeUrl(item.find(manifest.pg_games.link).attr('href')),
-    ref : engine.makeUrl(url),
-    name: (item.find(manifest.pg_games.name).text() || '').trim(),
-    size: manifest.pg_games.size ? (item.find(manifest.pg_games.size).text() || '').trim() : undefined,
-    img : img
+    ref : engine.makeUrl(url)
   };
+
+  // classic image tag
+  if (manifest.pg_games.img) {
+    data.img = engine.makeUrl(item.find(manifest.pg_games.img).attr('src'));
+  }
+  // there is a link to an image
+  if (!data.img && manifest.pg_games.imgLink) {
+    data.img = engine.makeUrl(item.find(manifest.pg_games.imgLink).attr('href'));
+  }
+
+  // check if image is not a default one
+  if (manifest.missingImg && data.img === manifest.missingImg) {
+    delete data.img;
+  }
+
+  // get game page link
+  if (manifest.pg_games.link) {
+    data.url = item.find(manifest.pg_games.link).attr('href');
+  } else {
+    // the item itself is the link to the page
+    data.url = item.attr('href');
+  }
+
+  if (data.url) {
+    data.url = engine.makeUrl(data.url);
+  }
+
+  // get game name
+  if (manifest.pg_games.name) {
+    data.name = (item.find(manifest.pg_games.name).text() || '').trim();
+  } else {
+    // the item itself show the game name
+    data.name = item.text().trim();
+  }
+
+  // get game size
+  if (manifest.pg_games.size) {
+    data.size = (item.find(manifest.pg_games.size).text() || '').trim();
+  }
+
+  return data;
 }
 
+/**
+ * Execute tasks to ends downloading a file
+ * @param {Engine} engine
+ * @param {string} url
+ * @param {string} referer
+ * @param {string} progressEventName
+ * @param {object[]} tasks
+ * @return {Promise}
+ */
+function download(engine, url, referer, progressEventName, tasks) {
+
+  if (!tasks.length) {
+    return engine.get({url: url, followAllRedirects: true, encoding: null}, {referer: referer}, {progress: progressEventName});
+  }
+
+  /**
+   * Shift a task and run it on the downloaded page
+   * @param {Promise} promise
+   * @return {Promise}
+   */
+  function handle(promise) {
+    var task = tasks.shift();
+    var query = {followAllRedirects: true};
+    return promise.
+      then(function (data) {
+        if (task.form) {
+          var form = data.find(task.form);
+          if (!form) {
+            return Promise.reject('Form not found');
+          }
+          query.url = form.attr('action');
+          query.method = (form.attr('method') || 'post').toUpperCase();
+          query.form = {};
+          data.forEach(form.find('input'), function (input) {
+            query.form[input.attr('name')] = input.val();
+          });
+        }
+        return data;
+      })
+      .then(function (data) {
+        if (task.link) {
+          query = {
+            method: 'GET',
+            url: data.find(task.link).attr('href')
+          };
+        }
+        return data;
+      })
+      .then(function () {
+        if (!query.method) {
+          return Promise.reject('Unknown method');
+        }
+        if (tasks.length) {
+          return handle(engine.send(query, {referer: referer}));
+
+        } else {
+          query.encoding = null;
+          return engine.send(query, {referer: referer}, {progress: progressEventName});
+        }
+      });
+  }
+
+  return handle(engine.get(url));
+}
+
+/**
+ * Remove duplicate games
+ * @param {object[]} games
+ * @return {object[]}
+ */
 function unique(games) {
   var urls = games.map(function (game) {
     return game.url;
