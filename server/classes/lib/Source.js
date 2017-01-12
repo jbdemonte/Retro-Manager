@@ -2,7 +2,9 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
 var classes = {
-  Engine: require('./Engine')
+  Engine: require('./Engine'),
+  Game: require('./Game'),
+  GameList: require('./GameList')
 };
 
 var tools = {
@@ -14,22 +16,10 @@ var tools = {
 //todo CACHE
 
 /**
- * Game Data.
- *
- * @typedef {object} GameData
- * @property {string} mid - Manifest Id (guid)
- * @property {string} sid - System Id
- * @property {string} ref - Referer URL
- * @property {string} name
- * @property {string} url
- * @property {string} [img] - Screenshot of the game if available
- */
-
-/**
  * Games event.
  *
  * @event Source#games
- * @type {GameData[]}
+ * @type {Game[]}
  */
 
 /**
@@ -52,8 +42,8 @@ function Source(path) {
   this.path = path;
 
   try {
-    this.manifest = require(this.path);
-    this.manifest.systems = this.manifest.systems || {};
+    this.config = require(this.path);
+    this.config.systems = this.config.systems || {};
     this.valid = true;
   } catch (err) {
     // return a non Source object to avoid any unwanted function call
@@ -66,18 +56,9 @@ function Source(path) {
    */
   this.crawling = {};
 
-  /**
-   * hashmap
-   * @type {{systemId: games}}
-   */
-  this.games = {};
+  this.games = new classes.GameList();
 
-  /**
-   * hashmap manifestId => { systemId => {url : true} }
-   * @type {{mid: {sid: {url: boolean}}}}
-   */
-  this.downloading = {};
-  this.engine = new classes.Engine(this.manifest.origin, this.manifest.headers);
+  this.engine = new classes.Engine(this.config.origin, this.config.headers);
 }
 
 util.inherits(Source, EventEmitter);
@@ -88,7 +69,7 @@ util.inherits(Source, EventEmitter);
  * @return {boolean}
  */
 Source.prototype.hasSystem = function (system) {
-  return !!this.manifest.systems[system.id];
+  return !!this.config.systems[system.id];
 };
 
 /**
@@ -107,25 +88,15 @@ Source.prototype.hasSystem = function (system) {
 Source.prototype.toJSON = function (systemId) {
   var data = {
     id: this.id,
-    name: this.manifest.name,
-    picture: this.manifest.picture
+    name: this.config.name,
+    url: this.config.origin,
+    picture: this.config.picture
   };
   if (systemId) {
     data.crawling = !!this.crawling[systemId];
-    data.games = this.games[systemId];
+    data.games = this.games.get(systemId);
   }
   return data;
-};
-
-Source.prototype.systemManifest = function (systemId) {
-  var manifest = Object.assign({}, this.manifest.generic, this.manifest.systems[systemId], {sourceId: this.id, systemId: systemId});
-  if (manifest.missingImg) {
-    manifest.missingImg = this.engine.makeUrl(manifest.missingImg);
-  }
-  ['pg_home', 'pg_games'].forEach(function (key) {
-    manifest[key] = manifest[key] || {};
-  });
-  return manifest;
 };
 
 /**
@@ -136,25 +107,28 @@ Source.prototype.systemManifest = function (systemId) {
  */
 Source.prototype.crawl = function (systemId) {
   var self = this;
-  if (self.games[systemId] || self.crawling[systemId]) {
+
+  // return if already crawled or is crawling
+  if (self.games.get(systemId) || self.crawling[systemId]) {
     return;
   }
   self.crawling[systemId] = true;
   self.emit('crawling', self.crawling);
-  var manifest = self.systemManifest(systemId);
+
+  var config = self.systemConfig(systemId);
   var engine = this.engine;
 
-  loadGameList(manifest, engine, manifest.path)
+  loadGameList(config, engine, config.path)
     .then(function (games) {
       games = unique(games || []);
 
-      if (manifest.pg_games.ignore) {
-        var ignore = new RegExp(manifest.pg_games.ignore);
+      if (config.pg_games.ignore) {
+        var ignore = new RegExp(config.pg_games.ignore);
         games = games.filter(function (game) {
           return !game.name.match(ignore);
         });
       }
-      self.games[systemId] = games;
+      self.games.set(systemId, games);
       self.crawling[systemId] = false;
       self.emit('games', games);
       self.emit('crawling', self.crawling);
@@ -167,22 +141,19 @@ Source.prototype.crawl = function (systemId) {
 
 /**
  * Download a game
- * @param {GameData} game
+ * @param {object} jsonGame
  */
-Source.prototype.download = function (game) {
-  var dl = this.downloading;
+Source.prototype.download = function (jsonGame) {
   var engine = this.engine;
   var self = this;
+  var game = self.games.retrieve(jsonGame);
 
-  dl[game.sc] = dl[game.sc] || {};
-  dl[game.sc][game.sid] = dl[game.sc][game.sid] || {};
-  if (dl[game.sc][game.sid][game.url]) {
+  if (!game.download.start()) {
     return ;
   }
-  dl[game.sc][game.sid][game.url] = true;
-  var manifest = this.systemManifest(game.sid);
+  var config = this.systemConfig(game.sid);
 
-  var progressEventName = 'progress_' + game.sc + '_' + game.sid + '_' + game.url;
+  var progressEventName = 'progress_' + game.id;
 
   function progress(progression) {
     self.emit('progress', {
@@ -197,18 +168,16 @@ Source.prototype.download = function (game) {
   var files = [];
   var filename, tmpfile;
 
-  find(self.games[game.sid], game.url).downloading = true;
-  
-  if (manifest.pg_game) {
-    tasks = Array.isArray(manifest.pg_game) ? manifest.pg_game.slice() : [manifest.pg_game];
+  if (config.pg_game) {
+    tasks = Array.isArray(config.pg_game) ? config.pg_game.slice() : [config.pg_game];
   }
   
-  download(engine, game.url, game.ref, progressEventName, tasks)
-    .then(function (result) {
+  this._download(game, progressEventName, tasks)
+    .then(function (response) {
       engine.removeListener(progressEventName, progress);
-      if (result) {
-        filename = result.filename;
-        return tools.fs.saveToTmpFile(result.body, result.filename);
+      if (response) {
+        filename = response.filename();
+        return tools.fs.saveToTmpFile(response.body, filename);
       }
     })
     .then(function (_tmpfile) {
@@ -216,9 +185,7 @@ Source.prototype.download = function (game) {
       return tools.systems.get(game.sid).handleFile(tmpfile, filename, files);
     })
     .then(function (renamed) {
-      var local = find(self.games[game.sid], game.url);
-      local.downloading = false;
-      local.downloaded = true;
+      game.download.end(true);
 
       self.emit('complete', {
         game: game,
@@ -229,164 +196,23 @@ Source.prototype.download = function (game) {
       }
     })
     .catch(function (err) {
-      find(self.games[game.sid], game.url).downloading = false;
+      game.download.end(false);
       console.log(err);
     });
 
 };
 
 /**
- * Retrieve the game in the list
- * @param {object[]} games
- * @param {string} url
- * @return {object}
- */
-function find(games, url) {
-  // Update the memory cache (to keep the state on refresh)
-  for(var i=0; i<games.length; i++) {
-    if (games[i].url === url) {
-      return games[i];
-    }
-  }
-  // would never happen
-  return {};
-}
-
-function loadGameList(manifest, engine, url, crawled) {
-  crawled = crawled || {};
-
-  // Check if the requested url has not already been crawled
-  if (crawled[url]) {
-    return Promise.resolve();
-  }
-
-  if (!tools.object.isObject(manifest.pg_games)) {
-    return Promise.reject('Manifest error: pages.games mismatch');
-  }
-
-  // Single page with all games
-  if (!manifest.pg_home.pageLinks) {
-    return loadGameListPage(manifest, engine, url, crawled);
-  }
-
-  crawled[url] = true;
-
-  // Main page with pagination (ie: A-Z Roms)
-  return engine
-    .get(url)
-    .then(function (result) {
-      return result.map(manifest.pg_home.pageLinks, function (link) {
-        return link.attr('href');
-      });
-    })
-    .then(function (urls) {
-      if (!urls || !urls.length) {
-        return ;
-      }
-      return Promise
-        .all(urls.map(function (url) {
-          return loadGameListPage(manifest, engine, url, crawled);
-        }))
-        .then(function (results) {
-          return Array.prototype.concat.apply([], results);
-        });
-    });
-}
-
-function loadGameListPage(manifest, engine, url, crawled) {
-  if (crawled[url]) {
-    return Promise.resolve([]);
-  }
-  crawled[url] = true;
-
-  return engine
-    .get(url)
-    .then(function (result) {
-      var games = result.map(manifest.pg_games.items, function (item) {
-        return buildGame(manifest, engine, result, item, url);
-      });
-      if (manifest.pg_home.next) {
-        // Pagination base on "Previous - Next"
-        var next = result.find(manifest.pg_home.next).attr('href');
-        if (next) {
-          return loadGameListPage(manifest, engine, next, crawled)
-            .then(function (moreGames) {
-              return games.concat(moreGames);
-            });
-        }
-      }
-      return games;
-    });
-}
-
-function buildGame(manifest, engine, result, item, url) {
-  var data = {
-    sc  : manifest.sourceId,
-    sid : manifest.systemId,
-    ref : engine.makeUrl(url)
-  };
-
-  // classic image tag
-  if (manifest.pg_games.img) {
-    data.img = engine.makeUrl(result.find(item, manifest.pg_games.img).attr('src'));
-  }
-  // there is a link to an image
-  if (!data.img && manifest.pg_games.imgLink) {
-    data.img = engine.makeUrl(result.find(item, manifest.pg_games.imgLink).attr('href'));
-  }
-
-  // check if image is not a default one
-  if (manifest.missingImg && data.img === manifest.missingImg) {
-    delete data.img;
-  }
-
-  if (manifest.pg_games.romLink) {
-    // Direct link to the rom
-    data.url = manifest.pg_games.romLink;
-  } else if (manifest.pg_games.link) {
-  // get game page link
-    data.url = result.find(item, manifest.pg_games.link).attr('href');
-  } else {
-    // the item itself is the link to the page
-    data.url = item.attr('href');
-  }
-
-  if (typeof data.url === 'function') {
-    data.url = data.url(item);
-  }
-
-  if (data.url) {
-    data.url = engine.makeUrl(data.url);
-  }
-
-  // get game name
-  if (manifest.pg_games.name) {
-    data.name = (result.find(item, manifest.pg_games.name).text() || '').trim();
-  } else {
-    // the item itself show the game name
-    data.name = item.text().trim();
-  }
-
-  // get game size
-  if (manifest.pg_games.size) {
-    data.size = (result.find(item, manifest.pg_games.size).text() || '').trim();
-  }
-
-  return data;
-}
-
-/**
  * Execute tasks to ends downloading a file
- * @param {Engine} engine
- * @param {string} url
- * @param {string} referer
+ * @param {Game} game
  * @param {string} progressEventName
  * @param {object[]} tasks
  * @return {Promise}
  */
-function download(engine, url, referer, progressEventName, tasks) {
+Source.prototype._download = function (game, progressEventName, tasks) {
+  var engine = this.engine;
   if (!tasks.length) {
-    return engine.get({url: url, followAllRedirects: true, encoding: null}, {referer: referer}, {progress: progressEventName});
+    return engine.get({url: game.url, followAllRedirects: true, encoding: null}, {referer: game.ref}, {progress: progressEventName});
   }
 
   /**
@@ -398,46 +224,128 @@ function download(engine, url, referer, progressEventName, tasks) {
     var task = tasks.shift();
     var query = {followAllRedirects: true};
     return promise.
-      then(function (data) {
+      then(function (response) {
         if (task.form) {
-          var form = data.find(task.form);
+          var form = response.body.find(task.form);
           if (!form) {
             return Promise.reject('Form not found');
           }
           query.url = form.attr('action');
           query.method = (form.attr('method') || 'post').toUpperCase();
           query.form = {};
-          data.forEach(data.find(form, 'input'), function (input) {
+          form.find('input').forEach(function (input) {
             query.form[input.attr('name')] = input.val();
           });
         }
-        return data;
+        return response;
       })
-      .then(function (data) {
+      .then(function (response) {
         if (task.link) {
           query = {
             method: 'GET',
-            url: data.find(task.link).attr('href')
+            url: response.body.selectAttr(task.link, 'href')
           };
         }
-        return data;
+        return response;
       })
-      .then(function () {
+      .then(function (response) {
         if (!query.method) {
           return Promise.reject('Unknown method');
         }
         if (tasks.length) {
-          return handle(engine.send(query, {referer: referer}));
+          return handle(engine.send(query, {referer: game.ref}));
 
         } else {
           query.encoding = null;
-          return engine.send(query, {referer: referer}, {progress: progressEventName});
+          return engine.send(query, {referer: response.url}, {progress: progressEventName});
         }
       });
   }
 
-  return handle(engine.get(url));
+  return handle(engine.get(game.url));
+};
+
+/**
+ * Return a system dedicated config
+ * @param {string} systemId
+ * @return {object}
+ * @private
+ */
+Source.prototype.systemConfig = function (systemId) {
+  var config = Object.assign({}, this.config.generic, this.config.systems[systemId], {sourceId: this.id, systemId: systemId});
+  ['pg_home', 'pg_games'].forEach(function (key) {
+    config[key] = config[key] || {};
+  });
+  return config;
+};
+
+function loadGameList(config, engine, url, crawled) {
+  crawled = crawled || {};
+
+  // Check if the requested url has not already been crawled
+  if (crawled[url]) {
+    return Promise.resolve();
+  }
+
+  if (!tools.object.isObject(config.pg_games)) {
+    return Promise.reject('Manifest error: pages.games mismatch');
+  }
+
+  // Single page with all games
+  if (!config.pg_home.pageLinks) {
+    return loadGameListPage(config, engine, url, crawled);
+  }
+
+  crawled[url] = true;
+
+  // Main page with pagination (ie: A-Z Roms)
+  return engine
+    .get(url)
+    .then(function (response) {
+      return response.body.find(config.pg_home.pageLinks).map(function (link) {
+        return link.attr('href');
+      });
+    })
+    .then(function (urls) {
+      if (!urls || !urls.length) {
+        return ;
+      }
+      return Promise
+        .all(urls.map(function (url) {
+          return loadGameListPage(config, engine, url, crawled);
+        }))
+        .then(function (results) {
+          return Array.prototype.concat.apply([], results);
+        });
+    });
 }
+
+function loadGameListPage(config, engine, url, crawled) {
+  if (crawled[url]) {
+    return Promise.resolve([]);
+  }
+  crawled[url] = true;
+
+  return engine
+    .get(url)
+    .then(function (response) {
+      var games = response.body.find(config.pg_games.items).map(function (item) {
+        return new classes.Game(config, item);
+      });
+      if (config.pg_home.next) {
+        // Pagination base on "Previous - Next"
+        var next = response.body.find(config.pg_home.next).attr('href');
+        if (next) {
+          return loadGameListPage(config, engine, next, crawled)
+            .then(function (moreGames) {
+              return games.concat(moreGames);
+            });
+        }
+      }
+      return games;
+    });
+}
+
 
 /**
  * Remove duplicate games

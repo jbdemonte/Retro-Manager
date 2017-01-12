@@ -50,7 +50,7 @@ function list(system) {
     })
     .then(function () {
       return tools.object.filter(sourceById, function (source) {
-        return !system || source.manifest.systems[system.id];
+        return !system || source.config.systems[system.id];
       });
     });
 }

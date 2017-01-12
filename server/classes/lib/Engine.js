@@ -4,13 +4,11 @@ var cheerio = require('cheerio');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 var path = require('path');
-var contentDisposition = require('content-disposition');
 
 module.exports = Engine;
 
-var regex = {
-  eq: /:eq\((\d+)\)/,
-  digit: /^\d+$/
+var classes = {
+  Response: require('./Response')
 };
 
 /**
@@ -29,7 +27,27 @@ function Engine(origin, mainHeaders) {
     origin = origin.replace(/\/+$/, '');
   }
 
-  mainHeaders.Origin = origin;
+  self.origin = mainHeaders.Origin = origin;
+
+  /**
+   * Complete URL if needed (URL may be relative to the origin)
+   * @param {string} url
+   * @return {string}
+   */
+  function completeURL(url) {
+    var scheme = /^(https?:)?\/\//;
+    if (url) {
+      if (url.match(scheme)) {
+        if (url[0] === '/') {
+          // url starts with // => extract origin scheme
+          return (origin.match(scheme)[1] || 'http:') + url;
+        }
+        // url starts with http: or https:
+        return url;
+      }
+      return origin + (url[0] === '/' ? '' : '/') + url;
+    }
+  }
 
   // todo Engine#progress
 
@@ -47,7 +65,8 @@ function Engine(origin, mainHeaders) {
 
     query.headers = Object.assign(query.headers || {}, mainHeaders, headers);
 
-    query.url = self.makeUrl(query.url);
+    query.url = completeURL(query.url);
+
 
     if (query.method === 'POST' && typeof query.body === 'object') {
       query.headers['content-type'] = query.headers['content-type'] || 'application/x-www-form-urlencoded';
@@ -59,18 +78,8 @@ function Engine(origin, mainHeaders) {
         if (error) {
           return reject(error);
         }
-        var data = {
-          url: query.url,
-          query: query,
-          response: response,
-          body: response.body,
-          filename: extractFilename(query, response)
-        };
-        if ((response.headers['content-type'] || '').match('text/html.*')) {
-          handleBody(response.body, data);
-        }
         process.nextTick(function () {
-          resolve(data);
+          resolve(new classes.Response(self, query, response, completeURL));
         });
       });
 
@@ -78,9 +87,9 @@ function Engine(origin, mainHeaders) {
         progress(rq, {throttle: 250}).on('progress', function (state) {
 
           state.txt = {
-            progress: padLeft((100 * state.percent).toFixed(1), 5) + '%',
-            speed: padLeft(fileSizeSI(state.speed), 8) + '/s',
-            size: padLeft(fileSizeSI(state.size.transferred), 8) + '/' + fileSizeSI(state.size.total),
+            progress: (100 * state.percent).toFixed(1) + '%',
+            speed: fileSizeSI(state.speed) + '/s',
+            size: fileSizeSI(state.size.transferred) + '/' + fileSizeSI(state.size.total),
             remaining:  (state.time.remaining || 0).toFixed(1) + 's'
           };
 
@@ -99,9 +108,7 @@ function Engine(origin, mainHeaders) {
    */
   self.get = function (query, headers, options) {
     if (typeof query === 'string') {
-      query = {
-        url: query
-      };
+      query = {url: query};
     }
     query.method = 'GET';
     return send(query, headers, options);
@@ -125,21 +132,6 @@ function Engine(origin, mainHeaders) {
    */
   self.send = send;
 
-  self.makeUrl = function (url) {
-    var scheme = /^(https?:)?\/\//;
-    if (url) {
-      if (url.match(scheme)) {
-        if (url[0] === '/') {
-          // url starts with // => extract origin scheme
-          return (origin.match(scheme)[1] || 'http:') + url;
-        }
-        // url starts with http: or https:
-        return url;
-      }
-      return origin + (url[0] === '/' ? '' : '/') + url;
-    }
-  };
-
 }
 
 util.inherits(Engine, EventEmitter);
@@ -154,74 +146,3 @@ function fileSizeSI(size) {
   return +(size / Math.pow(1e3, e)).toFixed(2) + ' ' + ('kMGTPEZY'[e - 1] || '') + 'B';
 }
 
-/**
- * Pad string on left up to the required length
- * @param {string} str
- * @param {number} required
- * @return {string}
- */
-function padLeft(str, required) {
-  str = str + '';
-  var len = required - String(str).length;
-  if (len > 0) {
-    return (new Array(len)).join(' ') + str;
-  }
-  return str;
-}
-
-function extractFilename(query, response) {
-  if (response.headers['content-disposition']) {
-    var parsed = contentDisposition.parse(response.headers['content-disposition']);
-    if (parsed && parsed.parameters && parsed.parameters.filename) {
-      return parsed.parameters.filename;
-    }
-  }
-  return decodeURI(path.basename(response.request.href));
-}
-
-/**
- * "jQuerify" the body + append some helper to the target object
- * @param {string} body
- * @param {object} target
- */
-function handleBody(body, target) {
-  var $ = cheerio.load(body);
-
-  target.$body = $;
-
-  target.forEach = function (items, fn) {
-    target.map(items, fn);
-  };
-
-  target.map = function (items, fn) {
-    var results = [];
-    items = typeof items === 'string' ? $(items) : items;
-    for (var i = 0; i < items.length; i++) {
-      results.push(fn(items.eq(i), i));
-    }
-    return results;
-  };
-
-  // Append :eq() support to cheerio
-  target.find = function (container, selectors) {
-    if (!selectors) {
-      selectors = container;
-      container = $;
-    }
-    var $result = $();
-    selectors.split(',').forEach(function (selector) {
-      var cursor = container;
-      selector.split(regex.eq).forEach(function (part) {
-        if (part) {
-          if (part.match(regex.digit)) {
-            cursor = cursor.eq(parseInt(part, 10));
-          } else {
-            cursor = cursor.find ? cursor.find(part) : cursor(part);
-          }
-        }
-      });
-      $result = $result.add(cursor);
-    });
-    return $result;
-  };
-}
