@@ -356,6 +356,7 @@ app.controller('SourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'sou
   $scope.system = system;
   $scope.source = source;
   $scope.filters = {};
+  $scope.loading = true;
 
   var gamesByUrl = {};
 
@@ -366,8 +367,10 @@ app.controller('SourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'sou
       for (var i = 0; i < games.length; i++) {
         gamesByUrl[games[i].url] = games[i];
       }
+      $scope.loading = false;
     }
   }
+
   mapGames();
 
   $scope.filter = function (game) {
@@ -384,9 +387,12 @@ app.controller('SourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'sou
     }
   };
 
-  socket.on('games', function (games) {
-    source.games = games;
-    mapGames();
+  socket.on('games', function (data) {
+    if (system.id === data.systemId) {
+      source.games = data.games;
+      mapGames();
+      $scope.loading = false;
+    }
   });
 
   socket.on('progress', function (data) {
@@ -412,6 +418,7 @@ app.controller('SourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'sou
   socket.on('crawling', function (crawling) {
     if (system.id in crawling) {
       source.crawling = crawling[system.id];
+      $scope.loading = false;
     }
   });
 

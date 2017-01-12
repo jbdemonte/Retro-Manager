@@ -1,5 +1,6 @@
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
+var path = require('path');
 
 var classes = {
   Engine: require('./Engine'),
@@ -12,8 +13,6 @@ var tools = {
   object: require('../../tools/lib/object'),
   systems: require('../../tools/lib/system')
 };
-
-//todo CACHE
 
 /**
  * Games event.
@@ -33,13 +32,13 @@ module.exports = Source;
 
 /**
  * System handler
- * @param {string} path
+ * @param {string} sourcePath
  * @constructor
  * @augments EventEmitter
  */
-function Source(path) {
-  this.id = path.split('/').pop();
-  this.path = path;
+function Source(sourcePath) {
+  this.id = sourcePath.split('/').pop();
+  this.path = sourcePath;
 
   try {
     this.config = require(this.path);
@@ -112,6 +111,13 @@ Source.prototype.crawl = function (systemId) {
   if (self.games.get(systemId) || self.crawling[systemId]) {
     return;
   }
+
+  // Reuse a cache
+  if (self._loadCache(systemId)) {
+    self.emit('games', {systemId: systemId, games: self.games.get(systemId)});
+    return;
+  }
+
   self.crawling[systemId] = true;
   self.emit('crawling', self.crawling);
 
@@ -134,8 +140,10 @@ Source.prototype.crawl = function (systemId) {
 
       self.games.set(systemId, games);
       self.crawling[systemId] = false;
-      self.emit('games', games);
+      self.emit('games', {systemId: systemId, games: games});
       self.emit('crawling', self.crawling);
+
+      self._saveCache(systemId);
     })
     .catch(function (err)  {
       console.log(err);
@@ -212,6 +220,7 @@ Source.prototype.download = function (jsonGame) {
  * @param {string} progressEventName
  * @param {object[]} tasks
  * @return {Promise}
+ * @private
  */
 Source.prototype._download = function (game, progressEventName, tasks) {
   var engine = this.engine;
@@ -287,6 +296,7 @@ Source.prototype.systemConfig = function (systemId) {
  * Start deep crawling an URL and return all games
  * @param {object} systemConfig
  * @return {Promise.<Game[]>}
+ * @private
  */
 Source.prototype._loadGameList = function (systemConfig) {
   var self = this;
@@ -335,6 +345,7 @@ Source.prototype._loadGameList = function (systemConfig) {
  * @param {string} url
  * @param {object} crawled - URL HashMap
  * @return {Promise.<Game[]>}
+ * @private
  */
 Source.prototype._loadGameListPage = function (systemConfig, url, crawled) {
   var self = this;
@@ -366,6 +377,47 @@ Source.prototype._loadGameListPage = function (systemConfig, url, crawled) {
     });
 };
 
+/**
+ * Return the cache file path of a systemId
+ * @param {string} systemId
+ * @return {string}
+ * @private
+ */
+Source.prototype._cacheFile = function (systemId) {
+  return path.join(this.path, 'cache', systemId + '.json');
+};
+
+/**
+ * Save the game list of a system in its cache
+ * @param {string} systemId
+ * @return {Promise}
+ * @private
+ */
+Source.prototype._saveCache = function (systemId) {
+  var games = this.games.get(systemId).map(function (game) {
+    return game.toJSON(true);
+  });
+  return tools.fs.saveToFile(JSON.stringify(games, null, 4), this._cacheFile(systemId));
+};
+
+/**
+ * Load a game list from its cache
+ * @param {string} systemId
+ * @return {boolean}
+ * @private
+ */
+Source.prototype._loadCache = function (systemId) {
+  try {
+    var games = require(this._cacheFile(systemId));
+    games = games.map(function (game) {
+      return (new classes.Game()).fromJSON(game);
+    });
+    this.games.set(systemId, games);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
 
 /**
  * Remove duplicate games

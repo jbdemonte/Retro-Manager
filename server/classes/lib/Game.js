@@ -4,6 +4,8 @@ var tools = {
   string: require('../../tools/lib/string')
 };
 
+var CACHE_KEYS = 'id sc sid ref img url name size'.split(' ');
+
 /**
  * Game instance
  * @param {object} config
@@ -13,27 +15,28 @@ var tools = {
 function Game(config, item) {
   var self = this;
 
-  self.id = tools.string.guid();
-
-  self.sc = config.sourceId;
-  self.sid = config.systemId;
-  self.ref = item.origin;
-  self.downloaded = false;
-  self.downloading = false;
-
+  self.id = '';
+  self.sc = '';
+  self.sid = '';
+  self.ref = '';
   self.img = '';
   self.url = '';
   self.name = '';
   self.size = '';
 
-  extractData.apply(this, arguments);
+  self.downloaded = false;
+  self.downloading = false;
+
+  if (config && item) {
+    extractData.apply(self, arguments);
+  }
 
   /**
    * Notice download as started
    * Return True if game downloaded has not been tried yet
    * @return {boolean}
    */
-  this.download = {
+  self.download = {
     start: function () {
       if (self.downloaded || self.downloading) {
         return false;
@@ -47,18 +50,41 @@ function Game(config, item) {
     }
   };
 
-  this.toJSON = function () {
+  /**
+   * Return an object
+   * @param {boolean} [cache]
+   * @return {object}
+   */
+  self.toJSON = function (cache) {
     var data = {};
-    'id sc sid ref downloaded downloading img url name size'.split(' ').forEach(function (key) {
+    var keys = CACHE_KEYS.slice();
+    if (!cache) {
+      keys.push('downloading');
+      keys.push('downloaded');
+    }
+    keys.sort();
+    keys.forEach(function (key) {
       data[key] = self[key];
     });
     return data;
+  };
+
+  self.fromJSON = function (json) {
+    CACHE_KEYS.forEach(function (key) {
+      self[key] = json[key];
+    });
+    return self;
   };
 
 }
 
 function extractData(config, item) {
   var self = this;
+
+  self.id = tools.string.guid();
+  self.sc = config.sourceId;
+  self.sid = config.systemId;
+  self.ref = item.origin;
 
   // classic image tag
   if (config.pg_games.img) {

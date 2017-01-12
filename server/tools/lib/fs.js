@@ -29,6 +29,7 @@ var exports = module.exports = {
   mkTmpDir: mkTmpDir,
   rmTmpDir: rmTmpDir,
   saveToTmpFile: saveToTmpFile,
+  saveToFile: saveToFile,
 
   filterDirs: filterDirs,
 
@@ -142,6 +143,26 @@ function saveToTmpFile(raw, filename) {
             return reject();
           }
           resolve(tmp);
+        });
+      });
+    });
+}
+
+/**
+ * Save data into a file
+ * @param {string} raw
+ * @param {string} filepath
+ * @return {Promise}
+ */
+function saveToFile(raw, filepath) {
+  return mkdir(path.dirname(filepath))
+    .then(function () {
+      return new Promise(function (resolve, reject) {
+        fs.writeFile(filepath, raw, function (err) {
+          if (err) {
+            return reject();
+          }
+          resolve();
         });
       });
     });

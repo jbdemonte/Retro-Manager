@@ -10,10 +10,13 @@
   .loading(ng-if="source.crawling")
     i.fa.fa-circle-o-notch.fa-spin
     span Crawling, please wait
-
     span.status {{status}}
 
-  .no-entry(ng-if="!source.crawling && !source.games.length")
+  .loading(ng-if="loading && !source.crawling")
+    i.fa.fa-circle-o-notch.fa-spin
+    span Loading, please wait
+
+  .no-entry(ng-if="!loading && !source.crawling && !source.games.length")
     span No game found while crawling
 
   #games(ng-if="source.games.length")
