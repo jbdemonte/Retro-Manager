@@ -132,6 +132,8 @@ function Engine(origin, mainHeaders) {
    */
   self.send = send;
 
+  self.completeURL = completeURL;
+
 }
 
 util.inherits(Engine, EventEmitter);

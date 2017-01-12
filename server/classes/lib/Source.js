@@ -292,7 +292,7 @@ Source.prototype._loadGameList = function (systemConfig) {
   var self = this;
   var crawled = {}; // URL HashMap to avoid infinity loop
   var engine = this.engine;
-  var url = systemConfig.path;
+  var url = engine.completeURL(systemConfig.path);
 
   if (!tools.object.isObject(systemConfig.pg_games)) {
     return Promise.reject('Manifest error: pages.games mismatch');
@@ -304,6 +304,8 @@ Source.prototype._loadGameList = function (systemConfig) {
   }
 
   crawled[url] = true;
+
+  self.emit('status', 'crawling ' + url);
 
   // Main page with pagination (ie: A-Z Roms)
   return engine
@@ -341,6 +343,8 @@ Source.prototype._loadGameListPage = function (systemConfig, url, crawled) {
     return Promise.resolve([]);
   }
   crawled[url] = true;
+
+  self.emit('status', 'crawling ' + url);
 
   return self.engine
     .get(url)

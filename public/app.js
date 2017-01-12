@@ -405,6 +405,10 @@ app.controller('SourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'sou
     }
   });
 
+  socket.on('status', function (status) {
+    $scope.status = status;
+  });
+
   socket.on('crawling', function (crawling) {
     if (system.id in crawling) {
       source.crawling = crawling[system.id];
