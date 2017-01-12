@@ -1,7 +1,8 @@
 #source
 
   #pictures
-    img(ng-src="{{'images/sources/' + source.id + '/' + source.picture}}", ng-if="source.picture", title="{{source.name}}")
+    a(ng-if="source.picture", href="{{source.url}}", target="_blank")
+      img(ng-src="{{'images/sources/' + source.id + '/' + source.picture}}", title="{{source.name}}")
 
   h1 {{source.name}}
   h2 {{system.name}}
