@@ -116,9 +116,8 @@ Source.prototype.crawl = function (systemId) {
   self.emit('crawling', self.crawling);
 
   var config = self.systemConfig(systemId);
-  var engine = this.engine;
 
-  loadGameList(config, engine, config.path)
+  self._loadGameList(config)
     .then(function (games) {
       games = unique(games || []);
 
@@ -284,21 +283,24 @@ Source.prototype.systemConfig = function (systemId) {
   return config;
 };
 
-function loadGameList(config, engine, url, crawled) {
-  crawled = crawled || {};
+/**
+ * Start deep crawling an URL and return all games
+ * @param {object} systemConfig
+ * @return {Promise.<Game[]>}
+ */
+Source.prototype._loadGameList = function (systemConfig) {
+  var self = this;
+  var crawled = {}; // URL HashMap to avoid infinity loop
+  var engine = this.engine;
+  var url = systemConfig.path;
 
-  // Check if the requested url has not already been crawled
-  if (crawled[url]) {
-    return Promise.resolve();
-  }
-
-  if (!tools.object.isObject(config.pg_games)) {
+  if (!tools.object.isObject(systemConfig.pg_games)) {
     return Promise.reject('Manifest error: pages.games mismatch');
   }
 
   // Single page with all games
-  if (!config.pg_home.pageLinks) {
-    return loadGameListPage(config, engine, url, crawled);
+  if (!systemConfig.pg_home.pageLinks) {
+    return self._loadGameListPage(systemConfig, url, crawled);
   }
 
   crawled[url] = true;
@@ -307,7 +309,7 @@ function loadGameList(config, engine, url, crawled) {
   return engine
     .get(url)
     .then(function (response) {
-      return response.body.find(config.pg_home.pageLinks).map(function (link) {
+      return response.body.find(systemConfig.pg_home.pageLinks).map(function (link) {
         return link.attr('href');
       });
     })
@@ -317,31 +319,40 @@ function loadGameList(config, engine, url, crawled) {
       }
       return Promise
         .all(urls.map(function (url) {
-          return loadGameListPage(config, engine, url, crawled);
+          return self._loadGameListPage(systemConfig, url, crawled);
         }))
         .then(function (results) {
           return Array.prototype.concat.apply([], results);
         });
     });
-}
+};
 
-function loadGameListPage(config, engine, url, crawled) {
+/**
+ * Deep crawl an URL and return all games
+ * @param {object} systemConfig
+ * @param {string} url
+ * @param {object} crawled - URL HashMap
+ * @return {Promise.<Game[]>}
+ */
+Source.prototype._loadGameListPage = function (systemConfig, url, crawled) {
+  var self = this;
+
   if (crawled[url]) {
     return Promise.resolve([]);
   }
   crawled[url] = true;
 
-  return engine
+  return self.engine
     .get(url)
     .then(function (response) {
-      var games = response.body.find(config.pg_games.items).map(function (item) {
-        return new classes.Game(config, item);
+      var games = response.body.find(systemConfig.pg_games.items).map(function (item) {
+        return new classes.Game(systemConfig, item);
       });
-      if (config.pg_home.next) {
+      if (systemConfig.pg_home.next) {
         // Pagination base on "Previous - Next"
-        var next = response.body.find(config.pg_home.next).attr('href');
+        var next = response.body.find(systemConfig.pg_home.next).attr('href');
         if (next) {
-          return loadGameListPage(config, engine, next, crawled)
+          return self._loadGameListPage(systemConfig, next, crawled)
             .then(function (moreGames) {
               return games.concat(moreGames);
             });
@@ -349,7 +360,7 @@ function loadGameListPage(config, engine, url, crawled) {
       }
       return games;
     });
-}
+};
 
 
 /**
