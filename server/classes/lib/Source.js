@@ -128,6 +128,11 @@ Source.prototype.crawl = function (systemId) {
           return !game.name.match(ignore);
         });
       }
+
+      games = games.sort(function (g1, g2) {
+        return g1.name < g2.name ? -1 : 1;
+      });
+
       self.games.set(systemId, games);
       self.crawling[systemId] = false;
       self.emit('games', games);
