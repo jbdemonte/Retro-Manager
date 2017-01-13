@@ -4,7 +4,7 @@
     img(ng-src="{{'images/systems/' + system.picture}}", ng-if="!system.pictures.length", title="{{system.picture}}")
     img(ng-src="{{'images/systems/' + picture}}", ng-repeat="picture in system.pictures", title="{{picture}}")
 
-  a.download(ng-if="downloadable", ui-sref="sources({section: system.section, systemId: system.id})")
+  a.download(ng-if="downloadable", ui-sref="system_sources({section: system.section, systemId: system.id})")
     i.fa.fa-cloud-download
 
   h1 {{system.name}}

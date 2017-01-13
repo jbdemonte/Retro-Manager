@@ -1,0 +1,14 @@
+#system-sources
+
+  #pictures
+    img(ng-src="{{'images/systems/' + system.picture}}", ng-if="!system.pictures.length", title="{{system.picture}}")
+    img(ng-src="{{'images/systems/' + picture}}", ng-repeat="picture in system.pictures", title="{{picture}}")
+
+  h1 {{system.name}}
+
+  .channel(ng-repeat="source in sources", ui-sref="system_source({section: system.section, systemId: system.id, sourceId: source.id})")
+    .box
+      span.helper
+      img(ng-if="source.picture", ng-src="{{'images/sources/' + source.id + '/' + source.picture}}")
+      .footer
+        span {{source.name}}

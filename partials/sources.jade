@@ -1,12 +1,11 @@
 #sources
 
   #pictures
-    img(ng-src="{{'images/systems/' + system.picture}}", ng-if="!system.pictures.length", title="{{system.picture}}")
-    img(ng-src="{{'images/systems/' + picture}}", ng-repeat="picture in system.pictures", title="{{picture}}")
+    i.fa.fa-cloud
 
   h1 {{system.name}}
 
-  .channel(ng-repeat="source in sources", ui-sref="source({section: system.section, systemId: system.id, sourceId: source.id})")
+  .channel(ng-repeat="source in sources", ui-sref="source({sourceId: source.id})")
     .box
       span.helper
       img(ng-if="source.picture", ng-src="{{'images/sources/' + source.id + '/' + source.picture}}")

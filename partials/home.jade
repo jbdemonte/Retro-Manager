@@ -1,25 +1,29 @@
 #home
-  a(ui-sref="bios")
+  a.bios(ui-sref="bios")
     i.fa.fa-microchip
     span BIOS
 
-  a(ui-sref="arcades", ng-if="sections.arcades")
+  a.sources(ui-sref="sources")
+    i.fa.fa-bolt
+    span SOURCES
+
+  a.sections(ui-sref="arcades", ng-if="sections.arcades")
     i.flaticon-joystick
     span ARCADES
 
-  a(ui-sref="computers", ng-if="sections.computers")
+  a.sections(ui-sref="computers", ng-if="sections.computers")
     i.flaticon-black-keyboard
     span COMPUTERS
 
-  a(ui-sref="consoles", ng-if="sections.consoles")
+  a.sections(ui-sref="consoles", ng-if="sections.consoles")
     i.fa.fa-gamepad
     span CONSOLES
 
-  a(ui-sref="handhelds", ng-if="sections.handhelds")
+  a.sections(ui-sref="handhelds", ng-if="sections.handhelds")
     i.flaticon-gameboy
     span HANDHELD CONSOLES
 
-  a(ui-sref="others", ng-if="sections.others")
+  a.sections(ui-sref="others", ng-if="sections.others")
     i.fa.fa-question-circle-o
     span OTHERS
 

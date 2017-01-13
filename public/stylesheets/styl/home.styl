@@ -1,21 +1,37 @@
 #home
-  margin-top 28vh
+  margin-top 25vh
 
   a.credits
     position absolute
     bottom 20px
     right 20px
 
-  a:not(.credits)
+  a.bios
+  a.sources
+    position absolute
+    bottom 20px
+    padding 8px 15px
+
+    i
+      font-size 22px
+      &:before
+        font-size @font-size
+        margin 0
+    span
+      margin-top 10px
+      font-size 15px
+  a.bios
+    left 20px
+  a.sources
+    left 100px
+
+  a.bios
+  a.sources
+  a.sections
     display inline-block
     border 2px solid #bcbcbc
     border-radius 15px
-    padding 25px 30px
     vertical-align middle
-    margin-bottom 20px
-
-    &:first-child
-      margin-right 50px
 
     > *
       display block
@@ -24,10 +40,17 @@
     *
       vertical-align middle
 
+    &:hover
+      border-color LINK_HOVER_COLOR
+      box-shadow inset 0 0 10px 0 LINK_HOVER_COLOR
+
+  a.sections
+    padding 25px 30px
+    margin-bottom 20px
     i
       font-size 50px
       &:before
-        font-size 50px
+        font-size @font-size
         margin 0
     span
       margin-top 10px
@@ -35,10 +58,6 @@
 
     & + a
       margin-left 30px
-
-    &:hover
-      border-color LINK_HOVER_COLOR
-      box-shadow inset 0 0 10px 0 LINK_HOVER_COLOR
 
 
 @media (max-width: 1024px)

@@ -70,6 +70,21 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
     controller: 'SystemsCtrl'
   });
 
+  $stateProvider.state('sources', {
+    url: '/sources',
+    templateUrl: '/partials/sources.html',
+    controller: 'SourcesCtrl',
+    resolve: {
+      sources: ['$http', function ($http) {
+        return $http
+          .get('api/sources')
+          .then(function (response) {
+            return response.data.sources;
+          });
+      }]
+    }
+  });
+
   var listing = {
     templateUrl: '/partials/system.html',
     controller: 'SystemCtrl',
@@ -91,10 +106,10 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
   $stateProvider.state('handhelds_list', Object.assign({url: '/handhelds/:systemId'}, listing));
   $stateProvider.state('others_list', Object.assign({url: '/others/:systemId'}, listing));
 
-  $stateProvider.state('sources', {
+  $stateProvider.state('system_sources', {
     url: '/:section/:systemId/sources',
-    templateUrl: '/partials/sources.html',
-    controller: 'SourcesCtrl',
+    templateUrl: '/partials/system_sources.html',
+    controller: 'SystemSourcesCtrl',
     resolve: {
       system: systemResolver,
       sources: ['$http', '$stateParams', function ($http, $stateParams) {
@@ -107,10 +122,10 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
     }
   });
 
-  $stateProvider.state('source', {
+  $stateProvider.state('system_source', {
     url: '/:section/:systemId/sources/:sourceId',
-    templateUrl: '/partials/source.html',
-    controller: 'SourceCtrl',
+    templateUrl: '/partials/system_source.html',
+    controller: 'SystemSourceCtrl',
     resolve: {
       system: systemResolver,
       source: ['$http', '$stateParams', function ($http, $stateParams) {
@@ -347,12 +362,16 @@ app.controller('SystemsCtrl', ['$scope', '$state', function ($scope, $state) {
   });
 }]);
 
-app.controller('SourcesCtrl', ['$scope', 'system', 'sources', function ($scope, system, sources) {
+app.controller('SourcesCtrl', ['$scope', 'sources', function ($scope, sources) {
+  $scope.sources = sources;
+}]);
+
+app.controller('SystemSourcesCtrl', ['$scope', 'system', 'sources', function ($scope, system, sources) {
   $scope.system = system;
   $scope.sources = sources;
 }]);
 
-app.controller('SourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'source', function ($scope, $stateParams, socket, system, source) {
+app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'source', function ($scope, $stateParams, socket, system, source) {
   $scope.system = system;
   $scope.source = source;
   $scope.filters = {};
