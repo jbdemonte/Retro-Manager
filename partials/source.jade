@@ -24,19 +24,20 @@
     #filters(ng-if="source.games.length > 10")
       input(type="text", ng-model="filters.name", placeholder="Search")
 
-    .channel(ng-repeat="game in source.games", ng-if="filter(game)", ng-click="download(game)", ng-class="{'hover-disabled': game.downloaded || game.downloading, downloaded: game.downloaded, downloading: game.downloading}")
-      .box
-        span.helper
-        i.fa.fa-check-circle-o(ng-if="game.downloaded")
-        i.fa.fa-cog.fa-spin(ng-if="game.downloading")
-        i.fa.fa-ban(ng-if="::!game.img")
-        span.size(ng-if="::game.size") {{::game.size}}
-        img(ng-if="::game.img", ng-src="{{::'api/proxy/?url=' + game.img}}")
-        .footer
-          .progress(style="right:{{100 * (1 - game.progression.percent)}}%")
-            span
+    div(infinite-scroll='showMore()', infinite-scroll-distance='1', infinite-scroll-container='"#content"')
+      .channel(ng-repeat="game in source.games", ng-click="download(game)", ng-class="{'hover-disabled': game.downloaded || game.downloading, downloaded: game.downloaded, downloading: game.downloading}")
+        .box
+          span.helper
+          i.fa.fa-check-circle-o(ng-if="game.downloaded")
+          i.fa.fa-cog.fa-spin(ng-if="game.downloading")
+          i.fa.fa-ban(ng-if="::!game.img")
+          span.size(ng-if="::game.size") {{::game.size}}
+          img(ng-if="::game.img", ng-src="{{::'api/proxy/?url=' + game.img}}")
+          .footer
+            .progress(style="right:{{100 * (1 - game.progression.percent)}}%")
+              span
 
-          span(ng-class="{long: game.name.length > 40}") {{::game.name}}
-        i.fa.fa-download
+            span(ng-class="{long: game.name.length > 40}") {{::game.name}}
+          i.fa.fa-download
 
 

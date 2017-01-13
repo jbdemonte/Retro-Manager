@@ -1,6 +1,6 @@
 // Global "systems" come from index.html
 
-var app = angular.module('app', ['ui.router', 'ngFileUpload']);
+var app = angular.module('app', ['ui.router', 'ngFileUpload', 'infinite-scroll']);
 
 app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($stateProvider, $httpProvider, $locationProvider) {
 
@@ -356,29 +356,41 @@ app.controller('SourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'sou
   $scope.system = system;
   $scope.source = source;
   $scope.filters = {};
-  $scope.loading = true;
+  $scope.loading = !source.games;
 
   var gamesByUrl = {};
+  var gameList = source.games || [];
+  var pagination = 100;
+
 
   function mapGames() {
-    var games = $scope.source.games;
     gamesByUrl = {};
-    if (games) {
-      for (var i = 0; i < games.length; i++) {
-        gamesByUrl[games[i].url] = games[i];
-      }
-      $scope.loading = false;
-    }
+    gameList.forEach(function (game) {
+      gamesByUrl[game.url] = game;
+    });
+    source.games = [];
+    $scope.showMore();
   }
 
-  mapGames();
 
-  $scope.filter = function (game) {
-    if ($scope.filters.name) {
-      return ~(game.name || '').toLowerCase().indexOf($scope.filters.name);
-    }
-    return true;
+  $scope.showMore = function () {
+    var max = (source.games ? source.games.length : 0) + pagination;
+    var count = 0;
+    source.games = gameList.filter(function (game) {
+      if (count === max) {
+        return false;
+      }
+      if ($scope.filters.name && !~(game.name || '').toLowerCase().indexOf($scope.filters.name)) {
+        return false;
+      }
+      count++;
+      return true;
+    });
   };
+
+  $scope.$watch('filters', function () {
+    $scope.showMore();
+  }, true);
 
   $scope.download = function (game) {
     if (!game.downloaded && !game.downloading) {
@@ -389,7 +401,7 @@ app.controller('SourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'sou
 
   socket.on('games', function (data) {
     if (system.id === data.systemId) {
-      source.games = data.games;
+      gameList = data.games;
       mapGames();
       $scope.loading = false;
     }
@@ -423,6 +435,8 @@ app.controller('SourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'sou
   });
 
   socket.emit('crawl', {sourceId: $stateParams.sourceId, systemId: system.id});
+
+  mapGames();
 }]);
 
 app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system', 'data', function ($scope, $http, $timeout, Upload, system, data) {
