@@ -1,18 +1,19 @@
 module.exports = {
-  forEach: forEach,
+  map: map,
   filter: filter,
   isObject: isObject
 };
 
 /**
- * Array.forEach for object
+ * Array.map for object
  * @param {object} obj
  * @param {function} fn
  * @param {object} self
+ * @returns {array}
  */
-function forEach(obj, fn, self) {
-  Object.keys(obj).forEach(function (key, index) {
-    fn.call(self, obj[key], index);
+function map(obj, fn, self) {
+  return Object.keys(obj).map(function (key) {
+    return fn.call(self, obj[key], key);
   });
 }
 

@@ -1,0 +1,22 @@
+#sources
+
+  #pictures
+    img(ng-if="source.picture", ng-src="{{'images/sources/' + source.id + '/' + source.picture}}")
+
+  h1 {{source.name}}
+  h2
+    a(href="{{source.url}}", target="_blank") {{source.url}}
+
+  .error(ng-if="source.error")
+    i.fa.fa-exclamation-triangle
+    span {{source.error}}
+
+  .no-entry(ng-if="!source.systems.length")
+    span No system found
+
+  a.channel(ng-repeat="system in source.systems", href="{{system.url}}", target="_blank")
+    .box
+      span.helper
+      img(ng-if="system.picture", ng-src="{{'images/systems/' + system.picture}}")
+      .footer
+        span {{system.name}}

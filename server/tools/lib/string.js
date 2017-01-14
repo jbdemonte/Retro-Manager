@@ -1,6 +1,7 @@
 module.exports = {
   rand: rand,
-  guid: guid
+  guid: guid,
+  completeURL: completeURL
 };
 
 /**
@@ -37,4 +38,25 @@ function guid() {
           s4() + '-' +
           s4() + '-' +
           s4() + s4() + s4();
+}
+
+/**
+ * Complete URL if needed (URL may be relative to the origin)
+ * @param {string} origin
+ * @param {string} url
+ * @return {string}
+ */
+function completeURL(origin, url) {
+  var scheme = /^(https?:)?\/\//;
+  if (url) {
+    if (url.match(scheme)) {
+      if (url[0] === '/') {
+        // url starts with // => extract origin scheme
+        return (origin.match(scheme)[1] || 'http:') + url;
+      }
+      // url starts with http: or https:
+      return url;
+    }
+    return origin + (url[0] === '/' ? '' : '/') + url;
+  }
 }

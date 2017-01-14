@@ -79,7 +79,22 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
         return $http
           .get('api/sources')
           .then(function (response) {
-            return response.data.sources;
+            return response.data;
+          });
+      }]
+    }
+  });
+
+  $stateProvider.state('source', {
+    url: '/sources/:sourceId',
+    templateUrl: '/partials/source.html',
+    controller: 'SourceCtrl',
+    resolve: {
+      source: ['$http', '$stateParams', function ($http, $stateParams) {
+        return $http
+          .get('api/sources/' + $stateParams.sourceId)
+          .then(function (response) {
+            return response.data;
           });
       }]
     }
@@ -364,6 +379,10 @@ app.controller('SystemsCtrl', ['$scope', '$state', function ($scope, $state) {
 
 app.controller('SourcesCtrl', ['$scope', 'sources', function ($scope, sources) {
   $scope.sources = sources;
+}]);
+
+app.controller('SourceCtrl', ['$scope', 'source', function ($scope, source) {
+  $scope.source = source;
 }]);
 
 app.controller('SystemSourcesCtrl', ['$scope', 'system', 'sources', function ($scope, system, sources) {

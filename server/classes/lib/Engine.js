@@ -11,6 +11,10 @@ var classes = {
   Response: require('./Response')
 };
 
+var tools = {
+  string: require('../../tools/lib/string')
+};
+
 /**
  * HTTP Engine
  * @param {string} origin
@@ -35,18 +39,7 @@ function Engine(origin, mainHeaders) {
    * @return {string}
    */
   function completeURL(url) {
-    var scheme = /^(https?:)?\/\//;
-    if (url) {
-      if (url.match(scheme)) {
-        if (url[0] === '/') {
-          // url starts with // => extract origin scheme
-          return (origin.match(scheme)[1] || 'http:') + url;
-        }
-        // url starts with http: or https:
-        return url;
-      }
-      return origin + (url[0] === '/' ? '' : '/') + url;
-    }
+    return tools.string.completeURL(origin, url);
   }
 
   // todo Engine#progress
