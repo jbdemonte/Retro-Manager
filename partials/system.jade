@@ -1,4 +1,4 @@
-#system(ng-class="{uploading: uploading.length}", ngf-drop, ngf-select, ng-model='files', ngf-drag-over-class="'dragover'", ngf-multiple='true', ngf-select-disabled='true', ngf-allow-dir='true')
+#system.dropable(ng-class="{uploading: uploading.length}", ngf-drop, ngf-select, ng-model='files', ngf-drag-over-class="'dragover'", ngf-multiple='true', ngf-select-disabled='true', ngf-allow-dir='true')
 
   #pictures
     img(ng-src="{{'images/systems/' + system.picture}}", ng-if="!system.pictures.length", title="{{system.picture}}")
