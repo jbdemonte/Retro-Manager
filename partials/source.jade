@@ -11,7 +11,7 @@
     i.fa.fa-exclamation-triangle
     span {{source.error}}
 
-  .no-entry(ng-if="!source.systems.length")
+  .no-entry(ng-if="!source.error && !source.systems.length")
     span No system found
 
   a.channel(ng-repeat="system in source.systems", href="{{system.url}}", target="_blank")
