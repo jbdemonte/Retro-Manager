@@ -16,10 +16,10 @@
     i.fa.fa-circle-o-notch.fa-spin
     span Loading, please wait
 
-  .no-entry(ng-if="!loading && !source.crawling && !source.games.length")
+  .no-entry(ng-if="!loading && !source.crawling && !source.games.length && !filters.name")
     span No game found while crawling
 
-  #games(ng-if="source.games.length")
+  #games(ng-if="source.games.length || filters.name")
 
     #filters(ng-if="source.games.length > 10")
       input(type="text", ng-model="filters.name", placeholder="Search")
