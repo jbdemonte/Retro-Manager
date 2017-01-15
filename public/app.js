@@ -377,8 +377,58 @@ app.controller('SystemsCtrl', ['$scope', '$state', function ($scope, $state) {
   });
 }]);
 
-app.controller('SourcesCtrl', ['$scope', 'sources', function ($scope, sources) {
+app.controller('SourcesCtrl', ['$scope', 'Upload', 'sources', function ($scope, Upload, sources) {
   $scope.sources = sources;
+  $scope.uploading = [];
+
+  function sort() {
+    $scope.sources.sort(function (a, b) {
+      return a.name < b.name ? -1 : 1;
+    });
+  }
+
+  $scope.$watch('files', function (files) {
+    (files || []).forEach(function (file) {
+      if (file.$error) {
+        return ;
+      }
+      var item = {
+        name: file.name,
+        progress: {}
+      };
+      $scope.uploading.push(item);
+      function hide() {
+        $scope.uploading.splice($scope.uploading.indexOf(item), 1);
+      }
+      Upload
+        .upload({
+          url: 'api/sources',
+          data: {
+            file: file
+          }
+        })
+        .then(
+          function (response) {
+            if (response.data && response.data.sources) {
+              $scope.sources = response.data.sources;
+              sort();
+            }
+            hide();
+          },
+          function () {
+            hide();
+          },
+          function (evt) {
+            item.progress = Math.floor(100.0 * evt.loaded / evt.total);
+          }
+        )
+        .catch(function () {
+          hide();
+        });
+    });
+  });
+
+  sort();
 }]);
 
 app.controller('SourceCtrl', ['$scope', 'source', function ($scope, source) {

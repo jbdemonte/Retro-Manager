@@ -302,7 +302,7 @@ Source.prototype._loadGameList = function (systemConfig) {
   var self = this;
   var crawled = {}; // URL HashMap to avoid infinity loop
   var engine = this.engine;
-  var url = engine.completeURL(systemConfig.path);
+  var url = engine.completeURL(systemConfig.url);
 
   if (!tools.object.isObject(systemConfig.pg_games)) {
     return Promise.reject('Manifest error: pages.games mismatch');

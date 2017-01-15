@@ -1,9 +1,14 @@
-#sources
+#sources.dropable(ng-class="{uploading: uploading.length}", ngf-drop, ngf-select, ng-model='files', ngf-drag-over-class="'dragover'", ngf-multiple='true', ngf-select-disabled='true', ngf-allow-dir='true')
 
   #pictures
     i.fa.fa-cloud
 
   h1 {{system.name}}
+
+  uploading-list(list="uploading")
+
+  .no-entry(ng-if="!sources.length")
+    span No source found
 
   .channel(ng-repeat="source in sources", ui-sref="source({sourceId: source.id})")
     .box
@@ -11,3 +16,7 @@
       img(ng-if="source.picture", ng-src="{{'images/sources/' + source.id + '/' + source.picture}}")
       .footer
         span {{source.name}}
+
+  .drop-label
+    i.fa.fa-download
+    span Drop your SOURCEs files here

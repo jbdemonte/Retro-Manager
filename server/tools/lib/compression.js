@@ -74,13 +74,14 @@ function uncompress(source, destination, extensions) {
 /**
  * Uncompress an archive and return its tmpPath path and files
  * @param {string} source
+ * @param {string[]} [extensions]
  * @return {Promise.<{tmpPath: string, files: string[]}>}
  */
-function uncompressToTmp(source) {
+function uncompressToTmp(source, extensions) {
   return tools.fs
     .mkTmpDir()
     .then(function (tmpPath) {
-      return uncompress(source, tmpPath)
+      return uncompress(source, tmpPath, extensions)
         .then(function (files) {
           return {
             tmpPath: tmpPath,

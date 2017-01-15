@@ -4,6 +4,7 @@ var stylus = require('stylus');
 var nib = require('nib');
 var bodyParser = require('body-parser');
 var tools = require('./server/tools');
+var constants = require('./constants');
 
 var app = express();
 var server = require('http').createServer(app);
@@ -28,8 +29,7 @@ app.get('/partials/*.html', function (req, res) {
 
 app.get('/images/sources/:sourceId/:image', function (req, res) {
   res.sendFile(
-    'web/' + req.params.sourceId + '/' + req.params.image,
-    {root: __dirname},
+    constants.SOURCES_PATH + '/' + req.params.sourceId + '/' + req.params.image,
     function (err) {
       if (err) {
         return res.status(err.status).end();

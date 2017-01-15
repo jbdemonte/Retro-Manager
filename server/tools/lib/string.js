@@ -1,3 +1,7 @@
+var uuid = require('node-uuid');
+
+var guidRE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
 module.exports = {
   rand: rand,
   guid: guid,
@@ -21,23 +25,15 @@ function rand(length) {
 }
 
 /**
- * Return an hexa string of 4 digit
- * @return {string}
- */
-function s4() {
-  return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-}
-
-/**
  * Return a guid
  * @return {string}
  */
 function guid() {
-  return  s4() + s4() + '-' +
-          s4() + '-' +
-          s4() + '-' +
-          s4() + '-' +
-          s4() + s4() + s4();
+  return uuid.v1();
+}
+
+function guidValid(str) {
+  return str && typeof str === 'string' && str.match(guidRE);
 }
 
 /**

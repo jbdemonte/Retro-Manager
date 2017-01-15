@@ -1,6 +1,5 @@
-var path = require('path');
 var classes = require('../../classes');
-var WEB_PATH = path.resolve('web');
+var constants = require('../../../constants');
 
 var sourceById;
 
@@ -10,17 +9,18 @@ var tools = {
 };
 
 module.exports = {
+  get: get,
   list: list,
-  get: get
+  reload: reload
 };
 
 /**
  * LOAD ALL SOURCES IN GLOBAL SOURCES
  * @return {Promise}
  */
-function loadSources() {
+function reload() {
   return tools.fs
-    .glob(WEB_PATH + '/*')
+    .glob(constants.SOURCES_PATH + '/*')
     .then(function (items) {
       return tools.fs.filterDirs(items);
     })
@@ -45,7 +45,7 @@ function list(system) {
     .resolve()
     .then(function () {
       if (!sourceById) {
-        return loadSources();
+        return reload();
       }
     })
     .then(function () {
