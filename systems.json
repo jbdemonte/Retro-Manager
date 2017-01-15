@@ -342,7 +342,13 @@
     "name": "Neo Geo",
     "picture": "Neo Geo.png",
     "extensions": ["zip"],
-    "section": "consoles"
+    "section": "consoles",
+    "bios": {
+      "9323dfa8b1fd45b071f5ec84317d01aa": {
+        "file": "neogeo.zip",
+        "dir": "roms/neogeo"
+      }
+    }
   },
   {
     "id": "nes",

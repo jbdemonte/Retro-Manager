@@ -16,6 +16,7 @@
       img(ng-if="source.picture", ng-src="{{'images/sources/' + source.id + '/' + source.picture}}")
       .footer
         span {{source.name}}
+        span.version(ng-if="source.version") {{source.version}}
 
   .drop-label
     i.fa.fa-download

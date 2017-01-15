@@ -9,9 +9,8 @@ module.exports = [multipart(), function (req, res) {
   }
 
   var file = req.files.file;
-  var sources = [];
 
-  handleFile(file.path, file.name, sources)
+  handleFile(file.path, file.name)
     .then(function () {
       return tools.fs.unlink(file.path);
     })
@@ -37,10 +36,9 @@ module.exports = [multipart(), function (req, res) {
  * Try to identify an archive as a source package
  * @param {string} source
  * @param {string} filename - Original filename (if different from source)
- * @param {array} sources output
  * @return {Promise}
  */
-function handleFile (source, filename, sources) {
+function handleFile (source, filename) {
 
   filename = filename || path.basename(source);
 
@@ -48,15 +46,42 @@ function handleFile (source, filename, sources) {
     return Promise.resolve(false);
   }
 
+  function cleanReject(tmpPath, err) {
+    return tools.fs
+      .rmTmpDir(tmpPath)
+      .then(function () {
+        return Promise.reject(err);
+      });
+  }
+
   return tools.compression.uncompressToTmp(source, ['js', 'json', 'jpg', 'png', 'gif'])
     .then(function (result) {
       try {
-        var source = require(result.tmpPath);
-        if (source.guid) {
-          return tools.fs.rename(result.tmpPath, constant.SOURCES_PATH + '/' + source.guid);
+        var config = require(result.tmpPath);
+        if (tools.string.guidValid(config.guid)) {
+          return {config: config, tmpPath: result.tmpPath};
         }
       } catch (err) {
-        return tools.fs.rmTmpDir(result.tmpPath);
+        return cleanReject(result.tmpPath, err);
       }
+      return Promise.reject(new Error('Invalid package'));
+    })
+    .then(function (data) {
+      var source = tools.source.get(data.config.guid);
+      // A same source file already exist, check the version
+      if (source && !source.isOlderThan(data.config)) {
+        return cleanReject(data.tmpPath, new Error('Updating a package requires an increased version number'));
+      }
+      if (source) {
+        return tools.fs
+          .rmdir(constant.SOURCES_PATH + '/' + data.config.guid)
+          .then(function () {
+            return data;
+          });
+      }
+      return data;
+    })
+    .then(function (data) {
+      return tools.fs.rename(data.tmpPath, constant.SOURCES_PATH + '/' + data.config.guid);
     });
 }

@@ -11,6 +11,7 @@ var classes = {
 var tools = {
   fs: require('../../tools/lib/fs'),
   object: require('../../tools/lib/object'),
+  string: require('../../tools/lib/string'),
   systems: require('../../tools/lib/system')
 };
 
@@ -39,6 +40,9 @@ module.exports = Source;
 function Source(sourcePath) {
   this.id = sourcePath.split('/').pop();
   this.path = sourcePath;
+
+  // delete all previous cache because module may have be updated
+  delete require.cache[require.resolve(this.path)];
 
   try {
     this.config = require(this.path);
@@ -89,13 +93,33 @@ Source.prototype.toJSON = function (systemId) {
     id: this.id,
     name: this.config.name,
     url: this.config.origin,
-    picture: this.config.picture
+    picture: this.config.picture,
+    version: this.config.version
   };
   if (systemId) {
     data.crawling = !!this.crawling[systemId];
     data.games = this.games.get(systemId);
   }
   return data;
+};
+
+/**
+ * Return True if raw entry version is newer than the current one
+ * @param {object} raw
+ * @return {boolean}
+ */
+Source.prototype.isOlderThan = function (raw) {
+  var mine = tools.string.getSemVer(this.config.version);
+  var theirs = tools.string.getSemVer(raw.version);
+  for (var i = 0; i < 3; i++) {
+    if (mine[i] < theirs[i]) {
+      return true;
+    }
+    if (mine[i] > theirs[i]) {
+      return false;
+    }
+  }
+  return false;
 };
 
 /**
