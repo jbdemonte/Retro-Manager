@@ -16,12 +16,15 @@ module.exports = function (req, res) {
 
   data.systems =  tools.object.map(source.config.systems, function (sourceSystem, systemId) {
     var system = tools.system.get(systemId) || {};
+    var urls = tools.array(sourceSystem).map(function (item) {
+      return tools.string.completeURL(source.config.origin, item.url);
+    });
     return {
       id: systemId,
       picture: system.picture,
       name: system.name,
       section: system.section,
-      url: tools.string.completeURL(source.config.origin, sourceSystem.path)
+      url: urls.length > 1 ? urls : urls.pop()
     };
   });
 

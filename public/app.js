@@ -433,6 +433,10 @@ app.controller('SourcesCtrl', ['$scope', 'Upload', 'sources', function ($scope, 
 
 app.controller('SourceCtrl', ['$scope', 'source', function ($scope, source) {
   $scope.source = source;
+
+  $scope.isArray = function (url) {
+    return Array.isArray(url);
+  };
 }]);
 
 app.controller('SystemSourcesCtrl', ['$scope', 'system', 'sources', function ($scope, system, sources) {

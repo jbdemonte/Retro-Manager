@@ -9,6 +9,7 @@ var classes = {
 };
 
 var tools = {
+  array: require('../../tools/lib/array'),
   fs: require('../../tools/lib/fs'),
   object: require('../../tools/lib/object'),
   string: require('../../tools/lib/string'),
@@ -145,18 +146,30 @@ Source.prototype.crawl = function (systemId) {
   self.crawling[systemId] = true;
   self.emit('crawling', self.crawling);
 
-  var config = self.systemConfig(systemId);
+  var configs = self.getSystemConfigs(systemId);
 
-  self._loadGameList(config)
+  function loadNextConfig(games) {
+    var config = configs.shift();
+    return self
+      ._loadGameList(config)
+      .then(function (_games) {
+        if (config.pg_games.ignore) {
+          var ignore = new RegExp(config.pg_games.ignore);
+          _games = _games.filter(function (game) {
+            return !game.name.match(ignore);
+          });
+        }
+        games = _games.concat(games);
+        if (configs.length) {
+          return loadNextConfig(games);
+        }
+        return games;
+      });
+  }
+
+  loadNextConfig([])
     .then(function (games) {
       games = unique(games || []);
-
-      if (config.pg_games.ignore) {
-        var ignore = new RegExp(config.pg_games.ignore);
-        games = games.filter(function (game) {
-          return !game.name.match(ignore);
-        });
-      }
 
       games = games.sort(function (g1, g2) {
         return g1.name < g2.name ? -1 : 1;
@@ -187,7 +200,19 @@ Source.prototype.download = function (jsonGame) {
   if (!game.download.start()) {
     return ;
   }
-  var config = this.systemConfig(game.sid);
+
+  var config = this
+    .getSystemConfigs(game.sid)
+    .filter(function (systemConfig) {
+      return engine.completeURL(systemConfig.url) === game.ref;
+    })
+    .pop();
+
+  if (!config) {
+    // should never happen
+    game.download.end(false);
+    return ;
+  }
 
   var progressEventName = 'progress_' + game.id;
 
@@ -305,15 +330,20 @@ Source.prototype._download = function (game, progressEventName, tasks) {
 /**
  * Return a system dedicated config
  * @param {string} systemId
- * @return {object}
+ * @return {object[]}
  * @private
  */
-Source.prototype.systemConfig = function (systemId) {
-  var config = Object.assign({}, this.config.generic, this.config.systems[systemId], {sourceId: this.id, systemId: systemId});
-  ['pg_home', 'pg_games'].forEach(function (key) {
-    config[key] = config[key] || {};
+Source.prototype.getSystemConfigs = function (systemId) {
+  var generic = this.config.generic;
+  var sourceId = this.id;
+
+  return tools.array(this.config.systems[systemId]).map(function (item) {
+    var config = Object.assign({}, generic, item, {sourceId: sourceId, systemId: systemId});
+    ['pg_home', 'pg_games'].forEach(function (key) {
+      config[key] = config[key] || {};
+    });
+    return config;
   });
-  return config;
 };
 
 /**
@@ -385,7 +415,7 @@ Source.prototype._loadGameListPage = function (systemConfig, url, crawled) {
     .get(url)
     .then(function (response) {
       var games = response.body.find(systemConfig.pg_games.items).map(function (item) {
-        return new classes.Game(systemConfig, item);
+        return new classes.Game(systemConfig, item, url);
       });
       if (systemConfig.pg_home.next) {
         // Pagination base on "Previous - Next"

@@ -12,7 +12,7 @@ var CACHE_KEYS = 'id sc sid ref img url name size'.split(' ');
  * @param {HTMLHandler} item
  * @constructor
  */
-function Game(config, item) {
+function Game(config, item, url) {
   var self = this;
 
   self.id = '';
@@ -78,13 +78,13 @@ function Game(config, item) {
 
 }
 
-function extractData(config, item) {
+function extractData(config, item, url) {
   var self = this;
 
   self.id = tools.string.guid();
   self.sc = config.sourceId;
   self.sid = config.systemId;
-  self.ref = item.origin;
+  self.ref = url;
 
   // classic image tag
   if (config.pg_games.img) {

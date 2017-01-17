@@ -1,4 +1,5 @@
 module.exports = {
+  array: require('./lib/array'),
   compression: require('./lib/compression'),
   source: require('./lib/source'),
   fs: require('./lib/fs'),

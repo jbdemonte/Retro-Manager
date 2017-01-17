@@ -14,9 +14,13 @@
   .no-entry(ng-if="!source.error && !source.systems.length")
     span No system found
 
-  a.channel(ng-repeat="system in source.systems", href="{{system.url}}", target="_blank")
+  .channel(ng-repeat="system in source.systems")
     .box
       span.helper
       img(ng-if="system.picture", ng-src="{{'images/systems/' + system.picture}}")
+      a.cover(ng-if="!isArray(system.url)", href="{{system.url}}", target="_blank")
+      .multiple(ng-if="isArray(system.url)")
+        a(ng-repeat="url in system.url", href="{{url}}", target="_blank")
+          span # {{$index+1}}
       .footer
         span {{system.name}}
