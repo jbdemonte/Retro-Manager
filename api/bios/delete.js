@@ -5,7 +5,7 @@ var config = require('../../config.json');
 
 module.exports = function (req, res) {
 
-  var promises = (Array.isArray(req.body.files) ? req.body.files : []).map(function (file) {
+  var promises = tools.array(req.body.files).map(function (file) {
     // check requested file is in the bios path
     var filePath = path.resolve(config.path.bios + '/' + file);
     if (filePath.indexOf(config.path.bios) === 0) {

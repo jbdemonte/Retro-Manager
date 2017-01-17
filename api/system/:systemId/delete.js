@@ -8,7 +8,7 @@ module.exports = function (req, res) {
     return res.json({error: 'Unknown system'});
   }
 
-  var promises = (Array.isArray(req.body.games) ? req.body.games : []).map(function (file) {
+  var promises = tools.array(req.body.games).map(function (file) {
     // check requested file is in the target system path
     var filePath = path.resolve(system.path.roms + '/' + file);
     if (filePath.indexOf(system.path.roms) === 0) {
