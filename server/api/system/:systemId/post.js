@@ -1,4 +1,4 @@
-var tools = require('../../../server/tools');
+var tools = require(__base + 'server/tools');
 var multipart = require('connect-multiparty');
 
 module.exports = [multipart(), function (req, res) {

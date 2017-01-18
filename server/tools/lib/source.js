@@ -1,5 +1,5 @@
-var classes = require('../../classes');
-var constants = require('../../../constants');
+var classes = require(__base + 'server/classes');
+var constants = require(__base + 'constants');
 
 var sourceById;
 

@@ -1,5 +1,6 @@
 var path = require('path');
 var fs = require('fs');
+var constants = require(__base + 'constants');
 
 var tools = {
   promise: require('./promise'),
@@ -9,8 +10,6 @@ var tools = {
 var _mkdir = tools.promise.promify(require('mkdirp'));
 var _rmdir = tools.promise.promify(fs, fs.rmdir);
 var _rename = tools.promise.promify(fs, fs.rename);
-
-var TMP_DIR = path.resolve(path.join(__dirname, '../../..')) + '/tmp';
 
 var exports = module.exports = {
   extension: getExtension,
@@ -96,7 +95,7 @@ function mkTmpDir() {
  * @return {Promise}
  */
 function rmTmpDir(tmpDir) {
-  if (tmpDir.indexOf(TMP_DIR) !== 0) {
+  if (tmpDir.indexOf(constants.TMP_PATH) !== 0) {
     return Promise.reject(new Error('tmp directory mismatch ' + tmpDir));
   }
   return rmdir(tmpDir);
@@ -132,7 +131,7 @@ function rename(source, target) {
  * @return {Promise.<string>} Return the filepath
  */
 function saveToTmpFile(raw, filename) {
-  return mkdir(TMP_DIR)
+  return mkdir(constants.TMP_PATH)
     .then(function () {
       return tmpPath(filename);
     })
@@ -177,7 +176,7 @@ function tmpPath(filename) {
   var extension = filename ? getExtension(filename) : '';
 
   return new Promise(function (resolve) {
-    var tmp = TMP_DIR + '/' + tools.string.rand() + (extension ? '.' + extension : '');
+    var tmp = constants.TMP_PATH + '/' + tools.string.rand() + (extension ? '.' + extension : '');
     fs.access(tmp, function (err) {
       // if err => path does not exist => ok
       resolve(err ? tmp : false);

@@ -1,11 +1,11 @@
 var classes = {
-  System: require('../../classes/lib/System')
+  System: require(__base + 'server/classes/lib/System')
 };
 
 var systemById = {};
 
 // LOAD SYSTEMS FROM JSON
-require('../../../systems.json').forEach(function (data) {
+require(__base + 'systems.json').forEach(function (data) {
   var system = new classes.System(data);
   if (systemById[system.id]) {
     throw new Error('Duplicate system id: ' + system.id);

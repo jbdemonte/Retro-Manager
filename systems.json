@@ -172,6 +172,13 @@
     "section": "consoles"
   },
   {
+    "id": "gamegear",
+    "name": "Game Gear",
+    "picture": "Game Gear.png",
+    "extensions": ["gg"],
+    "section": "handhelds"
+  },
+  {
     "id": "gb",
     "name": "Game Boy",
     "picture": "Game Boy.png",
@@ -194,13 +201,6 @@
     "name": "Game Boy Color",
     "picture": "Game Boy Color.png",
     "extensions": ["gb", "gbc", "zip"],
-    "section": "handhelds"
-  },
-  {
-    "id": "gamegear",
-    "name": "Game Gear",
-    "picture": "Game Gear.png",
-    "extensions": ["gg"],
     "section": "handhelds"
   },
   {
@@ -239,7 +239,7 @@
   },
   {
     "id": "lynx",
-    "name": "Lynx",
+    "name": "Atari Lynx",
     "picture": "Atari Lynx.png",
     "extensions": ["lnx", "zip"],
     "bios": {

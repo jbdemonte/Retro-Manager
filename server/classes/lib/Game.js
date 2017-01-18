@@ -1,7 +1,7 @@
 module.exports = Game;
 
 var tools = {
-  string: require('../../tools/lib/string')
+  string: require(__base + 'server/tools/lib/string')
 };
 
 var CACHE_KEYS = 'id sc sid ref img url name size'.split(' ');

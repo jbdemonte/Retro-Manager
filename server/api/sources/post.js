@@ -1,5 +1,5 @@
-var tools = require('../../server/tools');
-var constant = require('../../constants');
+var tools = require(__base + 'server/tools');
+var constant = require(__base + 'constants');
 var multipart = require('connect-multiparty');
 
 module.exports = [multipart(), function (req, res) {

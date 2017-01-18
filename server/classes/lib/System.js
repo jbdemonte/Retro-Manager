@@ -1,9 +1,9 @@
 var path = require('path');
-var config = require('../../../config.json');
+var config = require(__base + 'config.json');
 
 var tools = {
-  compression: require('../../tools/lib/compression'),
-  fs: require('../../tools/lib/fs')
+  compression: require(__base + 'server/tools/lib/compression'),
+  fs: require(__base + 'server/tools/lib/fs')
 };
 
 module.exports = System;

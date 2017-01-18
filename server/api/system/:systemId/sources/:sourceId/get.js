@@ -1,4 +1,4 @@
-var tools = require('../../../../../server/tools');
+var tools = require(__base + 'server/tools');
 
 module.exports = function (req, res) {
   var system = tools.system.get(req.params.systemId);

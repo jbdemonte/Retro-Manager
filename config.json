@@ -1,6 +1,10 @@
 {
   "path": {
-    "bios": "/home/pi/RetroPie/BIOS",
-    "roms": "/home/pi/RetroPie/roms"
+    "bios": "/Users/jbd/git/RetroPie-Manager/share/BIOS",
+    "roms": "/Users/jbd/git/RetroPie-Manager/share"
+  },
+  "path_recalbox": {
+    "bios": "/recalbox/share/bios",
+    "roms": "/recalbox/share/roms"
   }
 }

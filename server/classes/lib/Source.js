@@ -9,11 +9,11 @@ var classes = {
 };
 
 var tools = {
-  array: require('../../tools/lib/array'),
-  fs: require('../../tools/lib/fs'),
-  object: require('../../tools/lib/object'),
-  string: require('../../tools/lib/string'),
-  systems: require('../../tools/lib/system')
+  array: require(__base + 'server/tools/lib/array'),
+  fs: require(__base + 'server/tools/lib/fs'),
+  object: require(__base + 'server/tools/lib/object'),
+  string: require(__base + 'server/tools/lib/string'),
+  systems: require(__base + 'server/tools/lib/system')
 };
 
 /**

@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
-var tools = require('../../server/tools');
-var config = require('../../config.json');
+var tools = require(__base + 'server/tools');
+var config = require(__base + 'config.json');
 
 module.exports = function (req, res) {
 

@@ -12,7 +12,7 @@ var classes = {
 };
 
 var tools = {
-  string: require('../../tools/lib/string')
+  string: require(__base + 'server/tools/lib/string')
 };
 
 /**

@@ -1,3 +1,5 @@
+global.__base = __dirname + '/';
+
 var glob = require('glob');
 var express = require('express');
 var stylus = require('stylus');
@@ -6,9 +8,10 @@ var bodyParser = require('body-parser');
 var tools = require('./server/tools');
 var constants = require('./constants');
 
+
 var app = express();
 var server = require('http').createServer(app);
-require('./socket')(server);
+require('./server/socket')(server);
 
 function compile(str, path) {
   return stylus(str)
@@ -17,14 +20,14 @@ function compile(str, path) {
 }
 
 app.set('port', process.env.PORT || 3000);
-app.set('views', __dirname + '/views');
+app.set('views', __dirname + '/public/views');
 app.set('view engine', 'jade');
 
 app.use(stylus.middleware({ src: __dirname + '/public', compile: compile}));
 app.use(express.static(__dirname + '/public'));
 
 app.get('/partials/*.html', function (req, res) {
-  return res.render(__dirname + '/partials/' + req.params[0]);
+  return res.render(__dirname + '/public/partials/' + req.params[0]);
 });
 
 app.get('/images/sources/:sourceId/:image', function (req, res) {
@@ -42,10 +45,10 @@ app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Load API and create route automatically
-glob.sync('api/**/*.js').forEach(function (api) {
+glob.sync('api/**/*.js', {cwd: './server'}).forEach(function (api) {
   var path = api.split('/');
   var method = path.pop().replace('.js', '');
-  var args = require('./' + api);
+  var args = require('./server/' + api);
   if (!Array.isArray(args)) {
     args = [args];
   }
