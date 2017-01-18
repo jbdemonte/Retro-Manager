@@ -204,7 +204,7 @@ Source.prototype.download = function (jsonGame) {
   var config = this
     .getSystemConfigs(game.sid)
     .filter(function (systemConfig) {
-      return engine.completeURL(systemConfig.url) === game.ref;
+      return game.ref.indexOf(engine.completeURL(systemConfig.url)) === 0;
     })
     .pop();
 
