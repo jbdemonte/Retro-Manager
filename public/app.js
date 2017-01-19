@@ -548,6 +548,7 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system'
     var game = gamesByUrl[data.game.url];
     if (game) {
       game.progression = data.progression;
+      game.downloading = true;
     }
   });
 
@@ -557,6 +558,17 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system'
       delete game.progression;
       game.downloading = false;
       game.downloaded = true;
+    }
+  });
+
+  socket.on('game-state', function (data) {
+    var game = gamesByUrl[data.game.url];
+    if (game) {
+      if (!data.state.downloading) {
+        delete game.progression;
+      }
+      game.downloading = data.state.downloading;
+      game.downloaded = data.state.downloaded;
     }
   });
 

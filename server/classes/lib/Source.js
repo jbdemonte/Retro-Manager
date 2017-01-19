@@ -215,6 +215,7 @@ Source.prototype.download = function (jsonGame) {
   }
 
   if (!game.download.start()) {
+    self.emit('game-state', {game: game, state: {downloaded: game.downloaded, downloading: game.downloading}});
     return ;
   }
 
