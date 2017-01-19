@@ -23,6 +23,7 @@ module.exports = function (req, res) {
       res.json(result);
     })
     .catch(function (err) {
+      result.error = err;
       res.json(result);
     });
 

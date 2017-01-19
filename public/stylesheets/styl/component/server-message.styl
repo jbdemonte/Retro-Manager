@@ -1,0 +1,42 @@
+server-message
+  position absolute
+  right 10px
+  bottom 10px
+
+  .message
+    color #fff
+    text-align center
+    padding 0
+    animation max-height 1s linear
+    min-width 200px
+    max-height 0
+    position relative
+    overflow hidden
+    background #00a3ff
+
+    .msg-type
+      position absolute
+      top 10px
+      left 10px
+
+    i.fa-times
+      position absolute
+      top 1px
+      right 1px
+      border 1px solid transparent
+      padding 1px 2px
+      border-radius 3px
+      &:hover
+        cursor pointer
+        background rgba(204, 204, 204, 0.4)
+
+    span
+      display block
+      padding 10px 25px 10px 35px
+
+    & + .message
+      margin-top 5px
+    &.error
+      background #e44949
+    &.congrats
+      background #00dc65

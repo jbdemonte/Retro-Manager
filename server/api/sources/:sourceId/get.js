@@ -28,5 +28,5 @@ module.exports = function (req, res) {
     };
   });
 
-  res.json(data);
+  res.json({source: data});
 };

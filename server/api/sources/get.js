@@ -1,14 +1,17 @@
 var tools = require(__base + 'server/tools');
 
 module.exports = function (req, res) {
+  var result = {sources: []};
   tools.source.list()
     .then(function (sources) {
-      res.json(sources.map(function (source) {
-          return source.toJSON();
-        }));
+      result.sources = sources.map(function (source) {
+        return source.toJSON();
+      });
+      res.json(result);
     })
     .catch(function (err) {
-      res.json([]);
+      result.error = err;
+      res.json(result);
     });
 
 };

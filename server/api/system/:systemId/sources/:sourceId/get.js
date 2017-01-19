@@ -9,5 +9,5 @@ module.exports = function (req, res) {
   if (!source) {
     return res.json({error: 'Unknown source'});
   }
-  res.send(source.toJSON(system.id));
+  res.send({source: source.toJSON(system.id)});
 };

@@ -32,7 +32,7 @@ module.exports = function (server) {
         return ;
       }
       sources[source.id] = source;
-      'games progress crawling complete status'.split(' ').forEach(function (event) {
+      'games progress crawling started complete status pause server-error'.split(' ').forEach(function (event) {
         proxify(source, event);
       });
     }

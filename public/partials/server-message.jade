@@ -1,0 +1,6 @@
+.message(ng-repeat="message in $ctrl.messages", ng-class="{error: message.error, congrats: message.congrats, visible: message.visible}", id="{{::message.id}}")
+  i.msg-type.fa.fa-exclamation-triangle(ng-if="message.error")
+  i.msg-type.fa.fa-info-circle(ng-if="message.information")
+  i.msg-type.fa.fa-check-circle-o(ng-if="message.congrats")
+  i.fa.fa-times(ng-click="$ctrl.remove(message)")
+  span {{::message.msg}}

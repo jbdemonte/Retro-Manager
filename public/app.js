@@ -3,7 +3,6 @@
 var app = angular.module('app', ['ui.router', 'ngFileUpload', 'infinite-scroll']);
 
 app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($stateProvider, $httpProvider, $locationProvider) {
-
   $httpProvider.defaults.headers.delete = {"Content-Type": "application/json;charset=utf-8"};
 
   var systemResolver = ['$stateParams', function ($stateParams) {
@@ -79,7 +78,7 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
         return $http
           .get('api/sources')
           .then(function (response) {
-            return response.data;
+            return response.data.sources;
           });
       }]
     }
@@ -94,7 +93,7 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
         return $http
           .get('api/sources/' + $stateParams.sourceId)
           .then(function (response) {
-            return response.data;
+            return response.data.source;
           });
       }]
     }
@@ -147,7 +146,7 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
         return $http
           .get('api/system/' + $stateParams.systemId + '/sources/' + $stateParams.sourceId)
           .then(function (response) {
-            return response.data;
+            return response.data.source;
           });
       }]
     }
@@ -212,6 +211,53 @@ app.component('uploadingList', {
   }
 });
 
+app.component('serverMessage', {
+  templateUrl: '/partials/server-message.html',
+  controller: ['$timeout', 'socket', function ($timeout, socket) {
+    var self = this;
+    var count = 0;
+
+    self.messages = [{information: true, msg: 'Pause for 3000ms', visible:true}];
+
+    self.remove = function (message) {
+      self.messages.splice(self.messages.indexOf(message), 1);
+    };
+
+    function display(message, duration) {
+      message.id = 'message-' + Date.now() + '-' + (count++);
+      self.messages.push(message);
+
+
+      $timeout(function () {
+        message.visible = true;
+        angular.element(document.getElementById(message.id)).css('maxHeight', '100px');
+      }, 100);
+      $timeout(function () {
+        message.visible = false;
+        angular.element(document.getElementById(message.id)).css({maxHeight: '0px'});
+
+        $timeout(function () {
+          self.remove(message);
+        }, 500);
+
+      }, duration || 3000);
+
+    }
+
+    socket.on('server-error', function (data) {
+      display({error: true, msg: data.error}, 10000);
+    });
+
+    socket.on('pause', function (data) {
+      display({information: true, msg: 'Pause for ' + data.duration + 'ms'});
+    });
+
+    socket.on('complete', function (data) {
+      display({congrats: true, msg: 'Download complete (' + data.game.name + ')'});
+    });
+  }]
+});
+
 app.filter("noExtension", function () {
   return function (file) {
     file = file.split('.');
@@ -246,7 +292,6 @@ app.controller('HomeCtrl', ['$scope', function ($scope) {
 }]);
 
 app.controller('BiosCtrl', ['$scope', '$http', 'Upload', 'listing', function ($scope, $http, Upload, listing) {
-
   $scope.selected = {};
   $scope.bios = [];
   $scope.uploading = [];
