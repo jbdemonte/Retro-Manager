@@ -63,6 +63,8 @@ function Source(sourcePath) {
   this.games = new classes.GameList();
 
   this.engine = new classes.Engine(this.config.origin, this.config.headers);
+
+  this.stack = Promise.resolve();
 }
 
 util.inherits(Source, EventEmitter);
@@ -183,6 +185,9 @@ Source.prototype.crawl = function (systemId) {
       self._saveCache(systemId);
     })
     .catch(function (err)  {
+      self.crawling[systemId] = false;
+      self.emit('crawling', self.crawling);
+      self.emit('server-error', {error: err.toString()});
       console.log(err);
     });
 
@@ -197,20 +202,19 @@ Source.prototype.download = function (jsonGame) {
   var self = this;
   var game = self.games.retrieve(jsonGame);
 
-  if (!game.download.start()) {
-    return ;
-  }
-
   var config = this
     .getSystemConfigs(game.sid)
     .filter(function (systemConfig) {
-      return game.ref.indexOf(engine.completeURL(systemConfig.url)) === 0;
+      return game.ori === systemConfig.url;
     })
     .pop();
 
   if (!config) {
     // should never happen
-    game.download.end(false);
+    return ;
+  }
+
+  if (!game.download.start()) {
     return ;
   }
 
@@ -225,41 +229,58 @@ Source.prototype.download = function (jsonGame) {
 
   engine.on(progressEventName, progress);
 
-  var tasks = [];
-  var files = [];
-  var filename, tmpfile;
+  function start() {
+    var filename, tmpfile;
+    var tasks = [];
+    var files = [];
 
-  if (config.pg_game) {
-    tasks = Array.isArray(config.pg_game) ? config.pg_game.slice() : [config.pg_game];
-  }
-  
-  this._download(game, progressEventName, tasks)
-    .then(function (response) {
-      engine.removeListener(progressEventName, progress);
-      if (response) {
-        filename = response.filename();
-        return tools.fs.saveToTmpFile(response.body, filename);
-      }
-    })
-    .then(function (_tmpfile) {
-      tmpfile = _tmpfile;
-      return tools.systems.get(game.sid).handleFile(tmpfile, filename, files);
-    })
-    .then(function (renamed) {
-      game.download.end(true);
+    if (config.pg_game) {
+      tasks = Array.isArray(config.pg_game) ? config.pg_game.slice() : [config.pg_game];
+    }
 
-      self.emit('complete', {
-        game: game,
-        files: files
+    self.emit('started', {game: game});
+
+    return self._download(game, progressEventName, tasks)
+      .then(function (response) {
+        engine.removeListener(progressEventName, progress);
+        if (response) {
+          filename = response.filename();
+          return tools.fs.saveToTmpFile(response.body, filename);
+        }
+      })
+      .then(function (_tmpfile) {
+        tmpfile = _tmpfile;
+        return tools.systems.get(game.sid).handleFile(tmpfile, filename, files);
+      })
+      .then(function (renamed) {
+        game.download.end(true);
+        self.emit('complete', {game: game, files: files});
+        if (!renamed) {
+          return tools.fs.unlink(tmpfile);
+        }
+      })
+      .catch(function (err) {
+        game.download.end(false);
+        self.emit('server-error', {error: err.toString()});
+        console.log(err);
+        console.log(err.stack);
       });
-      if (!renamed) {
-        return tools.fs.unlink(tmpfile);
-      }
-    })
-    .catch(function (err) {
-      game.download.end(false);
-      console.log(err);
-    });
+  }
+
+  // If current web ressource required not to be a pig by downloading only one file in same time, we stack the promise
+  if (self.config.wait) {
+    self.stack = self.stack
+      .then(start)
+      .then(function () {
+        return new Promise(function (resolve) {
+          var duration = typeof self.config.wait === 'function' ? self.config.wait(game) : self.config.wait;
+          self.emit('pause', {duration: duration});
+          setTimeout(resolve, duration);
+        });
+      });
+  } else {
+    start();
+  }
 
 };
 
@@ -313,6 +334,9 @@ Source.prototype._download = function (game, progressEventName, tasks) {
       .then(function (response) {
         if (!query.method) {
           return Promise.reject('Unknown method');
+        }
+        if (!query.url) {
+          return Promise.reject('Download URL is missing');
         }
         if (tasks.length) {
           return handle(engine.send(query, {referer: game.ref}));

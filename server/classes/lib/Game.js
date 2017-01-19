@@ -4,15 +4,16 @@ var tools = {
   string: require(__base + 'server/tools/lib/string')
 };
 
-var CACHE_KEYS = 'id sc sid ref img url name size'.split(' ');
+var CACHE_KEYS = 'id sc sid ref ori img url name size'.split(' ');
 
 /**
  * Game instance
  * @param {object} config
  * @param {HTMLHandler} item
+ * @param {string} referer
  * @constructor
  */
-function Game(config, item, url) {
+function Game(config, item, referer) {
   var self = this;
 
   self.id = '';
@@ -78,13 +79,14 @@ function Game(config, item, url) {
 
 }
 
-function extractData(config, item, url) {
+function extractData(config, item, referer) {
   var self = this;
 
   self.id = tools.string.guid();
   self.sc = config.sourceId;
   self.sid = config.systemId;
-  self.ref = url;
+  self.ref = referer;
+  self.ori = config.url;
 
   // classic image tag
   if (config.pg_games.img) {
