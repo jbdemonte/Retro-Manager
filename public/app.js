@@ -498,6 +498,7 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system'
   var gamesByUrl = {};
   var gameList = source.games || [];
   var pagination = 100;
+  var delisteners = [];
 
 
   function mapGames() {
@@ -509,6 +510,12 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system'
     $scope.showMore();
   }
 
+  $scope.download = function (game) {
+    if (!game.downloaded && !game.downloading) {
+      game.downloading = true;
+      socket.emit('download', game);
+    }
+  };
 
   $scope.showMore = function () {
     var max = (source.games ? source.games.length : 0) + pagination;
@@ -529,39 +536,38 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system'
     $scope.showMore();
   }, true);
 
-  $scope.download = function (game) {
-    if (!game.downloaded && !game.downloading) {
-      game.downloading = true;
-      socket.emit('download', game);
-    }
-  };
+  $scope.$on('$destroy', function () {
+    delisteners.forEach(function (off) {
+      off();
+    });
+  });
 
-  socket.on('games', function (data) {
+  delisteners.push(socket.on('games', function (data) {
     if (system.id === data.systemId) {
       gameList = data.games;
       mapGames();
       $scope.loading = false;
     }
-  });
+  }));
 
-  socket.on('progress', function (data) {
+  delisteners.push(socket.on('progress', function (data) {
     var game = gamesByUrl[data.game.url];
     if (game) {
       game.progression = data.progression;
       game.downloading = true;
     }
-  });
+  }));
 
-  socket.on('complete', function (data) {
+  delisteners.push(socket.on('complete', function (data) {
     var game = gamesByUrl[data.game.url];
     if (game) {
       delete game.progression;
       game.downloading = false;
       game.downloaded = true;
     }
-  });
+  }));
 
-  socket.on('game-state', function (data) {
+  delisteners.push(socket.on('game-state', function (data) {
     var game = gamesByUrl[data.game.url];
     if (game) {
       if (!data.state.downloading) {
@@ -570,18 +576,18 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system'
       game.downloading = data.state.downloading;
       game.downloaded = data.state.downloaded;
     }
-  });
+  }));
 
-  socket.on('status', function (status) {
+  delisteners.push(socket.on('status', function (status) {
     $scope.status = status;
-  });
+  }));
 
-  socket.on('crawling', function (crawling) {
+  delisteners.push(socket.on('crawling', function (crawling) {
     if (system.id in crawling) {
       source.crawling = crawling[system.id];
       $scope.loading = false;
     }
-  });
+  }));
 
   socket.emit('crawl', {sourceId: $stateParams.sourceId, systemId: system.id});
 
