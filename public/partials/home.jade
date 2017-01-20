@@ -1,30 +1,30 @@
 #home
-  a.bios(ui-sref="bios")
+  a.bios(ui-sref="root.bios")
     i.fa.fa-microchip
     span BIOS
 
-  a.sources(ui-sref="sources")
+  a.sources(ui-sref="root.sources")
     i.fa.fa-bolt
     span SOURCES
 
-  a.sections(ui-sref="arcades", ng-if="sections.arcades")
+  a.sections(ui-sref="root.section({section: 'arcades'})", ng-if="sections.arcades")
     i.flaticon-joystick
     span ARCADES
 
-  a.sections(ui-sref="computers", ng-if="sections.computers")
+  a.sections(ui-sref="root.section({section: 'computers'})", ng-if="sections.computers")
     i.flaticon-black-keyboard
     span COMPUTERS
 
-  a.sections(ui-sref="consoles", ng-if="sections.consoles")
+  a.sections(ui-sref="root.section({section: 'consoles'})", ng-if="sections.consoles")
     i.fa.fa-gamepad
     span CONSOLES
 
-  a.sections(ui-sref="handhelds", ng-if="sections.handhelds")
+  a.sections(ui-sref="root.section({section: 'handhelds'})", ng-if="sections.handhelds")
     i.flaticon-gameboy
     span HANDHELD CONSOLES
 
-  a.sections(ui-sref="others", ng-if="sections.others")
+  a.sections(ui-sref="root.section({section: 'others'})", ng-if="sections.others")
     i.fa.fa-question-circle-o
     span OTHERS
 
-  a.credits(ui-sref="credits") CREDITS
+  a.credits(ui-sref="root.credits") CREDITS

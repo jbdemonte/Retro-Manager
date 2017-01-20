@@ -5,29 +5,32 @@ var app = angular.module('app', ['ui.router', 'ngFileUpload', 'infinite-scroll']
 app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($stateProvider, $httpProvider, $locationProvider) {
   $httpProvider.defaults.headers.delete = {"Content-Type": "application/json;charset=utf-8"};
 
-  var systemResolver = ['$stateParams', function ($stateParams) {
-    return systems
-      .filter(function (system) {
-        return system.id === $stateParams.systemId;
-      })
-      .shift();
-  }];
+  $stateProvider.state('root', {
+    abstract: true,
+    templateUrl: '/partials/root.html'
+  });
 
-  $stateProvider.state('home', {
+  $stateProvider.state('root.home', {
     url: '/',
-    templateUrl: '/partials/home.html',
-    controller: 'HomeCtrl'
+    views: {
+      'container@root': {
+        templateUrl: '/partials/home.html',
+        controller: 'HomeCtrl'
+      }
+    }
   });
 
-  $stateProvider.state('credits', {
+  $stateProvider.state('root.credits', {
     url: '/credits',
-    templateUrl: '/partials/credits.html'
+    views: {
+      'container@root': {
+        templateUrl: '/partials/credits.html'
+      }
+    }
   });
 
-  $stateProvider.state('bios', {
+  $stateProvider.state('root.bios', {
     url: '/bios',
-    templateUrl: '/partials/bios.html',
-    controller: 'BiosCtrl',
     resolve: {
       listing: ['$http', function ($http) {
         return $http
@@ -36,43 +39,17 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
             return response.data.listing || {};
           });
       }]
+    },
+    views: {
+      'container@root': {
+        templateUrl: '/partials/bios.html',
+        controller: 'BiosCtrl'
+      }
     }
   });
 
-  $stateProvider.state('arcades', {
-    url: '/arcades',
-    templateUrl: '/partials/systems.html',
-    controller: 'SystemsCtrl'
-  });
-
-  $stateProvider.state('computers', {
-    url: '/computers',
-    templateUrl: '/partials/systems.html',
-    controller: 'SystemsCtrl'
-  });
-
-  $stateProvider.state('consoles', {
-    url: '/consoles',
-    templateUrl: '/partials/systems.html',
-    controller: 'SystemsCtrl'
-  });
-
-  $stateProvider.state('handhelds', {
-    url: '/handhelds',
-    templateUrl: '/partials/systems.html',
-    controller: 'SystemsCtrl'
-  });
-
-  $stateProvider.state('others', {
-    url: '/others',
-    templateUrl: '/partials/systems.html',
-    controller: 'SystemsCtrl'
-  });
-
-  $stateProvider.state('sources', {
+  $stateProvider.state('root.sources', {
     url: '/sources',
-    templateUrl: '/partials/sources.html',
-    controller: 'SourcesCtrl',
     resolve: {
       sources: ['$http', function ($http) {
         return $http
@@ -81,13 +58,17 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
             return response.data.sources;
           });
       }]
+    },
+    views: {
+      'container': {
+        templateUrl: '/partials/sources.html',
+        controller: 'SourcesCtrl'
+      }
     }
   });
 
-  $stateProvider.state('source', {
-    url: '/sources/:sourceId',
-    templateUrl: '/partials/source.html',
-    controller: 'SourceCtrl',
+  $stateProvider.state('root.sources.details', {
+    url: '/:sourceId',
     resolve: {
       source: ['$http', '$stateParams', function ($http, $stateParams) {
         return $http
@@ -96,14 +77,35 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
             return response.data.source;
           });
       }]
+    },
+    views: {
+      'container@root': {
+        templateUrl: '/partials/source.html',
+        controller: 'SourceCtrl'
+      }
     }
   });
 
-  var listing = {
-    templateUrl: '/partials/system.html',
-    controller: 'SystemCtrl',
+  $stateProvider.state('root.section', {
+    url: '/{section:arcades|computers|consoles|handhelds|others}',
+    views: {
+      'container@root': {
+        templateUrl: '/partials/systems.html',
+        controller: 'SystemsCtrl'
+      }
+    }
+  });
+
+  $stateProvider.state('root.section.system', {
+    url: '/:systemId',
     resolve: {
-      system: systemResolver,
+      system: ['$stateParams', function ($stateParams) {
+        return systems
+          .filter(function (system) {
+            return system.id === $stateParams.systemId;
+          })
+          .shift();
+      }],
       data: ['$http', '$stateParams', function ($http, $stateParams) {
         return $http
           .get('api/system/' + $stateParams.systemId)
@@ -111,21 +113,18 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
             return response.data;
           });
       }]
+    },
+    views: {
+      'container@root': {
+        templateUrl: '/partials/system.html',
+        controller: 'SystemCtrl'
+      }
     }
-  };
+  });
 
-  $stateProvider.state('arcades_list', Object.assign({url: '/arcades/:systemId'}, listing));
-  $stateProvider.state('computers_list', Object.assign({url: '/computers/:systemId'}, listing));
-  $stateProvider.state('consoles_list', Object.assign({url: '/consoles/:systemId'}, listing));
-  $stateProvider.state('handhelds_list', Object.assign({url: '/handhelds/:systemId'}, listing));
-  $stateProvider.state('others_list', Object.assign({url: '/others/:systemId'}, listing));
-
-  $stateProvider.state('system_sources', {
-    url: '/:section/:systemId/sources',
-    templateUrl: '/partials/system_sources.html',
-    controller: 'SystemSourcesCtrl',
+  $stateProvider.state('root.section.system.sources', {
+    url: '/sources',
     resolve: {
-      system: systemResolver,
       sources: ['$http', '$stateParams', function ($http, $stateParams) {
         return $http
           .get('api/system/' + $stateParams.systemId + '/sources')
@@ -133,15 +132,18 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
             return response.data.sources || [];
           });
       }]
+    },
+    views: {
+      'container@root': {
+        templateUrl: '/partials/system/sources.html',
+        controller: 'SystemSourcesCtrl'
+      }
     }
   });
 
-  $stateProvider.state('system_source', {
-    url: '/:section/:systemId/sources/:sourceId',
-    templateUrl: '/partials/system_source.html',
-    controller: 'SystemSourceCtrl',
+  $stateProvider.state('root.section.system.sources.details', {
+    url: '/:sourceId',
     resolve: {
-      system: systemResolver,
       source: ['$http', '$stateParams', function ($http, $stateParams) {
         return $http
           .get('api/system/' + $stateParams.systemId + '/sources/' + $stateParams.sourceId)
@@ -149,6 +151,12 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
             return response.data.source;
           });
       }]
+    },
+    views: {
+      'container@root': {
+        templateUrl: '/partials/system/source.html',
+        controller: 'SystemSourceCtrl'
+      }
     }
   });
 
@@ -415,10 +423,9 @@ app.controller('BiosCtrl', ['$scope', '$http', 'Upload', 'listing', function ($s
 
 }]);
 
-app.controller('SystemsCtrl', ['$scope', '$state', function ($scope, $state) {
-  $scope.state = $state.current.name;
+app.controller('SystemsCtrl', ['$scope', '$state', '$stateParams', function ($scope, $state, $stateParams) {
   $scope.systems = systems.filter(function (system) {
-    return system.section === $scope.state;
+    return system.section === $stateParams.section;
   });
 }]);
 
@@ -594,7 +601,7 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system'
   mapGames();
 }]);
 
-app.controller('SystemCtrl', ['$scope', '$http', '$timeout', 'Upload', 'system', 'data', function ($scope, $http, $timeout, Upload, system, data) {
+app.controller('SystemCtrl', ['$scope', '$http', '$timeout', '$state', 'Upload', 'system', 'data', function ($scope, $http, $timeout, $state, Upload, system, data) {
   $scope.system = system;
   $scope.games = data.games;
   $scope.downloadable = data.downloadable;

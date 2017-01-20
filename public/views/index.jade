@@ -15,11 +15,4 @@ html(ng-app="app")
     script(type='text/javascript', src='app.js')
     script.
       var systems = !{systems};
-  body
-    header
-      a(ui-sref="home")
-        img(src="images/space_invader.png")
-        span Retropie Manager
-      monitor
-    #content(ui-view)
-    server-message
+  body(ui-view)
