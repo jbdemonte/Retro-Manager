@@ -54,8 +54,6 @@ header
   text-align left
 
   background #7d7e7d
-  background -moz-linear-gradient(top,  #7d7e7d 0%, #0e0e0e 100%)
-  background -webkit-linear-gradient(top,  #7d7e7d 0%,#0e0e0e 100%)
   background linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%)
 
   border-bottom 1px solid rgba(0, 0, 0, 0.7)
@@ -94,9 +92,20 @@ header
         &.danger
           color red
 
+#breadcrumb
+  position fixed
+  top HEADER_SIZE
+  left 0
+  right 0
+  padding 10px
+  z-index 1
+  text-align left
+  background linear-gradient(to bottom, rgba(57,57,57,1) 0%,rgba(57,57,57,1) 30%,rgba(57,57,57,0) 100%)
+
 #content
   position fixed
   top HEADER_SIZE
+  padding-top 30px
   bottom 0
   left 0
   right 0
@@ -121,7 +130,8 @@ header
       text-align right
       padding 10px 20px
       color LINK_HOVER_COLOR
-      background rgba(57, 57, 57, 0.72)
+      background linear-gradient(to bottom, rgba(57,57,57,0) 0%,rgba(57,57,57,1) 70%,rgba(57,57,57,1) 100%)
+
       i
         margin-right 5px
       span
@@ -218,7 +228,7 @@ header
   #pictures
     position absolute
     left 15px
-    top 15px
+    top 45px
     img
       max-height 170px
       max-width 170px
@@ -226,7 +236,7 @@ header
       margin-bottom 20px
     i
       color #fff
-      font-size 30px
+      font-size 40px
 
   @media (max-width: 975px)
     #pictures
@@ -345,3 +355,4 @@ header
 @require './styl/system_source.styl'
 @require './styl/component/uploading-list.styl'
 @require './styl/component/server-message.styl'
+@require './styl/component/breadcrumb.styl'

@@ -2,7 +2,7 @@
   .no-entry(ng-if="!systems.length")
     span No system found
 
-  .channel(ng-repeat="system in systems", ui-sref="root.section.system({systemId: system.id})")
+  .channel(ng-repeat="system in systems", ui-sref="root.home.section.system({systemId: system.id})")
     .box
       span.helper
       img(ng-if="system.picture", ng-src="{{'images/systems/' + system.picture}}")

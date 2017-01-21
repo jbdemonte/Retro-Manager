@@ -10,7 +10,7 @@
   .no-entry(ng-if="!sources.length")
     span No source found
 
-  .channel(ng-repeat="source in sources", ui-sref="root.sources.details({sourceId: source.id})")
+  .channel(ng-repeat="source in sources", ui-sref="root.home.sources.details({sourceId: source.id})")
     .box
       span.helper
       img(ng-if="source.picture", ng-src="{{'images/sources/' + source.id + '/' + source.picture}}")

@@ -6,7 +6,7 @@
 
   h1 {{system.name}}
 
-  .channel(ng-repeat="source in sources", ui-sref="root.section.system.sources.details({sourceId: source.id})")
+  .channel(ng-repeat="source in sources", ui-sref="root.home.section.system.sources.details({sourceId: source.id})")
     .box
       span.helper
       img(ng-if="source.picture", ng-src="{{'images/sources/' + source.id + '/' + source.picture}}")

@@ -1,6 +1,12 @@
 // Global "systems" come from index.html
 
-var app = angular.module('app', ['ui.router', 'ngFileUpload', 'infinite-scroll']);
+var app = angular.module('app', ['ui.router', 'ngFileUpload', 'infinite-scroll', 'ncy-angular-breadcrumb']);
+
+app.config(['$breadcrumbProvider', function ($breadcrumbProvider) {
+  $breadcrumbProvider.setOptions({
+    templateUrl: '/partials/breadcrumb.html'
+  });
+}]);
 
 app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($stateProvider, $httpProvider, $locationProvider) {
   $httpProvider.defaults.headers.delete = {"Content-Type": "application/json;charset=utf-8"};
@@ -17,86 +23,104 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
         templateUrl: '/partials/home.html',
         controller: 'HomeCtrl'
       }
+    },
+    ncyBreadcrumb: {
+      label: 'HOME'
     }
   });
 
-  $stateProvider.state('root.credits', {
-    url: '/credits',
+  $stateProvider.state('root.home.credits', {
+    url: 'credits',
     views: {
       'container@root': {
         templateUrl: '/partials/credits.html'
       }
+    },
+    ncyBreadcrumb: {
+      label: 'CREDITS'
     }
   });
 
-  $stateProvider.state('root.bios', {
-    url: '/bios',
-    resolve: {
-      listing: ['$http', function ($http) {
-        return $http
-          .get('api/bios')
-          .then(function (response) {
-            return response.data.listing || {};
-          });
-      }]
-    },
+  $stateProvider.state('root.home.bios', {
+    url: 'bios',
     views: {
       'container@root': {
         templateUrl: '/partials/bios.html',
-        controller: 'BiosCtrl'
+        controller: 'BiosCtrl',
+        resolve: {
+          listing: ['$http', function ($http) {
+            return $http
+              .get('api/bios')
+              .then(function (response) {
+                return response.data.listing || {};
+              });
+          }]
+        }
       }
+    },
+    ncyBreadcrumb: {
+      label: 'BIOS'
     }
   });
 
-  $stateProvider.state('root.sources', {
-    url: '/sources',
-    resolve: {
-      sources: ['$http', function ($http) {
-        return $http
-          .get('api/sources')
-          .then(function (response) {
-            return response.data.sources;
-          });
-      }]
-    },
+  $stateProvider.state('root.home.sources', {
+    url: 'sources',
     views: {
-      'container': {
+      'container@root': {
         templateUrl: '/partials/sources.html',
-        controller: 'SourcesCtrl'
+        controller: 'SourcesCtrl',
+        resolve: {
+          sources: ['$http', function ($http) {
+            return $http
+              .get('api/sources')
+              .then(function (response) {
+                return response.data.sources;
+              });
+          }]
+        }
       }
+    },
+    ncyBreadcrumb: {
+      label: 'SOURCES'
     }
   });
 
-  $stateProvider.state('root.sources.details', {
+  $stateProvider.state('root.home.sources.details', {
     url: '/:sourceId',
-    resolve: {
-      source: ['$http', '$stateParams', function ($http, $stateParams) {
-        return $http
-          .get('api/sources/' + $stateParams.sourceId)
-          .then(function (response) {
-            return response.data.source;
-          });
-      }]
-    },
     views: {
       'container@root': {
         templateUrl: '/partials/source.html',
-        controller: 'SourceCtrl'
+        controller: 'SourceCtrl',
+        resolve: {
+          source: ['$http', '$stateParams', function ($http, $stateParams) {
+            return $http
+              .get('api/sources/' + $stateParams.sourceId)
+              .then(function (response) {
+                return response.data.source;
+              });
+          }]
+        }
       }
+    },
+    ncyBreadcrumb: {
+      label: '{{source.name}}'
     }
   });
 
-  $stateProvider.state('root.section', {
-    url: '/{section:arcades|computers|consoles|handhelds|others}',
+  $stateProvider.state('root.home.section', {
+    url: '{section:arcades|computers|consoles|handhelds|others}',
     views: {
       'container@root': {
         templateUrl: '/partials/systems.html',
         controller: 'SystemsCtrl'
       }
+    },
+    ncyBreadcrumb: {
+      label: '{{section}}'
     }
   });
 
-  $stateProvider.state('root.section.system', {
+  $stateProvider.state('root.home.section.system', {
     url: '/:systemId',
     resolve: {
       system: ['$stateParams', function ($stateParams) {
@@ -105,58 +129,69 @@ app.config(['$stateProvider', '$httpProvider', '$locationProvider', function ($s
             return system.id === $stateParams.systemId;
           })
           .shift();
-      }],
-      data: ['$http', '$stateParams', function ($http, $stateParams) {
-        return $http
-          .get('api/system/' + $stateParams.systemId)
-          .then(function (response) {
-            return response.data;
-          });
       }]
     },
     views: {
       'container@root': {
         templateUrl: '/partials/system.html',
-        controller: 'SystemCtrl'
+        controller: 'SystemCtrl',
+        resolve: {
+          data: ['$http', '$stateParams', function ($http, $stateParams) {
+            return $http
+              .get('api/system/' + $stateParams.systemId)
+              .then(function (response) {
+                return response.data;
+              });
+          }]
+        }
       }
+    },
+    ncyBreadcrumb: {
+      label: '{{system.name}}'
     }
   });
 
-  $stateProvider.state('root.section.system.sources', {
+  $stateProvider.state('root.home.section.system.sources', {
     url: '/sources',
-    resolve: {
-      sources: ['$http', '$stateParams', function ($http, $stateParams) {
-        return $http
-          .get('api/system/' + $stateParams.systemId + '/sources')
-          .then(function (response) {
-            return response.data.sources || [];
-          });
-      }]
-    },
     views: {
       'container@root': {
         templateUrl: '/partials/system/sources.html',
-        controller: 'SystemSourcesCtrl'
+        controller: 'SystemSourcesCtrl',
+        resolve: {
+          sources: ['$http', '$stateParams', function ($http, $stateParams) {
+            return $http
+              .get('api/system/' + $stateParams.systemId + '/sources')
+              .then(function (response) {
+                return response.data.sources || [];
+              });
+          }]
+        }
       }
+    },
+    ncyBreadcrumb: {
+      label: 'SOURCES'
     }
   });
 
-  $stateProvider.state('root.section.system.sources.details', {
+  $stateProvider.state('root.home.section.system.sources.details', {
     url: '/:sourceId',
-    resolve: {
-      source: ['$http', '$stateParams', function ($http, $stateParams) {
-        return $http
-          .get('api/system/' + $stateParams.systemId + '/sources/' + $stateParams.sourceId)
-          .then(function (response) {
-            return response.data.source;
-          });
-      }]
-    },
     views: {
       'container@root': {
         templateUrl: '/partials/system/source.html',
-        controller: 'SystemSourceCtrl'
+        controller: 'SystemSourceCtrl',
+        resolve: {
+          source: ['$http', '$stateParams', function ($http, $stateParams) {
+            return $http
+              .get('api/system/' + $stateParams.systemId + '/sources/' + $stateParams.sourceId)
+              .then(function (response) {
+                return response.data.source;
+              });
+          }]
+        }
       }
+    },
+    ncyBreadcrumb: {
+      label: '{{source.name}}'
     }
   });
 
@@ -424,12 +459,14 @@ app.controller('BiosCtrl', ['$scope', '$http', 'Upload', 'listing', function ($s
 }]);
 
 app.controller('SystemsCtrl', ['$scope', '$state', '$stateParams', function ($scope, $state, $stateParams) {
+  $scope.section = $stateParams.section;
   $scope.systems = systems.filter(function (system) {
     return system.section === $stateParams.section;
   });
 }]);
 
 app.controller('SourcesCtrl', ['$scope', 'Upload', 'sources', function ($scope, Upload, sources) {
+  console.log('o', sources)
   $scope.sources = sources;
   $scope.uploading = [];
 
@@ -491,12 +528,14 @@ app.controller('SourceCtrl', ['$scope', 'source', function ($scope, source) {
   };
 }]);
 
-app.controller('SystemSourcesCtrl', ['$scope', 'system', 'sources', function ($scope, system, sources) {
+app.controller('SystemSourcesCtrl', ['$scope', '$stateParams', 'system', 'sources', function ($scope, $stateParams, system, sources) {
+  $scope.section = $stateParams.section;
   $scope.system = system;
   $scope.sources = sources;
 }]);
 
 app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'source', function ($scope, $stateParams, socket, system, source) {
+  $scope.section = $stateParams.section;
   $scope.system = system;
   $scope.source = source;
   $scope.filters = {};
@@ -601,7 +640,8 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system'
   mapGames();
 }]);
 
-app.controller('SystemCtrl', ['$scope', '$http', '$timeout', '$state', 'Upload', 'system', 'data', function ($scope, $http, $timeout, $state, Upload, system, data) {
+app.controller('SystemCtrl', ['$scope', '$http', '$timeout', '$state', '$stateParams', 'Upload', 'system', 'data', function ($scope, $http, $timeout, $state, $stateParams, Upload, system, data) {
+  $scope.section = $stateParams.section;
   $scope.system = system;
   $scope.games = data.games;
   $scope.downloadable = data.downloadable;

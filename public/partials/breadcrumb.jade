@@ -1,0 +1,4 @@
+ol
+  li(ng-repeat='step in steps', ng-switch='$last || !!step.abstract')
+    a(href='{{step.ncyBreadcrumbLink}}', target="_self", ng-class='{active: $last}')
+      span {{step.ncyBreadcrumbLabel}}
