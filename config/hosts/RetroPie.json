@@ -1,7 +1,7 @@
 {
   "path": {
-    "bios": "/recalbox/share/bios",
-    "roms": "/recalbox/share/roms"
+    "bios": "/home/pi/RetroPie/BIOS",
+    "roms": "/home/pi/RetroPie/roms"
   },
   "systems": {
     "3do": true,
