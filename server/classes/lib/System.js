@@ -33,7 +33,7 @@ function System(data) {
   }
 
   this.path = {
-    roms: path.resolve(config.path.roms + '/' + this.id),
+    roms: path.resolve(config.path.roms + '/' + (this.folder || this.id)),
     bios: path.resolve(config.path.bios + '/' + this.id)
   };
 }
