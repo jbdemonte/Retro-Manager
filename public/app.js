@@ -292,7 +292,7 @@ app.component('serverMessage', {
     });
 
     socket.on('pause', function (data) {
-      display({information: true, msg: 'Pause for ' + data.duration + 'ms'});
+      display({information: true, msg: 'Pause for ' + (data.duration / 1000).toFixed(2) + ' second' + (data.duration > 1000 ? 's' : '')});
     });
 
     socket.on('complete', function (data) {

@@ -187,8 +187,7 @@ Source.prototype.crawl = function (systemId) {
     .catch(function (err)  {
       self.crawling[systemId] = false;
       self.emit('crawling', self.crawling);
-      self.emit('server-error', {error: err.toString()});
-      console.log(err);
+      self._error(err);
     });
 
 };
@@ -231,9 +230,13 @@ Source.prototype.download = function (jsonGame) {
   engine.on(progressEventName, progress);
 
   function start() {
-    var filename, tmpfile;
+    var data = {
+      game: game,
+      files: [],
+      size: 0
+    };
+    var tmpfile;
     var tasks = [];
-    var files = [];
 
     if (config.pg_game) {
       tasks = Array.isArray(config.pg_game) ? config.pg_game.slice() : [config.pg_game];
@@ -244,27 +247,27 @@ Source.prototype.download = function (jsonGame) {
     return self._download(game, progressEventName, tasks)
       .then(function (response) {
         engine.removeListener(progressEventName, progress);
-        if (response) {
-          filename = response.filename();
-          return tools.fs.saveToTmpFile(response.body, filename);
-        }
+        data.filename = response.filename();
+        data.size = response.body.length;
+        return tools.fs.saveToTmpFile(response.body, data.filename);
       })
       .then(function (_tmpfile) {
         tmpfile = _tmpfile;
-        return tools.systems.get(game.sid).handleFile(tmpfile, filename, files);
+        return tools.systems.get(game.sid).handleFile(tmpfile, data.filename, data.files);
       })
       .then(function (renamed) {
         game.download.end(true);
-        self.emit('complete', {game: game, files: files});
+        self.emit('complete', data);
         if (!renamed) {
           return tools.fs.unlink(tmpfile);
         }
       })
+      .then(function () {
+        return data;
+      })
       .catch(function (err) {
         game.download.end(false);
-        self.emit('server-error', {error: err.toString()});
-        console.log(err);
-        console.log(err.stack);
+        self._error(err);
       });
   }
 
@@ -272,13 +275,14 @@ Source.prototype.download = function (jsonGame) {
   if (self.config.wait) {
     self.stack = self.stack
       .then(start)
-      .then(function () {
+      .then(function (data) {
         return new Promise(function (resolve) {
-          var duration = typeof self.config.wait === 'function' ? self.config.wait(game) : self.config.wait;
+          var duration = typeof self.config.wait === 'function' ? self.config.wait(data) : self.config.wait;
           self.emit('pause', {duration: duration});
           setTimeout(resolve, duration);
         });
-      });
+      })
+      .catch(self._error.bind(self));
   } else {
     start();
   }
@@ -496,6 +500,17 @@ Source.prototype._loadCache = function (systemId) {
   } catch (err) {
     return false;
   }
+};
+
+/**
+ * Emit and log an error
+ * @param {Error} err
+ * @private
+ */
+Source.prototype._error = function (err) {
+  this.emit('server-error', {error: err.toString()});
+  console.log(err);
+  console.log(err.stack);
 };
 
 /**
