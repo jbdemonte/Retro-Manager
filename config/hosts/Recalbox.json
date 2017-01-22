@@ -4,10 +4,16 @@
     "roms": "/recalbox/share/roms"
   },
   "systems": {
+    "amstradcpc": {
+      "extensions": ["dsk", "zip"]
+    },
     "atari2600": {
       "extensions": ["a26", "bin", "zip"]
     },
     "atari7800": true,
+    "atarist": {
+      "extensions": ["st", "stx", "ipf", "zip"]
+    },
     "fba": true,
     "fba_libretro": true,
     "fds": true,
@@ -34,46 +40,67 @@
     "msx": {
       "extensions": ["mx1", "mx2", "zip"]
     },
+    "msx1": {
+      "name": "MSX 1",
+      "picture": "Sony HitBit (MSX 1).png",
+      "extensions": ["mx1", "mx2", "zip"],
+      "section": "computers"
+    },
+    "msx2": {
+      "name": "MSX 2",
+      "picture": "Philips VG 8235 (MSX 2).png",
+      "extensions": ["mx1", "mx2", "zip"],
+      "section": "computers"
+    },
     "n64": true,
     "neogeo": {
       "extensions": ["zip"]
     },
     "nes": true,
     "ngp": {
-      "ids": ["ngp", "ngc"],
-      "pictures": ["Neo Geo Pocket.png", "Neo Geo Pocket Color.png"],
+      "extensions": ["ngp", "ngc", "zip"]
+    },
+    "ngpc": {
       "extensions": ["ngp", "ngc", "zip"]
     },
     "pcengine": {
       "extensions": ["pce", "cue", "ccd", "sgx", "zip"]
     },
+    "pcenginecd": true,
     "psx": {
       "extensions": ["img", "bin", "iso"]
     },
+    "o2em": true,
     "scummvm": {
       "extensions": ["a26"]
     },
     "sega32x": {
       "extensions": ["32x", "smd", "bin", "zip"]
     },
-    "segacd": {
-      "extensions": ["cue"]
-    },
+    "segacd": true,
     "sg-1000": {
       "extensions": ["sg", "zip"]
     },
+    "sg1000": true,
     "snes": {
       "extensions": ["sfc", "smc", "zip"]
     },
+    "supergrafx": true,
     "vectrex": {
       "extensions": ["vec", "zip"]
     },
     "virtualboy": true,
     "wonderswan": {
       "folder": "wswan",
-      "ids": ["wonderswan", "wonderswancolor"],
-      "pictures": ["Bandai Wonder Swan.png", "Bandai Wonder Swan Color.png"],
       "extensions": ["ws", "wsc", "zip"]
+    },
+    "wonderswancolor": {
+      "folder": "wswanc",
+      "extensions": ["ws", "wsc", "zip"]
+    },
+    "zx81": true,
+    "zxspectrum": {
+      "extensions": ["tzx", "tap", "z80", "rzx", "scl", "tr", "zip"]
     }
   }
 }

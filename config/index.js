@@ -38,7 +38,7 @@ try {
 
 /*
  Recalbox
- Based on https://github.com/recalbox/recalbox-manager/blob/master/project/MANIFEST.xml
+ Based on https://github.com/recalbox/recalbox-manager/blob/recalbox-4.1.x/project/MANIFEST.xml
  */
 try {
   fs.statSync('/recalbox/');

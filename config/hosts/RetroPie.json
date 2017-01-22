@@ -57,7 +57,12 @@
     "trs-80": true,
     "ti99": true,
     "vectrex": true,
-    "videopac": true,
+    "videopac": {
+      "name": "Videopac / Odyssey 2",
+      "picture": "Odyssey 2.png",
+      "pictures": ["Odyssey 2.png", "Philips Videopac G7400.png"],
+      "extensions": ["bin", "zip"]
+    },
     "virtualboy": true,
     "wonderswan": true,
     "wonderswancolor": true,
