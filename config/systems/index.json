@@ -13,7 +13,7 @@
     "id": "amiga",
     "name": "Amiga",
     "picture": "Amiga.png",
-    "extensions": ["adf", "uae", "hdf", "lzx"],
+    "extensions": ["adf", "adz", "dms", "ipf", "zip", "sh"],
     "bios": {
       "192d6d950d0ed3df8040b788502831c2": "kick13.rom",
       "dc10d7bdd1b6f450773dfb558477c230": "kick20.rom",
@@ -25,14 +25,21 @@
     "id": "amstradcpc",
     "name": "Amstrad CPC",
     "picture": "Amstrad CPC.png",
-    "extensions": ["dsk", "cpc"],
+    "extensions": ["cdt", "cpc", "dsk"],
+    "section": "computers"
+  },
+  {
+    "id": "apple2",
+    "name": "Apple 2",
+    "picture": "Apple 2.png",
+    "extensions": ["po", "dsk", "nib"],
     "section": "computers"
   },
   {
     "id": "atari2600",
     "name": "Atari 2600",
     "picture": "Atari 2600.png",
-    "extensions": ["a26", "bin", "gz", "rom", "zip"],
+    "extensions": ["a26", "bin", "rom", "zip", "gz"],
     "section": "consoles"
   },
   {
@@ -63,7 +70,7 @@
     "id": "atari800",
     "name": "Atari 8-bit Series",
     "picture": "Atari 800.png",
-    "extensions": ["atr", "bas", "bin", "com", "dcm", "gz", "xex", "xfd"],
+    "extensions": ["bas", "bin", "car", "com", "xex", "atr", "xfd", "dcm", "atr.gz", "xfd.gz"],
     "bios": {
       "0bac0c6a50104045d902df4503a4c30b": "ATARIBAS.ROM",
       "eb1f32f5d9f382db1bbfb8d7f9cb343a": "ATARIOSA.ROM",
@@ -77,28 +84,28 @@
     "id": "atarijaguar",
     "name": "Atari Jaguar",
     "picture": "Atari Jaguar.png",
-    "extensions": ["j64", "jag"],
+    "extensions": ["j64", "jag", "zip"],
     "section": "consoles"
   },
   {
     "id": "atarist",
     "name": "Atari ST",
     "picture": "Atari ST.png",
-    "extensions": ["ctr", "img", "ipf", "raw", "rom", "st", "stx"],
+    "extensions": ["st", "stx", "img", "rom", "raw", "ipf", "ctr"],
     "section": "computers"
   },
   {
     "id": "c64",
     "name": "Commodore 64",
     "picture": "Commodore 64.png",
-    "extensions": ["crt", "d64", "g64", "t64", "tap", "x64"],
+    "extensions": ["crt", "d64", "g64", "prg", "t64", "tap", "x64", "zip", "vsf"],
     "section": "computers"
   },
   {
     "id": "coco",
     "name": "Tandy Color Computer",
     "picture": "Tandy Color Computer.png",
-    "extensions": ["asc", "bas", "cas", "ccc", "dmk", "dsk", "jvc", "os9", "rom", "sna", "vdk", "wav"],
+    "extensions": ["cas", "wav", "bas", "asc", "dmk", "jvc", "os9", "dsk", "vdk", "rom", "ccc", "sna"],
     "bios": {
       "c2fc43556eb6b7b25bdf5955bd9df825": "bas13.rom"
     },
@@ -118,14 +125,14 @@
     "id": "daphne",
     "name": "Daphne",
     "picture": "LaserActive.png",
-    "extensions": [".daphne"],
+    "extensions": ["daphne"],
     "section": "others"
   },
   {
     "id": "dragon32",
     "name": "Dragon 32",
     "picture": "Dragon 32.png",
-    "extensions": ["asc", "bas", "cas", "ccc", "dmk", "dsk", "jvc", "os9", "rom", "sna", "vdk", "wav"],
+    "extensions": ["cas", "wav", "bas", "asc", "dmk", "jvc", "os9", "dsk", "vdk", "rom", "ccc", "sna"],
     "bios": {
       "3420b96031078a4ef408cad7bf21a33f": "d32.rom"
     },
@@ -135,7 +142,7 @@
     "id": "dreamcast",
     "name": "Dreamcast",
     "picture": "Dreamcast.png",
-    "extensions": ["cdi", "gdi"],
+    "extensions": ["cdi", "chd", "gdi"],
     "bios": {
       "e10c53c2f8b90bab96ead2d368858623": "dc_boot.bin",
       "74e3f69c2bb92bc1fc5d9a53dcf6ffe2": "dc_flash.bin"
@@ -172,10 +179,17 @@
     "section": "consoles"
   },
   {
+    "id": "gw",
+    "name": "Game & Watch",
+    "picture": "Game & Watch.png",
+    "extensions": ["mgw"],
+    "section": "handhelds"
+  },
+  {
     "id": "gamegear",
     "name": "Game Gear",
     "picture": "Game Gear.png",
-    "extensions": ["gg"],
+    "extensions": ["gg", "bin", "sms", "zip"],
     "section": "handhelds"
   },
   {
@@ -200,21 +214,22 @@
     "id": "gbc",
     "name": "Game Boy Color",
     "picture": "Game Boy Color.png",
-    "extensions": ["gb", "gbc", "zip"],
+    "extensions": ["gbc", "zip"],
     "section": "handhelds"
   },
   {
-    "id": "gw",
-    "name": "Game & Watch",
-    "picture": "Game & Watch.png",
-    "extensions": ["mgw", "zip"],
-    "section": "handhelds"
+    "id": "gc",
+    "name": "GameCube",
+    "picture": "GameCube.png",
+    "extensions": ["iso"],
+    "bios": {},
+    "section": "consoles"
   },
   {
     "id": "intellivision",
     "name": "Intellivision",
     "picture": "Intellivision.png",
-    "extensions": ["bin", "int"],
+    "extensions": ["int", "bin"],
     "bios": {
       "62e761035cb657903761800f4437b8af": "exec.bin",
       "0cd5946c6473e42e8e4c2137785e427f": "grom.bin"
@@ -227,14 +242,6 @@
     "picture": "Lua.png",
     "description": "Lua-scripted video games",
     "extensions": ["lua", "zip"],
-    "section": "others"
-  },
-  {
-    "id": "scummvm",
-    "name": "ScummVM",
-    "description": "Script Creation Utility for Maniac Mansion Virtual Machine (ScummVM)",
-    "picture": "ScummVM.png",
-    "extensions": ["a26"],
     "section": "others"
   },
   {
@@ -251,7 +258,7 @@
     "id": "macintosh",
     "name": "Macintosh",
     "picture": "Macintosh.png",
-    "extensions": ["img", "rom"],
+    "extensions": ["img", "rom", "txt", "dsk"],
     "section": "computers"
   },
   {
@@ -287,7 +294,7 @@
     "name": "Sega Master System",
     "picture": "Sega Master System 2.png",
     "pictures": ["Sega Master System.png", "Sega Master System 2.png", "Sega Mark III.png"],
-    "extensions": ["sms"],
+    "extensions": ["sms", "bin", "zip"],
     "section": "consoles"
   },
   {
@@ -303,7 +310,7 @@
     "id": "msx",
     "name": "MSX",
     "picture": "Sony HitBit (MSX 1).png",
-    "extensions": ["mx1", "mx2", "zip"],
+    "extensions": ["rom", "mx1", "mx2", "col", "dsk", "zip"],
     "bios": {
       "d6dedca1112ddfda94cc9b2e426b818b": "CARTS.SHA",
       "85b38e4128bbc300e675f55b278683a8": "CYRILLIC.FNT",
@@ -327,21 +334,21 @@
     "id": "n64",
     "name": "Nintendo 64",
     "picture": "Nintendo 64.png",
-    "extensions": ["n64", "v64", "z64"],
+    "extensions": ["z64", "n64", "v64"],
     "section": "consoles"
   },
   {
     "id": "nds",
     "name": "Nintendo DS",
     "picture": "Nintendo DS.png",
-    "extensions": ["bin", "nds"],
+    "extensions": ["nds", "zip"],
     "section": "handhelds"
   },
   {
     "id": "neogeo",
     "name": "Neo Geo",
     "picture": "Neo Geo.png",
-    "extensions": ["zip"],
+    "extensions": ["fba", "zip"],
     "section": "consoles",
     "bios": {
       "9323dfa8b1fd45b071f5ec84317d01aa": {
@@ -354,14 +361,14 @@
     "id": "nes",
     "name": "Nintendo Entertainment System",
     "picture": "Nintendo Entertainment System.png",
-    "extensions": ["nes"],
+    "extensions": ["nes", "zip"],
     "section": "consoles"
   },
   {
     "id": "ngp",
     "name": "NeoGeo Pocket",
     "picture": "Neo Geo Pocket.png",
-    "extensions": ["ngp", "ngc", "zip"],
+    "extensions": ["ngp", "zip"],
     "section": "handhelds"
   },
   {
@@ -382,7 +389,7 @@
     "id": "pc",
     "name": "DOSBox",
     "picture": "DOSBox.png",
-    "extensions": ["bat", "com", "exe", "sh"],
+    "extensions": ["bat", "com", "exe", "sh", "conf"],
     "section": "others"
   },
   {
@@ -390,7 +397,7 @@
     "name": "PC Engine / TurboGrafx 16",
     "picture": "PC Engine.png",
     "pictures": ["PC Engine.png", "TurboGrafx 16.png"],
-    "extensions": ["pce"],
+    "extensions": ["pce", "ccd", "cue", "iso", "zip"],
     "bios": {
       "ff1a674273fe3540ccef576376407d1d": "syscard3.pce"
     },
@@ -400,41 +407,47 @@
     "id": "psp",
     "name": "PSP",
     "picture": "PlayStation Portable.png",
-    "extensions": ["cso", "iso", "pbp"],
+    "extensions": ["iso", "pbp", "cso"],
     "section": "handhelds"
   },
   {
     "id": "psx",
     "name": "PlayStation",
     "picture": "PlayStation.png",
-    "extensions": ["img", "bin", "iso"],
+    "extensions": ["cue", "cbn", "img", "iso", "m3u", "mdf", "pbp", "toc", "z", "znx"],
     "bios": {
       "924e392ed05558ffdb115408c263dccf": "SCPH1001.BIN"
     },
     "section": "consoles"
   },
   {
+    "id": "ps2",
+    "name": "PlayStation 2",
+    "picture": "PlayStation 2.png",
+    "extensions": ["iso", "img", "bin", "mdf", "z", "z2", "bz2", "dump", "cso", "ima", "gz"],
+    "bios": {},
+    "section": "consoles"
+  },
+  {
     "id": "samcoupe",
     "name": "SAM Coupé",
     "picture": "SAM Coupé.png",
-    "extensions": ["dsk", "mgt", "sad", "sbt"],
+    "extensions": ["dsk", "mgt", "sbt", "sad"],
     "section": "computers"
   },
   {
-    "id": "saturn",
-    "name": "Sega Saturn",
-    "picture": "Sega Saturn.png",
-    "extensions": ["bin", "iso", "mdf"],
-    "bios": {
-      "af5828fdff51384f99b3c4926be27762": "saturn_bios.bin"
-    },
-    "section": "consoles"
+    "id": "scummvm",
+    "name": "ScummVM",
+    "description": "Script Creation Utility for Maniac Mansion Virtual Machine (ScummVM)",
+    "picture": "ScummVM.png",
+    "extensions": ["sh", "svm"],
+    "section": "others"
   },
   {
     "id": "sega32x",
     "name": "Sega 32x",
     "picture": "Sega Genesis Model2 32X.png",
-    "extensions": ["32x", "smd", "bin", "zip"],
+    "extensions": ["32x", "smd", "bin", "md", "zip"],
     "bios": {
       "6a5433f6a132a2b683635819a6dcf085": "32X_G_BIOS.BIN",
       "f88354ec482be09aeccd76a97bb75868": "32X_M_BIOS.BIN",
@@ -446,7 +459,7 @@
     "id": "segacd",
     "name": "Sega CD",
     "picture": "Sega CD.png",
-    "extensions": ["cue"],
+    "extensions": ["iso", "cue"],
     "bios": {
       "854b9150240a198070150e4566ae1290": "us_scd2_9306.bin",
       "d8b8b720dea6c6ba25c309ed633930f4": "eu_mcd2_9306.bin",
@@ -458,14 +471,14 @@
     "id": "sg-1000",
     "name": "Sega SG-1000",
     "picture": "Sega SG-1000.png",
-    "extensions": ["sg", "zip"],
+    "extensions": ["sg", "bin", "zip"],
     "section": "consoles"
   },
   {
     "id": "snes",
     "name": "Super Nintendo Entertainment System",
     "picture": "Super Nintendo Entertainment System.png",
-    "extensions": ["sfc", "smc", "zip"],
+    "extensions": ["bin", "smc", "sfc", "fig", "swc", "mgd", "zip"],
     "section": "consoles"
   },
   {
@@ -492,14 +505,14 @@
     "id": "vectrex",
     "name": "Vectrex",
     "picture": "Vectrex.png",
-    "extensions": ["vec", "zip"],
+    "extensions": ["vec", "gam", "bin", "zip"],
     "section": "consoles"
   },
   {
     "id": "videopac",
     "name": "Videopac / Odyssey 2",
     "picture": "Odyssey 2.png",
-    "extensions": ["bin"],
+    "extensions": ["bin", "zip"],
     "bios": {
       "562d5ebf9e030a40d6fabfc2f33139fd": "o2rom.bin"
     },
@@ -516,7 +529,7 @@
     "id": "wonderswan",
     "name": "Wonder Swan",
     "picture": "Bandai Wonder Swan.png",
-    "extensions": ["ws", "wsc", "zip"],
+    "extensions": ["ws", "zip"],
     "section": "handhelds"
   },
   {
@@ -530,7 +543,7 @@
     "id": "zmachine",
     "name": "Zmachine (Infocom)",
     "picture": "Infocom.png",
-    "extensions": ["dat", "z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8", "zip"],
+    "extensions": ["dat", "zip", "z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8"],
     "section": "others"
   },
 
@@ -538,7 +551,7 @@
     "id": "zxspectrum",
     "name": "ZX Spectrum",
     "picture": "ZX Spectrum.png",
-    "extensions": ["sna", "szx", "z80", "tap", "tzx", "gz", "udi", "mgt", "img", "trd", "scl", "dsk"],
+    "extensions": ["sna", "szx", "z80", "tap", "tzx", "gz", "udi", "mgt", "img", "trd", "scl", "dsk", "zip"],
     "section": "computers"
   }
 ]

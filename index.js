@@ -5,13 +5,12 @@ var express = require('express');
 var stylus = require('stylus');
 var nib = require('nib');
 var bodyParser = require('body-parser');
-var tools = require('./server/tools');
 var constants = require('./constants');
+var config = require('./config');
 
 
 var app = express();
 var server = require('http').createServer(app);
-require('./server/socket')(server);
 
 function compile(str, path) {
   return stylus(str)
@@ -44,26 +43,11 @@ app.get('/images/sources/:sourceId/:image', function (req, res) {
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Load API and create route automatically
-glob.sync('api/**/*.js', {cwd: './server'}).forEach(function (api) {
-  var path = api.split('/');
-  var method = path.pop().replace('.js', '');
-  var args = require('./server/' + api);
-  if (!Array.isArray(args)) {
-    args = [args];
-  }
-  args.unshift('/' + path.join('/'));
-  app[method].apply(app, args);
-});
-
-app.get('*', function (req, res) {
-  res.render('index', {systems: JSON.stringify(require('./systems.json'))});
-});
 
 Promise
   .resolve()
   .then(function () {
-    return tools.source.list();
+    return config.systems ? serve() : serveError();
   })
   .then(function () {
     server.listen(app.get('port'), function () {
@@ -73,3 +57,44 @@ Promise
   .catch(function (err) {
     console.log(err);
   });
+
+
+/**
+ * Start normal server
+ * @return {Promise}
+ */
+function serve() {
+  console.log('Host=' + config.host);
+
+  require('./server/socket')(server);
+
+  // Load API and create route automatically
+  glob.sync('api/**/*.js', {cwd: './server'}).forEach(function (api) {
+    var path = api.split('/');
+    var method = path.pop().replace('.js', '');
+    var args = require('./server/' + api);
+    if (!Array.isArray(args)) {
+      args = [args];
+    }
+    args.unshift('/' + path.join('/'));
+    app[method].apply(app, args);
+  });
+
+  app.get('*', function (req, res) {
+    res.render('index', {systems: JSON.stringify(config.systems)});
+  });
+
+  return require('./server/tools').source.list();
+}
+
+/**
+ * Start error server
+ * @return {Promise}
+ */
+function serveError() {
+  app.get('*', function (req, res) {
+    res.render('missing');
+  });
+
+  return Promise.resolve();
+}

@@ -1,0 +1,9 @@
+{
+  "path": {
+    "bios": "/storage/system",
+    "roms": "/storage/roms"
+  },
+  "systems": {
+    "todo": "todo"
+  }
+}

@@ -1,5 +1,5 @@
 var path = require('path');
-var config = require(__base + 'config.json');
+var config = require(__base + 'config');
 
 var tools = {
   compression: require(__base + 'server/tools/lib/compression'),

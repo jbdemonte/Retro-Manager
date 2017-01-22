@@ -1,0 +1,79 @@
+{
+  "path": {
+    "bios": "/recalbox/share/bios",
+    "roms": "/recalbox/share/roms"
+  },
+  "systems": {
+    "atari2600": {
+      "extensions": ["a26", "bin", "zip"]
+    },
+    "atari7800": true,
+    "fba": true,
+    "fba_libretro": true,
+    "fds": true,
+    "gw": {
+      "extensions": ["mgw", "zip"]
+    },
+    "gamegear": {
+      "extensions": ["gg", "zip"]
+    },
+    "gb": true,
+    "gba": true,
+    "gbc": {
+      "extensions": ["gb", "gbc", "zip"]
+    },
+    "lutro": true,
+    "lynx": true,
+    "mame": true,
+    "mastersystem": {
+      "extensions": ["sms", "zip"]
+    },
+    "megadrive": {
+      "extensions": ["gen", "md", "smd", "bin", "zip"]
+    },
+    "msx": {
+      "extensions": ["mx1", "mx2", "zip"]
+    },
+    "n64": true,
+    "neogeo": {
+      "extensions": ["zip"]
+    },
+    "nes": true,
+    "ngp": {
+      "ids": ["ngp", "ngc"],
+      "pictures": ["Neo Geo Pocket.png", "Neo Geo Pocket Color.png"],
+      "extensions": ["ngp", "ngc", "zip"]
+    },
+    "pcengine": {
+      "extensions": ["pce", "cue", "ccd", "sgx", "zip"]
+    },
+    "psx": {
+      "extensions": ["img", "bin", "iso"]
+    },
+    "scummvm": {
+      "extensions": ["a26"]
+    },
+    "sega32x": {
+      "extensions": ["32x", "smd", "bin", "zip"]
+    },
+    "segacd": {
+      "extensions": ["cue"]
+    },
+    "sg-1000": {
+      "extensions": ["sg", "zip"]
+    },
+    "snes": {
+      "extensions": ["sfc", "smc", "zip"]
+    },
+    "vectrex": {
+      "extensions": ["vec", "zip"]
+    },
+    "virtualboy": true,
+    "wonderswan": {
+      "folder": "wswan",
+      "ids": ["wonderswan", "wonderswancolor"],
+      "pictures": ["Bandai Wonder Swan.png", "Bandai Wonder Swan Color.png"],
+      "extensions": ["ws", "wsc", "zip"]
+    }
+  }
+}

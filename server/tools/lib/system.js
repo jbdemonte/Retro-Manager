@@ -5,7 +5,7 @@ var classes = {
 var systemById = {};
 
 // LOAD SYSTEMS FROM JSON
-require(__base + 'systems.json').forEach(function (data) {
+require(__base + 'config').systems.forEach(function (data) {
   var system = new classes.System(data);
   if (systemById[system.id]) {
     throw new Error('Duplicate system id: ' + system.id);

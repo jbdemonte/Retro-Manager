@@ -1,6 +1,6 @@
 var glob = require('glob');
 var tools = require(__base + 'server/tools');
-var config = require(__base + 'config.json');
+var config = require(__base + 'config');
 
 module.exports = function (req, res) {
 
