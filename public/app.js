@@ -260,7 +260,7 @@ app.component('serverMessage', {
     var self = this;
     var count = 0;
 
-    self.messages = [{information: true, msg: 'Pause for 3000ms', visible:true}];
+    self.messages = [];
 
     self.remove = function (message) {
       self.messages.splice(self.messages.indexOf(message), 1);
