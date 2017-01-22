@@ -69,7 +69,7 @@ function serve() {
   require('./server/socket')(server);
 
   // Load API and create route automatically
-  glob.sync('api/**/*.js', {cwd: './server'}).forEach(function (api) {
+  glob.sync('api/**/*.js', {cwd: __base + 'server'}).forEach(function (api) {
     var path = api.split('/');
     var method = path.pop().replace('.js', '');
     var args = require('./server/' + api);
