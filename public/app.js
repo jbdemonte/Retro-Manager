@@ -466,7 +466,6 @@ app.controller('SystemsCtrl', ['$scope', '$state', '$stateParams', function ($sc
 }]);
 
 app.controller('SourcesCtrl', ['$scope', 'Upload', 'sources', function ($scope, Upload, sources) {
-  console.log('o', sources)
   $scope.sources = sources;
   $scope.uploading = [];
 
@@ -534,7 +533,7 @@ app.controller('SystemSourcesCtrl', ['$scope', '$stateParams', 'system', 'source
   $scope.sources = sources;
 }]);
 
-app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system', 'source', function ($scope, $stateParams, socket, system, source) {
+app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket', 'system', 'source', function ($scope, $stateParams, $http, socket, system, source) {
   $scope.section = $stateParams.section;
   $scope.system = system;
   $scope.source = source;
@@ -555,6 +554,18 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system'
     source.games = [];
     $scope.showMore();
   }
+
+  $scope.refresh = function () {
+    if (!$scope.loading && !$scope.source.crawling) {
+      $scope.loading = true;
+      $http
+        .delete('api/system/' + system.id + '/sources/' + source.id)
+        .then(function () {
+          socket.emit('crawl', {sourceId: source.id, systemId: system.id});
+        });
+
+    }
+  };
 
   $scope.download = function (game) {
     if (!game.downloaded && !game.downloading) {
@@ -635,7 +646,7 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', 'socket', 'system'
     }
   }));
 
-  socket.emit('crawl', {sourceId: $stateParams.sourceId, systemId: system.id});
+  socket.emit('crawl', {sourceId: source.id, systemId: system.id});
 
   mapGames();
 }]);

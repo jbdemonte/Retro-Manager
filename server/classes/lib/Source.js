@@ -290,6 +290,26 @@ Source.prototype.download = function (jsonGame) {
 };
 
 /**
+ * Remove the cache
+ * @param systemId
+ * @return {*}
+ */
+Source.prototype.clearCache = function (systemId) {
+  var self = this;
+  var file = self._cacheFile(systemId);
+  return tools.fs
+    .unlink(file)
+    .catch(function (err) {
+      console.log(err, err.stack);
+      // swallow error
+    })
+    .then(function () {
+      self.games.set(systemId, null);
+      delete require.cache[file];
+    });
+};
+
+/**
  * Execute tasks to ends downloading a file
  * @param {Game} game
  * @param {string} progressEventName
@@ -410,7 +430,7 @@ Source.prototype._loadGameList = function (systemConfig) {
     })
     .then(function (urls) {
       if (!urls || !urls.length) {
-        return ;
+        return [];
       }
       return Promise
         .all(urls.map(function (url) {

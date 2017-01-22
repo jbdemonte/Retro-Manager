@@ -5,7 +5,9 @@
       img(ng-src="{{'images/sources/' + source.id + '/' + source.picture}}", title="{{source.name}}")
 
   h1 {{source.name}}
-  h2 {{system.name}}
+  h2(ng-click="refresh()", ng-class="{refresh: !loading && !source.crawling}", ng-attr-title="{{!loading && !source.crawling ? 'Refresh' : ''}}")
+    i.fa.fa-refresh
+    span {{system.name}}
 
   .loading(ng-if="source.crawling")
     i.fa.fa-circle-o-notch.fa-spin
