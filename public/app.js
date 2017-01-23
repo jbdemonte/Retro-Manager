@@ -511,19 +511,19 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
   $scope.source = source;
   $scope.filters = {};
   $scope.loading = !source.games;
+  $scope.games = [];
 
   var gamesByUrl = {};
-  var gameList = source.games || [];
   var pagination = 100;
   var delisteners = [];
 
 
   function mapGames() {
     gamesByUrl = {};
-    gameList.forEach(function (game) {
+    (source.games || []).forEach(function (game) {
       gamesByUrl[game.url] = game;
     });
-    source.games = [];
+    $scope.games = [];
     $scope.showMore();
   }
 
@@ -547,9 +547,9 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
   };
 
   $scope.showMore = function () {
-    var max = (source.games ? source.games.length : 0) + pagination;
+    var max = $scope.games.length + pagination;
     var count = 0;
-    source.games = gameList.filter(function (game) {
+    $scope.games = (source.games || []).filter(function (game) {
       if (count === max) {
         return false;
       }
@@ -573,7 +573,7 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
 
   delisteners.push(socket.on('games', function (data) {
     if (system.id === data.systemId) {
-      gameList = data.games;
+      source.games = data.games || [];
       mapGames();
       $scope.loading = false;
     }

@@ -8,6 +8,9 @@
   h2(ng-click="refresh()", ng-class="{refresh: !loading && !source.crawling}", ng-attr-title="{{!loading && !source.crawling ? 'Refresh' : ''}}")
     i.fa.fa-refresh
     span {{system.name}}
+  h3(ng-if="!loading && !source.crawling")
+    span(ng-if="source.games.length > 1") {{source.games.length}} games
+    span(ng-if="source.games.length < 2") {{source.games.length}} game
 
   .loading(ng-if="source.crawling")
     i.fa.fa-circle-o-notch.fa-spin
@@ -26,8 +29,11 @@
     #filters(ng-if="source.games.length > 10")
       input(type="text", ng-model="filters.name", placeholder="Search")
 
+    .no-entry(ng-if="!games.length")
+      span No result
+
     div(infinite-scroll='showMore()', infinite-scroll-distance='1', infinite-scroll-container='"#content"')
-      .channel(ng-repeat="game in source.games", ng-click="download(game)", ng-class="{'hover-disabled': game.downloaded || game.downloading, downloaded: game.downloaded, downloading: game.downloading}")
+      .channel(ng-repeat="game in games", ng-click="download(game)", ng-class="{'hover-disabled': game.downloaded || game.downloading, downloaded: game.downloaded, downloading: game.downloading}")
         .box
           span.helper
           i.fa.fa-check-circle-o(ng-if="game.downloaded")
