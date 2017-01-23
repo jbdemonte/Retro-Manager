@@ -1,5 +1,6 @@
 var tools = require(__base + 'server/tools');
 var multipart = require('connect-multiparty');
+var config = require(__base + 'config');
 
 module.exports = [multipart(), function (req, res) {
 
@@ -29,23 +30,29 @@ module.exports = [multipart(), function (req, res) {
  * @param {string} source
  * @param {string} filename - Original filename (if different from source)
  * @param {array} bios output
- * @return {Promise.boolean} - Return True if source has been renamed (moved)
+ * @return {Promise.<boolean>} - Return True if source has been renamed (moved)
  */
 function handleFile(source, filename, bios) {
   return tools.fs
     .md5(source)
     .then(function (md5) {
-      var system = tools.system.getByBIOS(md5);
-      // find a system which recognize this file as a BIOS
-      if (system) {
+      var match;
+
+      config.systems.some(function (system) {
+        return (system.bios || []).some(function (item) {
+          if (item.md5 === md5) {
+            match = Object.assign({system: system.id}, item);
+            return true;
+          }
+        });
+      });
+
+      // find a matching bios
+      if (match) {
         return tools.fs
-          .rename(source, system.path.bios + '/' + system.bios[md5])
+          .rename(source, match.path + '/' + match.file)
           .then(function () {
-            bios.push({
-              system: system.id,
-              file: system.bios[md5],
-              md5: md5
-            });
+            bios.push(match);
             return true;
           });
       }

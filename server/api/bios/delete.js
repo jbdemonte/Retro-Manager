@@ -5,10 +5,10 @@ var config = require(__base + 'config');
 
 module.exports = function (req, res) {
 
-  var promises = tools.array(req.body.files).map(function (file) {
+  var promises = tools.array(req.body.files).map(function (filepath) {
     // check requested file is in the bios path
-    var filePath = path.resolve(config.path.bios + '/' + file);
-    if (filePath.indexOf(config.path.bios) === 0) {
+    var filePath = path.resolve(filepath);
+    if (filePath.indexOf(config.path.bios) === 0 || filePath.indexOf(config.path.roms) === 0) {
       return new Promise(function (resolve, reject) {
         fs.unlink(filePath, function (err) {
           if (err) {
@@ -18,7 +18,7 @@ module.exports = function (req, res) {
         });
       });
     } else {
-      return Promise.reject(new Error('Unknown file ' + file));
+      return Promise.reject(new Error('Unknown file ' + filepath));
     }
   });
 

@@ -346,7 +346,7 @@ app.controller('BiosCtrl', ['$scope', '$http', 'Upload', 'listing', function ($s
       } else if (a.system > b.system) {
         return 1;
       }
-      return a.name < b.name ? -1 : 1;
+      return a.file < b.file ? -1 : 1;
     });
   }
 
@@ -357,26 +357,16 @@ app.controller('BiosCtrl', ['$scope', '$http', 'Upload', 'listing', function ($s
   };
 
   $scope.remove = function () {
-    var files = Object.keys($scope.selected).filter(function (key) {
-      return $scope.selected[key];
-    });
-    $scope.bios.filter(function (item) {
-      return item.unknown && !$scope.selected[item.system + '/' + item.file];
-    });
-    $scope.bios.forEach(function (item) {
-      if ($scope.selected[item.system + '/' + item.file]) {
+    var files = $scope.bios
+      .filter(function (item, index) {
+        return $scope.selected[index];
+      })
+      .map(function (item) {
         item.missing = true;
-      }
-    });
+        return item.path + '/' + item.file;
+      });
     $scope.selected = {};
     $http.delete('api/bios', {data: JSON.stringify({files: files})});
-  };
-
-  $scope.toggle = function (item) {
-    if (item.missing) {
-      return ;
-    }
-    $scope.selected[item.system + '/' + item.file] = !$scope.selected[item.system + '/' + item.file];
   };
 
   $scope.$watch('files', function (files) {
@@ -393,19 +383,14 @@ app.controller('BiosCtrl', ['$scope', '$http', 'Upload', 'listing', function ($s
         $scope.uploading.splice($scope.uploading.indexOf(item), 1);
       }
       Upload
-        .upload({
-          url: 'api/bios',
-          data: {
-            file: file
-          }
-        })
+        .upload({url: 'api/bios', data: {file: file}})
         .then(
           function (response) {
             if (response.data.added) {
               response.data.added.forEach(function (item) {
                 var found = $scope.bios.some(function (entry) {
-                  if (item.system === entry.system && item.md5 === entry.md5 && item.file === entry.file) {
-                    entry.missing = entry.unknown = false;
+                  if (item.system === entry.system && item.md5 === entry.md5 && item.path === entry.path && item.file === entry.file) {
+                    entry.missing = false;
                     return true;
                   }
                 });
@@ -432,30 +417,17 @@ app.controller('BiosCtrl', ['$scope', '$http', 'Upload', 'listing', function ($s
 
   systems.forEach(function (system) {
     if (system.bios) {
-      Object.keys(system.bios).forEach(function (md5) {
-        var item = {system: system.id, file: system.bios[md5], md5: md5};
-        item.missing = listing.every(function (item) {
-          return item.system !== system.id || item.md5 !== md5 || item.file !== system.bios[md5];
+      system.bios.forEach(function (item) {
+        item = Object.assign({system: system.id}, item);
+        item.missing = listing.every(function (existing) {
+          return existing.system !== item.system || existing.md5 !== item.md5 || existing.path !== item.path || existing.file !== item.file;
         });
         $scope.bios.push(item);
       });
     }
   });
 
-  listing.forEach(function (item) {
-    var found = systems.some(function (system) {
-      return system.bios && Object.keys(system.bios).some(function (md5) {
-        return item.system === system.id && item.md5 === md5 && item.file === system.bios[md5];
-      });
-    });
-    if (!found) {
-      item.unknown = true;
-      $scope.bios.push(item);
-    }
-  });
-
   sort();
-
 }]);
 
 app.controller('SystemsCtrl', ['$scope', '$state', '$stateParams', function ($scope, $state, $stateParams) {

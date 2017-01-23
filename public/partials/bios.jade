@@ -22,13 +22,12 @@
         th
           span File
     tbody
-      tr(ng-repeat="item in bios", ng-class="{missing: item.missing, unknown: item.unknown}", ng-click="toggle(item)")
+      tr(ng-repeat="item in bios", ng-class="{missing: item.missing}", ng-click="selected[$index] = !item.missing && !selected[$index]")
         td.chk
-          input(type="checkbox", ng-model="selected[item.system + '/' + item.file]", ng-disabled="item.missing")
+          input(type="checkbox", ng-model="selected[$index]", ng-disabled="item.missing")
         td.icon
-          i.fa.fa-question-circle-o(ng-if="item.unknown", title="Unknown file")
           i.fa.fa-times-circle-o(ng-if="item.missing", title="Missing file")
-          i.fa.fa-check-circle-o(ng-if="!item.unknown && !item.missing")
+          i.fa.fa-check-circle-o(ng-if="!item.missing")
         td.md5
           span {{item.md5}}
         td.system

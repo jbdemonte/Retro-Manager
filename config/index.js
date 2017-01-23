@@ -20,8 +20,29 @@ function merge(host) {
     })
     .filter(function (system) {
       return system;
+    })
+    .map(function (system) {
+      if (system.bios) {
+        system.bios = Object.keys(system.bios).map(function (md5) {
+          var item = system.bios[md5];
+          var isObject = typeof item === 'object';
+          var data = {
+            md5: md5.toLowerCase(),
+            file: isObject ? item.file : item,
+            path: isObject ? (item.path || '').replace('$(ROMS)', mod.path.roms) : mod.path.roms
+          };
+          // remove trailing /
+          data.path = data.path.replace(/\/+$/, '');
+          Object.freeze(data);
+          return data;
+        });
+      }
+
+      Object.freeze(system);
+      return system;
     });
 
+  Object.freeze(result);
   return result;
 }
 
