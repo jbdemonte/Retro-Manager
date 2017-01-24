@@ -267,6 +267,8 @@ Source.prototype.download = function (jsonGame) {
       })
       .catch(function (err) {
         game.download.end(false);
+        data.error = err ? err.toString() : 'Unknown error';
+        self.emit('failed', data);
         self._error(err);
       });
   }
@@ -300,7 +302,7 @@ Source.prototype.clearCache = function (systemId) {
   return tools.fs
     .unlink(file)
     .catch(function (err) {
-      console.log(err, err.stack);
+      console.log(err.stack || err);
       // swallow error
     })
     .then(function () {
@@ -529,8 +531,7 @@ Source.prototype._loadCache = function (systemId) {
  */
 Source.prototype._error = function (err) {
   this.emit('server-error', {error: err.toString()});
-  console.log(err);
-  console.log(err.stack);
+  console.log(err.stack || err);
 };
 
 /**

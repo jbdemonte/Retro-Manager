@@ -36,6 +36,7 @@
       .channel(ng-repeat="game in games", ng-click="download(game)", ng-class="{'hover-disabled': game.downloaded || game.downloading, downloaded: game.downloaded, downloading: game.downloading}")
         .box
           span.helper
+          i.fa.fa-exclamation-triangle(ng-if="game.error", title="{{game.error}}")
           i.fa.fa-check-circle-o(ng-if="game.downloaded")
           i.fa.fa-cog.fa-spin(ng-if="game.downloading")
           i.fa.fa-ban(ng-if="::!game.img")

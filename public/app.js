@@ -256,7 +256,7 @@ app.component('uploadingList', {
 
 app.component('serverMessage', {
   templateUrl: '/partials/server-message.html',
-  controller: ['$timeout', 'socket', function ($timeout, socket) {
+  controller: ['$timeout', '$rootScope', 'socket', function ($timeout, $rootScope, socket) {
     var self = this;
     var count = 0;
 
@@ -270,11 +270,11 @@ app.component('serverMessage', {
       message.id = 'message-' + Date.now() + '-' + (count++);
       self.messages.push(message);
 
-
       $timeout(function () {
         message.visible = true;
         angular.element(document.getElementById(message.id)).css('maxHeight', '100px');
       }, 100);
+
       $timeout(function () {
         message.visible = false;
         angular.element(document.getElementById(message.id)).css({maxHeight: '0px'});
@@ -284,10 +284,13 @@ app.component('serverMessage', {
         }, 500);
 
       }, duration || 3000);
-
     }
 
     socket.on('server-error', function (data) {
+      display({error: true, msg: data.error}, 10000);
+    });
+
+    $rootScope.$on('server-error', function (event, data) {
       display({error: true, msg: data.error}, 10000);
     });
 
@@ -584,6 +587,7 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
     if (game) {
       game.progression = data.progression;
       game.downloading = true;
+      game.error = false;
     }
   }));
 
@@ -593,6 +597,17 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
       delete game.progression;
       game.downloading = false;
       game.downloaded = true;
+      game.error = false;
+    }
+  }));
+
+  delisteners.push(socket.on('failed', function (data) {
+    var game = gamesByUrl[data.game.url];
+    if (game) {
+      delete game.progression;
+      game.downloading = false;
+      game.downloaded = false;
+      game.error = data.error;
     }
   }));
 
@@ -623,7 +638,7 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
   mapGames();
 }]);
 
-app.controller('SystemCtrl', ['$scope', '$http', '$timeout', '$state', '$stateParams', 'Upload', 'system', 'data', function ($scope, $http, $timeout, $state, $stateParams, Upload, system, data) {
+app.controller('SystemCtrl', ['$rootScope', '$scope', '$http', '$timeout', '$state', '$stateParams', 'Upload', 'system', 'data', function ($rootScope, $scope, $http, $timeout, $state, $stateParams, Upload, system, data) {
   $scope.section = $stateParams.section;
   $scope.system = system;
   $scope.games = data.games;
@@ -666,15 +681,12 @@ app.controller('SystemCtrl', ['$scope', '$http', '$timeout', '$state', '$statePa
         $scope.uploading.splice($scope.uploading.indexOf(item), 1);
       }
       Upload
-        .upload({
-          url: 'api/system/' + system.id,
-          data: {
-            file: file
-          }
-        })
+        .upload({url: 'api/system/' + system.id, data: {file: file}})
         .then(
           function (response) {
-            if (!response.data.error) {
+            if (response.data.error) {
+              $rootScope.$emit('server-error', response.data);
+            } else {
               (response.data.added || []).forEach(function (filename) {
                 if ($scope.games.indexOf(filename) < 0) {
                   $scope.games.push(filename);

@@ -31,6 +31,6 @@ module.exports = function (req, res) {
       res.send({});
     })
     .catch(function (err) {
-      res.status(400).send({error: err ? err.message : 'Unknown error'});
+      res.status(400).send({error: err ? err.toString() : 'Unknown error'});
     });
 };

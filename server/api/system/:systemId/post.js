@@ -25,6 +25,6 @@ module.exports = [multipart(), function (req, res) {
       res.send({added: files});
     })
     .catch(function (err) {
-      res.send({error: err ? err.message : 'Unknown error'});
+      res.send({error: err ? err.toString() : 'Unknown error'});
     });
 }];

@@ -61,12 +61,14 @@ System.prototype.handleFile = function (source, filename, files) {
         return listing.filter(function (archivedFilename) {
           return ~self.extensions.indexOf(tools.fs.extension(archivedFilename));
         }).length;
+      })
+      .catch(function (err) {
+        return Promise.reject('Error while exploring archive ' + (filename || path.basename(source)));
       });
   }
 
   return (promise || Promise.resolve(0))
     .then(function (romArchived) {
-
       // Extension is accepted by the emulator - a ROM or a compressed ROM (only one ROM in the archive)
       if (~self.extensions.indexOf(tools.fs.extension(filename)) && romArchived < 2) {
         return tools.fs
