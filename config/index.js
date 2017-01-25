@@ -14,8 +14,7 @@ function merge(host) {
     .map(function (system) {
       var hsys = mod.systems[system.id];
       if (hsys) {
-        return typeof hsys === 'object' ? Object.assign(system, hsys) : system;
-
+        return Object.assign({}, system, typeof hsys === 'object' ? hsys : {});
       }
     })
     .filter(function (system) {

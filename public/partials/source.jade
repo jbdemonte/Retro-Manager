@@ -1,4 +1,4 @@
-#sources
+#source
 
   #pictures
     img(ng-if="source.picture", ng-src="{{'images/sources/' + source.id + '/' + source.picture}}")
@@ -14,13 +14,15 @@
   .no-entry(ng-if="!source.error && !source.systems.length")
     span No system found
 
-  .channel(ng-repeat="system in source.systems")
+  .channel(ng-repeat="system in source.systems", ng-class="{unknown: system.unknown, unhandled: system.unhandled}")
     .box
       span.helper
+      i.fa.fa-exclamation-triangle(ng-if="system.unhandled", title="Not supported in the current device")
+      i.fa.fa-question-circle(ng-if="system.unknown", title="Unknown system")
       img(ng-if="system.picture", ng-src="{{'images/systems/' + system.picture}}")
       a.cover(ng-if="!isArray(system.url)", href="{{system.url}}", target="_blank")
       .multiple(ng-if="isArray(system.url)")
         a(ng-repeat="url in system.url", href="{{url}}", target="_blank")
           span # {{$index+1}}
       .footer
-        span {{system.name}}
+        span {{system.name || system.id}}
