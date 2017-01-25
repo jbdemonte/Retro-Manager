@@ -552,11 +552,12 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
   $scope.showMore = function () {
     var max = $scope.games.length + pagination;
     var count = 0;
+    var name = ($scope.filters.name || '').toLowerCase();
     $scope.games = (source.games || []).filter(function (game) {
       if (count === max) {
         return false;
       }
-      if ($scope.filters.name && !~(game.name || '').toLowerCase().indexOf($scope.filters.name)) {
+      if (name && !~(game.name || '').toLowerCase().indexOf(name)) {
         return false;
       }
       count++;
