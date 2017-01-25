@@ -27,7 +27,7 @@ function completeURL(origin, url) {
       // url starts with http: or https:
       return url;
     }
-    return origin + (url[0] === '/' ? '' : '/') + url;
+    return origin.replace(/\/+$/, '') + (url[0] === '/' ? '' : '/') + url;
   }
 }
 
