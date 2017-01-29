@@ -512,7 +512,13 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
   $scope.section = $stateParams.section;
   $scope.system = system;
   $scope.source = source;
-  $scope.filters = {};
+  var regions = ['asia', 'china', 'europe', 'japan', 'usa'];
+  $scope.filters = {
+    filtered: false
+  };
+  regions.forEach(function (region) {
+    $scope.filters[region] = true;
+  });
   $scope.loading = !source.games;
   $scope.games = [];
 
@@ -553,11 +559,23 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
     var max = $scope.games.length + pagination;
     var count = 0;
     var name = ($scope.filters.name || '').toLowerCase();
+
+    $scope.filters.filtered = name.length > 0 || regions.some(function (region) {
+      return !$scope.filters[region];
+    });
+
     $scope.games = (source.games || []).filter(function (game) {
+      var gameName = (game.name || '').toLowerCase();
       if (count === max) {
         return false;
       }
-      if (name && !~(game.name || '').toLowerCase().indexOf(name)) {
+      if (name && !~gameName.indexOf(name)) {
+        return false;
+      }
+      var regionFiltered = regions.some(function (region) {
+        return !$scope.filters[region] && ~gameName.indexOf(region);
+      });
+      if (regionFiltered) {
         return false;
       }
       count++;

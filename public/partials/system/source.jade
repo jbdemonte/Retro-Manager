@@ -21,12 +21,27 @@
     i.fa.fa-circle-o-notch.fa-spin
     span Loading, please wait
 
-  .no-entry(ng-if="!loading && !source.crawling && !source.games.length && !filters.name")
+  .no-entry(ng-if="!loading && !source.crawling && !source.games.length && !filters.filtered")
     span No game found while crawling
 
-  #games(ng-if="source.games.length || filters.name")
+  #games(ng-if="source.games.length || filters.filtered")
 
     #filters(ng-if="source.games.length > 10")
+      input(type="checkbox", id="filter-asia", ng-model="filters.asia")
+      label(for="filter-asia") ASIA
+
+      input(type="checkbox", id="filter-china", ng-model="filters.china")
+      label(for="filter-china") China
+
+      input(type="checkbox", id="filter-europe", ng-model="filters.europe")
+      label(for="filter-europe") Europe
+
+      input(type="checkbox", id="filter-japan", ng-model="filters.japan")
+      label(for="filter-japan") Japan
+
+      input(type="checkbox", id="filter-usa", ng-model="filters.usa")
+      label(for="filter-usa") USA
+
       input(type="text", ng-model="filters.name", placeholder="Search")
 
     .no-entry(ng-if="!games.length")
