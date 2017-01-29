@@ -1,6 +1,6 @@
 {
-  "name": "RetroPie-Manager",
-  "description": "A ROMs manager for Retropie",
+  "name": "Retro-Manager",
+  "description": "A ROMs manager for RetroPie, Recalbox...",
   "main": "index.js",
   "author": {
     "name": "Jean-Baptiste DEMONTE",
