@@ -1,4 +1,3 @@
-var fs = require('fs');
 var path = require('path');
 var tools = require(__base + 'server/tools');
 
@@ -8,25 +7,15 @@ module.exports = function (req, res) {
     return res.json({error: 'Unknown system'});
   }
 
-  var promises = tools.array(req.body.games).map(function (file) {
-    // check requested file is in the target system path
-    var filePath = path.resolve(system.path.roms + '/' + file);
-    if (filePath.indexOf(system.path.roms) === 0) {
-      return new Promise(function (resolve, reject) {
-        fs.unlink(filePath, function (err) {
-          if (err) {
-            return reject(err);
-          }
-          resolve();
-        });
-      });
-    } else {
-      return Promise.reject(new Error('Unknown file ' + file));
-    }
-  });
-
   Promise
-    .all(promises)
+    .all(tools.array(req.body.games).map(function (file) {
+      // check requested file is in the target system path
+      var filePath = path.resolve(system.path.roms + '/' + file);
+      if (filePath.indexOf(system.path.roms) === 0) {
+        return tools.fs.rm(filePath);
+      }
+      return Promise.reject(new Error('Unknown file ' + file));
+    }))
     .then(function () {
       res.send({});
     })

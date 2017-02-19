@@ -24,6 +24,7 @@ var exports = module.exports = {
   mkdir: mkdir,
   rename: rename,
 
+  rm: rm,
   rmdir: rmdir,
   mkTmpDir: mkTmpDir,
   rmTmpDir: rmTmpDir,
@@ -48,6 +49,21 @@ function mkdir(target) {
   return _mkdir(target).then(function () {
     return target;
   });
+}
+
+/**
+ * Remove a file or a directory
+ * @param {string} target
+ * @return {Promise}
+ */
+function rm(target) {
+  return exports.stat(target)
+    .then(function (stats) {
+      if (stats.isDirectory()) {
+        return rmdir(target);
+      }
+      return exports.unlink(target);
+    });
 }
 
 /**
