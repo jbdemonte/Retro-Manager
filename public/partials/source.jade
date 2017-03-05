@@ -1,7 +1,8 @@
 #source
 
   #pictures
-    img(ng-if="source.picture", ng-src="{{'images/sources/' + source.id + '/' + source.picture}}")
+    a(href="{{source.url}}", target="_blank")
+      img(ng-if="source.picture", ng-src="{{'images/sources/' + source.id + '/' + source.picture}}")
 
   h1 {{source.name}}
   h2
@@ -26,3 +27,6 @@
           span # {{$index+1}}
       .footer
         span {{system.name || system.id}}
+
+  .bottom-info
+    span {{source.id}}

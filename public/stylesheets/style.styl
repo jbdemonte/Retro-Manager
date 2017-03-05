@@ -122,20 +122,26 @@ header
       .drop-label
         display none
 
+    .bottom-info
     .drop-label
       position fixed
       bottom 0
       right 0
       left 0
-      text-align right
       padding 10px 20px
-      color LINK_HOVER_COLOR
       background linear-gradient(to bottom, rgba(57,57,57,0) 0%,rgba(57,57,57,1) 70%,rgba(57,57,57,1) 100%)
-
       i
         margin-right 5px
       span
         font-size 13px
+
+    .bottom-info
+      color grey
+      text-align left
+
+    .drop-label
+      text-align right
+      color LINK_HOVER_COLOR
 
     &:not(.dragover)
       .drop-label
