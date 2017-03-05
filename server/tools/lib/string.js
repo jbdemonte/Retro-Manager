@@ -17,7 +17,7 @@ module.exports = {
  * @return {string}
  */
 function completeURL(origin, url) {
-  var scheme = /^(https?:)?\/\//;
+  var scheme = /^(data:image)|((https?:)?\/\/)/;
   if (url) {
     if (url.match(scheme)) {
       if (url[0] === '/') {

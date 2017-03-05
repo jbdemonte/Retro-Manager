@@ -526,7 +526,6 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
   var pagination = 100;
   var delisteners = [];
 
-
   function mapGames() {
     gamesByUrl = {};
     (source.games || []).forEach(function (game) {
@@ -535,6 +534,10 @@ app.controller('SystemSourceCtrl', ['$scope', '$stateParams', '$http', 'socket',
     $scope.games = [];
     $scope.showMore();
   }
+
+  $scope.img = function (game) {
+    return game.img.substr(0, 4) === 'data' ? game.img : 'api/proxy/?url=' + game.img;
+  };
 
   $scope.refresh = function () {
     if (!$scope.loading && !$scope.source.crawling) {

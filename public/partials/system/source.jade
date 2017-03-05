@@ -56,7 +56,7 @@
           i.fa.fa-cog.fa-spin(ng-if="game.downloading")
           i.fa.fa-ban(ng-if="::!game.img")
           span.size(ng-if="::game.size") {{::game.size}}
-          img(ng-if="::game.img", ng-src="{{::'api/proxy/?url=' + game.img}}")
+          img(ng-if="::game.img", ng-src="{{::img(game)}}")
           .footer
             .progress(style="right:{{100 * (1 - game.progression.percent)}}%")
               span
