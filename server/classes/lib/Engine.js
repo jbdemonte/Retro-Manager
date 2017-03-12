@@ -47,8 +47,8 @@ function Engine(origin, mainHeaders) {
   /**
    * Send a HTTP(S) request
    * @param {string|object} query
-   * @param {object} headers
-   * @param {object} options
+   * @param {object} [headers]
+   * @param {object} [options]
    * @return {Promise}
    * @fires Engine#progress
    */
@@ -95,8 +95,8 @@ function Engine(origin, mainHeaders) {
   /**
    * Send a GET query
    * @param {string|object} query
-   * @param {object} headers
-   * @param {object} options
+   * @param {object} [headers]
+   * @param {object} [options]
    * @return {Promise.<object>}
    */
   self.get = function (query, headers, options) {
