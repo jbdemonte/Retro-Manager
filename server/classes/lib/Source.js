@@ -41,6 +41,7 @@ module.exports = Source;
 function Source(sourcePath) {
   this.id = sourcePath.split('/').pop();
   this.path = sourcePath;
+  this.timers = {};
 
   // delete all previous cache because module may have be updated
   delete require.cache[require.resolve(this.path)];
@@ -150,7 +151,7 @@ Source.prototype.crawl = function (systemId) {
 
   var configs = self.getSystemConfigs(systemId);
 
-  function loadNextConfig(games) {
+  function loadConfigs(games) {
     var config = configs.shift();
     return self
       ._loadGameList(config)
@@ -163,33 +164,37 @@ Source.prototype.crawl = function (systemId) {
         }
         games = _games.concat(games);
         if (configs.length) {
-          return loadNextConfig(games);
+          return loadConfigs(games);
         }
         return games;
       });
   }
 
-  loadNextConfig([])
+  loadConfigs([])
     .then(function (games) {
-      games = unique(games || []);
-
-      games = games.sort(function (g1, g2) {
+      return unique(games || []).sort(function (g1, g2) {
         return g1.name < g2.name ? -1 : 1;
       });
-
+    })
+    .then(function (games) {
+      return self
+        ._cacheInlineImages(systemId, games)
+        .then(function () {
+          return games;
+        });
+    })
+    .then(function (games) {
       self.games.set(systemId, games);
       self.crawling[systemId] = false;
       self.emit('games', {systemId: systemId, games: games});
       self.emit('crawling', self.crawling);
-
-      self._saveCache(systemId);
+      return self._saveCache(systemId);
     })
     .catch(function (err)  {
       self.crawling[systemId] = false;
       self.emit('crawling', self.crawling);
       self._error(err);
     });
-
 };
 
 /**
@@ -503,6 +508,50 @@ Source.prototype._saveCache = function (systemId) {
     return game.toJSON(true);
   });
   return tools.fs.saveToFile(JSON.stringify(games, null, 4), this._cacheFile(systemId));
+};
+
+/**
+ * Cachify all inline image from games and replace their url
+ * @param {string} systemId
+ * @param {Game[]} games
+ * @return {Promise}
+ * @private
+ */
+Source.prototype._cacheInlineImages = function (systemId, games) {
+  var promises = [];
+  var self = this;
+  games.forEach(function (game) {
+    if (game.inlineImg) {
+      var md5 = tools.string.md5(game.inlineImg.data);
+      promises.push(tools.fs.saveToFile(game.inlineImg.data, path.join(self.path, 'cache', systemId, md5), 'binary'));
+      game.img = 'cache://sources/' + self.id + '/' + systemId + '/' + md5 + '/' + encodeURIComponent(game.inlineImg.name) + '.' + game.inlineImg.ext;
+      delete game.inlineImg;
+    }
+  });
+  return Promise.all(promises);
+};
+
+/**
+ * Cachify an image for a game
+ * The JSON update is done after an idle time of 1 second
+ * @param {string} systemId
+ * @param {string} gameId
+ * @param {string} url
+ * @param {string} content - binary content
+ */
+Source.prototype.cacheImage = function (systemId, gameId, url, content) {
+  var self = this;
+  var game = this.games.get(systemId, gameId);
+  if (game) {
+    var md5 = tools.string.md5(content);
+    tools.fs.saveToFile(content, path.join(this.path, 'cache', systemId, md5), 'binary');
+    game.img = 'cache://sources/' + this.id + '/' + systemId + '/' + md5 + '/' + tools.string.getFilenameFromURL(url);
+    // wait 1s of idle before saving to avoid multiple parallel save
+    clearTimeout(this.timers[systemId]);
+    this.timers[systemId] = setTimeout(function () {
+      self._saveCache(systemId);
+    }, 1000);
+  }
 };
 
 /**

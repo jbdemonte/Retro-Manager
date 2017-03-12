@@ -1,14 +1,39 @@
 var uuid = require('node-uuid');
+var parseURL = require('url').parse;
+var path = require('path');
+var crypto = require('crypto');
 
 var guidRE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 module.exports = {
   completeURL: completeURL,
+  getFilenameFromURL: getFilenameFromURL,
   getSemVer: getSemVer,
   guid: guid,
   guidValid: guidValid,
+  md5: md5,
   rand: rand
 };
+
+/**
+ * Return a md5 hash
+ * @param {string} input
+ * @return {string}
+ */
+function md5(input) {
+  var md5sum = crypto.createHash('md5');
+  md5sum.update(input);
+  return md5sum.digest('hex');
+}
+
+/**
+ * Return the filename of a URL
+ * @param {string} url
+ * @return {string}
+ */
+function getFilenameFromURL(url) {
+  return path.basename(parseURL(url).pathname);
+}
 
 /**
  * Complete URL if needed (URL may be relative to the origin)

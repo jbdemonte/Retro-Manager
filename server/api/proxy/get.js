@@ -6,6 +6,7 @@
 var request = require('request');
 var url = require("url");
 var path = require("path");
+var tools = require(__base + 'server/tools');
 
 var headers = {
   "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -33,9 +34,13 @@ module.exports = function (req, res) {
       if (error) {
         return res.status(404).end();
       }
-      res.setHeader('Content-disposition', 'inline; filename="' + path.basename(req.query.url) + '"');
+      var data = response.body.toString('binary');
+
+      res.setHeader('Content-disposition', 'inline; filename="' + tools.string.getFilenameFromURL(req.query.url) + '"');
       res.setHeader('Content-Type', response.headers['content-type']);
-      res.end(response.body, 'binary');
+      res.end(data, 'binary');
+
+      tools.source.get(req.query.sourceId).cacheImage(req.query.systemId, req.query.gameId, req.query.url, data);
     });
   }, 10);
 };

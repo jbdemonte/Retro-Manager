@@ -167,13 +167,14 @@ function saveToTmpFile(raw, filename) {
  * Save data into a file
  * @param {string} raw
  * @param {string} filepath
+ * @param {string} [encoding=utf8]
  * @return {Promise}
  */
-function saveToFile(raw, filepath) {
+function saveToFile(raw, filepath, encoding) {
   return mkdir(path.dirname(filepath))
     .then(function () {
       return new Promise(function (resolve, reject) {
-        fs.writeFile(filepath, raw, function (err) {
+        fs.writeFile(filepath, raw, encoding || 'utf8', function (err) {
           if (err) {
             return reject();
           }

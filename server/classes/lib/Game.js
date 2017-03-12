@@ -6,6 +6,10 @@ var tools = {
 
 var CACHE_KEYS = 'id sc sid ref ori img url name size'.split(' ');
 
+var re = {
+  inline: /^data:image\/(.*);base64,(.*)/i
+};
+
 /**
  * Game instance
  * @param {object} config
@@ -21,6 +25,7 @@ function Game(config, item, referer) {
   self.sid = '';
   self.ref = '';
   self.img = '';
+  self.inlineImg = null;
   self.url = '';
   self.name = '';
   self.size = '';
@@ -81,6 +86,7 @@ function Game(config, item, referer) {
 
 function extractData(config, item, referer) {
   var self = this;
+  var match;
 
   self.id = tools.string.guid();
   self.sc = config.sourceId;
@@ -100,6 +106,17 @@ function extractData(config, item, referer) {
   // check if image is not a default one
   if (config.missingImg && self.img && ~self.img.indexOf(config.missingImg)) {
     delete self.img;
+  }
+
+  if (self.img) {
+    match = self.img.match(re.inline);
+    if (match) {
+      self.inlineImg = {
+        ext: match[1] === 'jpeg' ? 'jpg' : match[1],
+        data: (Buffer.from ? Buffer.from(match[2], 'base64') : new Buffer(match[2], 'base64')).toString('binary'),
+        name: (config.pg_games.imgName ? config.pg_games.imgName(item) : '') || self.name
+      };
+    }
   }
 
   if (config.pg_games.romLink) {

@@ -11,7 +11,20 @@ function GameList() {
    */
   var games = {};
 
-  this.get = function (systemId) {
+  /**
+   * Return the gameList of a systemId, or a game if the gameId is provided
+   * @param {string} systemId
+   * @param {string} [gameId]
+   * @return {Game[]|Game}
+   */
+  this.get = function (systemId, gameId) {
+    if (gameId) {
+      return games[systemId]
+        .filter(function (game) {
+          return game.id === gameId;
+        })
+        .pop();
+    }
     return games[systemId];
   };
 

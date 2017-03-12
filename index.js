@@ -8,7 +8,6 @@ var bodyParser = require('body-parser');
 var constants = require('./constants');
 var config = require('./config');
 
-
 var app = express();
 var server = require('http').createServer(app);
 
@@ -32,6 +31,17 @@ app.get('/partials/*.html', function (req, res) {
 app.get('/images/sources/:sourceId/:image', function (req, res) {
   res.sendFile(
     constants.SOURCES_PATH + '/' + req.params.sourceId + '/' + req.params.image,
+    function (err) {
+      if (err) {
+        return res.status(err.status).end();
+      }
+    }
+  );
+});
+
+app.get('/cache/sources/:sourceId/:systemId/:md5/:image', function (req, res) {
+  res.sendFile(
+    constants.SOURCES_PATH + '/' + req.params.sourceId + '/cache/' + req.params.systemId + '/' + req.params.md5,
     function (err) {
       if (err) {
         return res.status(err.status).end();
