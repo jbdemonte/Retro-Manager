@@ -1,7 +1,13 @@
+var path = require('path');
 var p7zip = require('p7zip');
+var unecm = require('unecm');
 
 var tools = {
   fs: require('./fs')
+};
+
+var re = {
+  ecm: /\.ecm$/i
 };
 
 module.exports = {
@@ -11,7 +17,7 @@ module.exports = {
 };
 
 // list only extensions which are un-compressible and which may not be a system ROM extension (ie. ISO)
-var CLASSIC_ARCHIVES_EXTENSIONS = 'zip 7z gz gzip tgz tar arj bz2 bzip2 tbz2 tbz xz txz lzma'.split(' ');
+var CLASSIC_ARCHIVES_EXTENSIONS = 'rar zip 7z gz gzip tgz tar arj bz2 bzip2 tbz2 tbz xz txz lzma ecm'.split(' ');
 
 /**
  * Return the File list of an archives
@@ -19,9 +25,41 @@ var CLASSIC_ARCHIVES_EXTENSIONS = 'zip 7z gz gzip tgz tar arj bz2 bzip2 tbz2 tbz
  * @return {Promise.string[]}
  */
 function listFiles(source) {
+  if (source.match(re.ecm)) {
+    return Promise.resolve([decodeECMFilename(source)]);
+  }
   return p7zip.list(source).then(function (result) {
     return result.files.map(function (file) {
       return file.name;
+    });
+  });
+}
+
+/**
+ * Return the filename of an ECM encoded file
+ * @param {string} source
+ * @return {string}
+ */
+function decodeECMFilename(source) {
+  return path.basename(source).replace(re.ecm, '');
+}
+
+/**
+ * Decode an ECM encoded file
+ * @param {string} source
+ * @param {string} destination
+ * @return {Promise.string[]} Decoded file list (one element)
+ */
+function decodeECM(source, destination) {
+  return new Promise(function (resolve, reject) {
+    var handler = unecm(source, destination);
+
+    handler.on('error', function (data) {
+      reject(new Error(data.error));
+    });
+
+    handler.on('complete', function () {
+      resolve([decodeECMFilename(source)]);
     });
   });
 }
@@ -66,6 +104,9 @@ function un7zip(source, destination, extensions) {
  */
 function uncompress(source, destination, extensions) {
   if (hasArchiveExtension(source)) {
+    if (source.match(re.ecm)) {
+      return decodeECM(source, path.join(destination, decodeECMFilename(source)));
+    }
     return un7zip(source, destination, extensions);
   }
   return Promise.reject({message: 'Unknown file type'});
